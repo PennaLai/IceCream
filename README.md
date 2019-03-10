@@ -5,7 +5,7 @@
 ### How to contribute
 
 - You should fork/clone this repository 
-- Create your owner branch
+- Create your own branch
 - Commit the change into your own branch 
 - Pull a request into *dev* branch if your complete a new function and ensure that there is no bug in it.
 
