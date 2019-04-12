@@ -1,5 +1,5 @@
 # Ice	Cream
-[![All Contributors](https://img.shields.io/badge/all_contributors-2-orange.svg?style=flat-square)](#contributors)
+[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors)
 
 *This is a semantic recognition android app*
 
@@ -23,7 +23,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 
 <!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
 <!-- prettier-ignore -->
-<table><tr><td align="center"><a href="https://github.com/PennaLai"><img src="https://avatars1.githubusercontent.com/u/29558750?v=4" width="100px;" alt="PennaLai"/><br /><sub><b>PennaLai</b></sub></a><br /><a href="https://github.com/PennaLai/IceCream/commits?author=PennaLai" title="Code">💻</a></td><td align="center"><a href="https://github.com/NicoleMayer"><img src="https://avatars2.githubusercontent.com/u/32037406?v=4" width="100px;" alt="NicoleMayer"/><br /><sub><b>NicoleMayer</b></sub></a><br /><a href="https://github.com/PennaLai/IceCream/commits?author=NicoleMayer" title="Code">💻</a></td></tr></table>
+<table><tr><td align="center"><a href="https://github.com/PennaLai"><img src="https://avatars1.githubusercontent.com/u/29558750?v=4" width="100px;" alt="PennaLai"/><br /><sub><b>PennaLai</b></sub></a><br /><a href="https://github.com/PennaLai/IceCream/commits?author=PennaLai" title="Code">💻</a></td><td align="center"><a href="https://github.com/NicoleMayer"><img src="https://avatars2.githubusercontent.com/u/32037406?v=4" width="100px;" alt="NicoleMayer"/><br /><sub><b>NicoleMayer</b></sub></a><br /><a href="https://github.com/PennaLai/IceCream/commits?author=NicoleMayer" title="Code">💻</a></td><td align="center"><a href="https://www.kemo.tech"><img src="https://avatars3.githubusercontent.com/u/37008277?v=4" width="100px;" alt="Kemo"/><br /><sub><b>Kemo</b></sub></a><br /><a href="https://github.com/PennaLai/IceCream/commits?author=Kemo-Huang" title="Code">💻</a></td></tr></table>
 
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
