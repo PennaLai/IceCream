@@ -24,7 +24,6 @@ public class LoginActivity extends AppCompatActivity {
         signUp = (FancyButton) findViewById(R.id.signup);
     }
 
-
     /**
      * @author: Penna
      * @Description: click login event
@@ -44,10 +43,10 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "username or password should not be empty",  Toast.LENGTH_LONG).show();
         }else if(true){
             // TODO check more restriction that username and password should satisfy
-            goToPersonalDetailPage();
         } else {
             Toast.makeText(LoginActivity.this, "login successful",  Toast.LENGTH_LONG).show();
             // TODO try to connect server to login
+            goToPersonalDetailPage();
         }
     }
 
@@ -63,6 +62,10 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(startPersonalActivityIntent);
     }
 
+    /**
+     * @author: Penna
+     * @Description: onClick sign up function
+     */
     public void onSignUp(View view){
         Toast.makeText(LoginActivity.this, "sing up successfully",  Toast.LENGTH_LONG).show();
     }

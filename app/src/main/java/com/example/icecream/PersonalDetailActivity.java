@@ -20,7 +20,7 @@ public class PersonalDetailActivity extends AppCompatActivity {
 
     /**
      * @author: Penna
-     * @Description:
+     * @Description: get the user information from user page
      */
     public void getUserInformation(){
         Intent intentFromLogin =getIntent();
