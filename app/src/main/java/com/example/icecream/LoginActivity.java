@@ -1,4 +1,6 @@
 package com.example.icecream;
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -42,10 +44,23 @@ public class LoginActivity extends AppCompatActivity {
             Toast.makeText(LoginActivity.this, "username or password should not be empty",  Toast.LENGTH_LONG).show();
         }else if(true){
             // TODO check more restriction that username and password should satisfy
+            goToPersonalDetailPage();
         } else {
             Toast.makeText(LoginActivity.this, "login successful",  Toast.LENGTH_LONG).show();
             // TODO try to connect server to login
         }
+    }
+
+    /**
+     * @author: Penna
+     * @Description: Jump to the PersonalDetailPage
+     */
+    public void goToPersonalDetailPage(){
+        Context context = LoginActivity.this;
+        Class destinationActivity = PersonalDetailActivity.class;
+        Intent startPersonalActivityIntent = new Intent(context, destinationActivity);
+        startPersonalActivityIntent.putExtra(Intent.EXTRA_TEXT, usernameEdit.getText().toString());
+        startActivity(startPersonalActivityIntent);
     }
 
     public void onSignUp(View view){

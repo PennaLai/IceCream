@@ -6,4 +6,9 @@
     android:layout_height="match_parent"
     tools:context=".PersonalDetailActivity">
 
+    <TextView
+        android:id="@+id/username"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="Here is the PersonalDetailActivity"/>
 </android.support.constraint.ConstraintLayout>
