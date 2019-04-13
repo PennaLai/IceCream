@@ -5,7 +5,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
+
+import com.mob.MobSDK;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.HashMap;
+
+import cn.smssdk.EventHandler;
+import cn.smssdk.SMSSDK;
+import cn.smssdk.gui.RegisterPage;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class LoginActivity extends AppCompatActivity {
@@ -22,6 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.login);
         signUp = (FancyButton) findViewById(R.id.signup);
+
     }
 
     /**
@@ -67,7 +76,13 @@ public class LoginActivity extends AppCompatActivity {
      * @Description: onClick sign up function
      */
     public void onSignUp(View view){
-        Toast.makeText(LoginActivity.this, "sing up successfully",  Toast.LENGTH_LONG).show();
+        Context context = LoginActivity.this;
+        Class destinationActivity = RegisterActivity.class;
+        Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
+        startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, usernameEdit.getText().toString());
+        startActivity(startRegisterActivityIntent);
     }
+
+
 
 }
