@@ -12,6 +12,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 
+import com.github.glomadrian.codeinputlib.CodeInput;
 import com.mob.MobSDK;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
@@ -20,7 +21,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private EditText etPhoneNumber;
     private Button sendVerificationCode;
-    private EditText etVerificationCode;
+    // private EditText etVerificationCode;
+    private CodeInput pinCode;
     private Button nextStep;
 
     private String phoneNumber;
@@ -35,7 +37,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
         etPhoneNumber = (EditText) findViewById(R.id.phoneNumber);
-        etVerificationCode = (EditText) findViewById(R.id.verificationCode);
+//        etVerificationCode = (EditText) findViewById(R.id.verificationCode);
+        pinCode = (CodeInput) findViewById(R.id.pinCode);
         sendVerificationCode = (Button) findViewById(R.id.btn_getVerificationCode);
         nextStep = (Button) findViewById(R.id.btn_checkVerificationCode);
         sendVerificationCode.setOnClickListener(this);
@@ -109,10 +112,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 SMSSDK.getVerificationCode("86", phoneNumber);
                 break;
 
-            case R.id.btn_checkVerificationCode:
-                verificationCode = etVerificationCode.getText().toString();
-                SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
-                break;
+//            case R.id.btn_checkVerificationCode:
+//                verificationCode = etVerificationCode.getText().toString();
+//                SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
+//                break;
         }
     }
 
