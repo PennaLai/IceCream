@@ -19,11 +19,13 @@ import mehdi.sakout.fancybuttons.FancyButton;
 import utils.User;
 
 public class LoginActivity extends AppCompatActivity {
-    MaterialEditText usernameEdit;
-    MaterialEditText passwordEdit;
-    FancyButton login;
-    TextView signUp;
-    User user;
+    private MaterialEditText usernameEdit;
+    private MaterialEditText passwordEdit;
+    private FancyButton login;
+    private TextView signUp;
+    private TextView skip;
+    private TextView forget;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,24 +35,36 @@ public class LoginActivity extends AppCompatActivity {
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.login);
         signUp = (TextView) findViewById(R.id.signup);
+        skip = (TextView) findViewById(R.id.tv_skip);
+        forget = (TextView) findViewById(R.id.tv_forget);
+        user = new User();
 
     }
 
     /**
-     * @author: Penna
-     * @Description: click login event
+     * @ author: Penna
+     * @ Description: click login event
      */
     public void onLogin(View view){
-        boolean success = checkLoginValid();
-        if(success){
+        boolean valid = checkLoginValid();
+        if(valid){
             // TODO try to connect server to login
-            goToPersonalDetailPage();
+            if(connectToSever()) {
+                goToPersonalDetailPage();
+            }else{
+                // fail to connect
+            }
         }
     }
 
+
+    public boolean connectToSever(){
+        return true;
+    }
+
     /**
-     * @author: Penna
-     * @Description: check the usernameEdit and passwordEdit valid
+     * @ author: Penna
+     * @ Description: check the usernameEdit and passwordEdit valid
      */
     public boolean checkLoginValid(){
         String username = usernameEdit.getText().toString();
@@ -67,8 +81,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: Jump to the PersonalDetailPage
+     * @ author: Penna
+     * @ Description: Jump to the PersonalDetailPage
+     * @ Todo:
      */
     public void goToPersonalDetailPage(){
         Context context = LoginActivity.this;
@@ -79,14 +94,36 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: onClick sign up function
+     * @ author: Penna
+     * @ Description: onClick sign up function
      */
     public void onSignUp(View view){
         Context context = LoginActivity.this;
         Class destinationActivity = RegisterActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
         startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, usernameEdit.getText().toString());
+        startActivity(startRegisterActivityIntent);
+    }
+
+    /**
+     * @ author: Penna
+     * @ Description: Skip login
+     */
+    public void onSkip(View view){
+        Context context = LoginActivity.this;
+        Class destinationActivity = PersonalDetailActivity.class;
+        Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
+        startActivity(startRegisterActivityIntent);
+    }
+
+    /**
+     * @ author: Penna
+     * @ Description: Jump to find password page
+     */
+    public void onForget(View view){
+        Context context = LoginActivity.this;
+        Class destinationActivity = ForgetPasswordActivity.class;
+        Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
         startActivity(startRegisterActivityIntent);
     }
 
