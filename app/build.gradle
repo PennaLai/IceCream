@@ -32,10 +32,7 @@ repositories {
     maven {
         url "http://dl.bintray.com/glomadrian/maven"
     }
-//    maven{
-//        url "https://jitpack.io"
-//    }
-//    mavenCentral()
+
 }
 
 
@@ -53,5 +50,5 @@ dependencies {
 //    implementation ('com.github.ozodrukh:CircularReveal:2.0.1@aar') {
 //        transitive = true;
 //    }
-
+    implementation 'com.squareup.okhttp3:okhttp:3.14.1'
 }

@@ -2,11 +2,11 @@ package utils;
 
 public class User {
 
-    private String useName;
+    private String username;
     private String password;
 
-    public void setUseName(String useName) {
-        this.useName = useName;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public void setPassword(String password) {
@@ -17,8 +17,8 @@ public class User {
         return password;
     }
 
-    public String getUseName() {
-        return useName;
+    public String getUsername() {
+        return username;
     }
 
 

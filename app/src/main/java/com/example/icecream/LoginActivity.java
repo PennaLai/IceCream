@@ -1,4 +1,5 @@
 package com.example.icecream;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -11,13 +12,16 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import utils.User;
+import utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
-    MaterialEditText usernameEdit;
-    MaterialEditText passwordEdit;
-    FancyButton login;
-    TextView signUp;
-    User user;
+    private MaterialEditText usernameEdit;
+    private MaterialEditText passwordEdit;
+    private FancyButton login;
+    private TextView signUp;
+    private TextView skip;
+    private TextView forget;
+    private User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -27,44 +31,67 @@ public class LoginActivity extends AppCompatActivity {
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.t);
         signUp = (TextView) findViewById(R.id.signup);
+        skip = (TextView) findViewById(R.id.tv_skip);
+        forget = (TextView) findViewById(R.id.tv_forget);
+        user = new User();
 
     }
 
     /**
-     * @author: Penna
-     * @Description: click login event
+     * @ author: Penna
+     * @ Description: click login event
      */
-    public void onLogin(View view){
+    public void onLogin(View view) {
         boolean success = checkLoginValid();
-        if(success){
+        if (success) {
             // TODO try to connect server to login
-            goToPersonalDetailPage();
+            if(connectToSever()) {
+                goToPersonalDetailPage();
+            }else{
+                // fail to connect
+            }
         }
     }
 
-    /**
-     * @author: Penna
-     * @Description: check the usernameEdit and passwordEdit valid
-     */
-    public boolean checkLoginValid(){
-        String username = usernameEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
-        if (username.equals("") || password.equals("")){
-            Toast.makeText(LoginActivity.this, "username or password should not be empty",  Toast.LENGTH_LONG).show();
-            return false;
-        }else if(true){
-            // TODO check more restriction that username and password should satisfy
-            return false;
-        }
-            Toast.makeText(LoginActivity.this, "login successful",  Toast.LENGTH_LONG).show();
+
+    public boolean connectToSever(){
         return true;
     }
 
     /**
-     * @author: Penna
-     * @Description: Jump to the PersonalDetailPage
+     * @author: Penna, Kemo
+     * @Description: check the usernameEdit and passwordEdit valid
      */
-    public void goToPersonalDetailPage(){
+    public boolean checkLoginValid() {
+        Object usernameEditText = usernameEdit.getText();
+        Object passwordEditText = passwordEdit.getText();
+        assert usernameEditText != null;
+        assert passwordEditText != null;
+        String username = usernameEditText.toString();
+        String password = passwordEditText.toString();
+
+        Validation.ValState userState = Validation.validate(username);
+        if (userState != Validation.ValState.Valid) {
+            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        Validation.ValState passwordState = Validation.validate(password);
+        if (passwordState != Validation.ValState.Valid) {
+            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        Toast.makeText(LoginActivity.this, "login succeed", Toast.LENGTH_LONG).show();
+        return true;
+    }
+
+    /**
+     * @ author: Penna
+     * @ Description: Jump to the PersonalDetailPage
+     * @ Todo:
+     */
+    public void goToPersonalDetailPage() {
         Context context = LoginActivity.this;
         Class destinationActivity = PersonalDetailActivity.class;
         Intent startPersonalActivityIntent = new Intent(context, destinationActivity);
@@ -73,10 +100,10 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: onClick sign up function
+     * @ author: Penna
+     * @ Description: onClick sign up function
      */
-    public void onSignUp(View view){
+    public void onSignUp(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = RegisterActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
@@ -84,6 +111,27 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(startRegisterActivityIntent);
     }
 
+    /**
+     * @ author: Penna
+     * @ Description: Skip login
+     */
+    public void onSkip(View view){
+        Context context = LoginActivity.this;
+        Class destinationActivity = PersonalDetailActivity.class;
+        Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
+        startActivity(startRegisterActivityIntent);
+    }
+
+    /**
+     * @ author: Penna
+     * @ Description: Jump to find password page
+     */
+    public void onForget(View view){
+        Context context = LoginActivity.this;
+        Class destinationActivity = ForgetPasswordActivity.class;
+        Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
+        startActivity(startRegisterActivityIntent);
+    }
 
 
 }
