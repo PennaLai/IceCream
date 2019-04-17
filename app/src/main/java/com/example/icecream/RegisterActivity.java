@@ -136,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.btn_getVerificationCode:
                 //  TODO: check the valid of the phone number before send message
                 phoneNumber = etPhoneNumber.getText().toString();
-//                SMSSDK.getVerificationCode("86", phoneNumber);
+                SMSSDK.getVerificationCode("86", phoneNumber);
                 sendVerificationCode.setClickable(false);
                 sendVerificationCode.setBackgroundColor(Color.parseColor("#898989"));
                 start_verify_timer();
