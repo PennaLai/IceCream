@@ -7,14 +7,8 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mob.MobSDK;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.HashMap;
-
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 public class LoginActivity extends AppCompatActivity {
@@ -29,7 +23,7 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(R.layout.activity_login);
         usernameEdit = (MaterialEditText) findViewById(R.id.username);
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
-        login = (FancyButton) findViewById(R.id.login);
+        login = (FancyButton) findViewById(R.id.t);
         signUp = (TextView) findViewById(R.id.signup);
 
     }

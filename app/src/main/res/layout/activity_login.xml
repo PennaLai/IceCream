@@ -4,6 +4,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:fancy="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/head"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
@@ -39,7 +40,7 @@
 
 
     <mehdi.sakout.fancybuttons.FancyButton
-        android:id="@+id/login"
+        android:id="@+id/t"
         android:layout_width="336dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"
@@ -66,7 +67,7 @@
 
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/logo"
         android:layout_width="140dp"
         android:layout_height="134dp"
         android:layout_marginTop="8dp"
@@ -81,7 +82,7 @@
         app:srcCompat="@drawable/logo" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -99,25 +100,26 @@
         app:layout_constraintVertical_bias="0.3" />
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/words"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
         android:text="Listen to my story!"
         app:fontFamily="sans-serif-light"
         app:layout_constraintHorizontal_bias="0.091"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView" />
+        app:layout_constraintTop_toBottomOf="@+id/title" />
 
     <TextView
         android:id="@+id/signup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
+        android:onClick="onSignUp"
         android:text="Sign up"
         android:textColor="@color/smssdk_lv_tv_color"
         android:textSize="14sp"
-        android:onClick="onSignUp"
         app:fontFamily="sans-serif-medium"
         app:layout_constraintHorizontal_bias="0.049"
         app:layout_constraintLeft_toLeftOf="parent"
@@ -125,7 +127,7 @@
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/skip"
         android:layout_width="wrap_content"
         android:layout_height="27dp"
         android:layout_marginTop="8dp"
@@ -137,10 +139,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/login" />
+        app:layout_constraintTop_toBottomOf="@+id/t" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/forgotPw"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="15dp"
@@ -154,12 +156,12 @@
         app:layout_constraintTop_toBottomOf="@+id/password" />
 
     <!--<Button-->
-        <!--android:id="@+id/button"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Login"-->
-        <!--tools:layout_editor_absoluteX="161dp"-->
-        <!--tools:layout_editor_absoluteY="455dp" />-->
+    <!--android:id="@+id/button"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:text="Login"-->
+    <!--tools:layout_editor_absoluteX="161dp"-->
+    <!--tools:layout_editor_absoluteY="455dp" />-->
 
 
 </android.support.constraint.ConstraintLayout>
