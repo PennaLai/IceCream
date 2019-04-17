@@ -18,6 +18,17 @@ android {
     }
 }
 
+// 短信验证mod插件
+apply plugin: 'com.mob.sdk'
+
+MobSDK {
+    appKey "2ad39f750df28"
+    appSecret "bc0b5900c6ee2fdcbf8440386af41652"
+
+    SMSSDK {}
+}
+
+
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation 'com.android.support:appcompat-v7:28.0.0'
