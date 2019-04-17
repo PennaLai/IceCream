@@ -1,0 +1,59 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "PennaLai",
+      "name": "PennaLai",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/29558750?v=4",
+      "profile": "https://github.com/PennaLai",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "NicoleMayer",
+      "name": "NicoleMayer",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/32037406?v=4",
+      "profile": "https://github.com/NicoleMayer",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Kemo-Huang",
+      "name": "Kemo",
+      "avatar_url": "https://avatars3.githubusercontent.com/u/37008277?v=4",
+      "profile": "https://www.kemo.tech",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Airine",
+      "name": "Aaron",
+      "avatar_url": "https://avatars2.githubusercontent.com/u/21023948?v=4",
+      "profile": "https://github.com/Airine",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "yuyuBri",
+      "name": "yuyu",
+      "avatar_url": "https://avatars1.githubusercontent.com/u/30828706?v=4",
+      "profile": "https://github.com/yuyuBri",
+      "contributions": [
+        "code"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "IceCream",
+  "projectOwner": "PennaLai",
+  "repoType": "github",
+  "repoHost": "https://github.com"
+}
