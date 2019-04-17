@@ -43,16 +43,24 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.365" />
 
-    <EditText
-        android:id="@+id/verificationCode"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:ems="10"
-        android:inputType="number"
+    <com.github.glomadrian.codeinputlib.CodeInput
+        android:id="@+id/pinCode"
+        android:layout_width="213dp"
+        android:layout_height="47dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginRight="8dp"
+        app:codes="4"
+        app:hint_color="#77ce9d"
+        app:hint_text="Pin code"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.277"
+        app:layout_constraintHorizontal_bias="0.258"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.612" />
+        app:layout_constraintVertical_bias="0.605"
+        app:text_color="#b12eff"
+        app:underline_color="#457ad1"
+        app:underline_selected_color="#9e1ace" />
+
 </android.support.constraint.ConstraintLayout>

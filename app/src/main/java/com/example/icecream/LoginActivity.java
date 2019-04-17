@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.mob.MobSDK;
@@ -20,7 +21,7 @@ public class LoginActivity extends AppCompatActivity {
     MaterialEditText usernameEdit;
     MaterialEditText passwordEdit;
     FancyButton login;
-    FancyButton signUp;
+    TextView signUp;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,7 +30,7 @@ public class LoginActivity extends AppCompatActivity {
         usernameEdit = (MaterialEditText) findViewById(R.id.username);
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.login);
-        signUp = (FancyButton) findViewById(R.id.signup);
+        signUp = (TextView) findViewById(R.id.signup);
 
     }
 
