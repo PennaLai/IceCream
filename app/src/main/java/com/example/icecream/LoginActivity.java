@@ -1,4 +1,5 @@
 package com.example.icecream;
+
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,7 @@ import cn.smssdk.SMSSDK;
 import cn.smssdk.gui.RegisterPage;
 import mehdi.sakout.fancybuttons.FancyButton;
 import utils.User;
+import utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
     private MaterialEditText usernameEdit;
@@ -45,9 +47,9 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: click login event
      */
-    public void onLogin(View view){
-        boolean valid = checkLoginValid();
-        if(valid){
+    public void onLogin(View view) {
+        boolean success = checkLoginValid();
+        if (success) {
             // TODO try to connect server to login
             if(connectToSever()) {
                 goToPersonalDetailPage();
@@ -63,20 +65,30 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @ author: Penna
-     * @ Description: check the usernameEdit and passwordEdit valid
+     * @author: Penna, Kemo
+     * @Description: check the usernameEdit and passwordEdit valid
      */
-    public boolean checkLoginValid(){
-        String username = usernameEdit.getText().toString();
-        String password = passwordEdit.getText().toString();
-        if (username.equals("") || password.equals("")){
-            Toast.makeText(LoginActivity.this, "username or password should not be empty",  Toast.LENGTH_LONG).show();
-            return false;
-        }else if(true){
-            // TODO check more restriction that username and password should satisfy
+    public boolean checkLoginValid() {
+        Object usernameEditText = usernameEdit.getText();
+        Object passwordEditText = passwordEdit.getText();
+        assert usernameEditText != null;
+        assert passwordEditText != null;
+        String username = usernameEditText.toString();
+        String password = passwordEditText.toString();
+
+        Validation.ValState userState = Validation.validate(username);
+        if (userState != Validation.ValState.Valid) {
+            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
             return false;
         }
-            Toast.makeText(LoginActivity.this, "login successful",  Toast.LENGTH_LONG).show();
+
+        Validation.ValState passwordState = Validation.validate(password);
+        if (passwordState != Validation.ValState.Valid) {
+            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
+            return false;
+        }
+
+        Toast.makeText(LoginActivity.this, "login succeed", Toast.LENGTH_LONG).show();
         return true;
     }
 
@@ -85,7 +97,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ Description: Jump to the PersonalDetailPage
      * @ Todo:
      */
-    public void goToPersonalDetailPage(){
+    public void goToPersonalDetailPage() {
         Context context = LoginActivity.this;
         Class destinationActivity = PersonalDetailActivity.class;
         Intent startPersonalActivityIntent = new Intent(context, destinationActivity);
@@ -97,7 +109,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: onClick sign up function
      */
-    public void onSignUp(View view){
+    public void onSignUp(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = RegisterActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
@@ -126,7 +138,6 @@ public class LoginActivity extends AppCompatActivity {
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
         startActivity(startRegisterActivityIntent);
     }
-
 
 
 }
