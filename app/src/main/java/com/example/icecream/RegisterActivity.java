@@ -1,6 +1,8 @@
 package com.example.icecream;
 
 import android.content.Context;
+import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
@@ -16,17 +18,19 @@ import com.github.glomadrian.codeinputlib.CodeInput;
 import com.mob.MobSDK;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
+import mehdi.sakout.fancybuttons.FancyButton;
 
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener{
 
     private EditText etPhoneNumber;
-    private Button sendVerificationCode;
+    private FancyButton sendVerificationCode;
     // private EditText etVerificationCode;
     private CodeInput pinCode;
-    private Button nextStep;
+    private FancyButton nextStep;
 
     private String phoneNumber;
     private String verificationCode;
+    private boolean timer_running;
 
     boolean success = false;
 
@@ -39,8 +43,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         etPhoneNumber = (EditText) findViewById(R.id.phoneNumber);
 //        etVerificationCode = (EditText) findViewById(R.id.verificationCode);
         pinCode = (CodeInput) findViewById(R.id.pinCode);
-        sendVerificationCode = (Button) findViewById(R.id.btn_getVerificationCode);
-        nextStep = (Button) findViewById(R.id.btn_checkVerificationCode);
+        sendVerificationCode = (FancyButton) findViewById(R.id.btn_getVerificationCode);
+        nextStep = (FancyButton) findViewById(R.id.btn_checkVerificationCode);
         sendVerificationCode.setOnClickListener(this);
         nextStep.setOnClickListener(this);
 
@@ -97,6 +101,29 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
+    /**
+     * @ author: Airine
+     * @ Description: start the verify pin code timer, to set the text per second.
+     */
+    private void start_verify_timer(){
+        CountDownTimer downTimer = new CountDownTimer(60 * 1000, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                timer_running = true;
+                sendVerificationCode.setText((millisUntilFinished/1000)+"s");
+            }
+
+            @Override
+            public void onFinish() {
+                timer_running = false;
+                sendVerificationCode.setText("Get Pin");
+                sendVerificationCode.setClickable(true);
+                sendVerificationCode.setBackgroundColor(Color.parseColor("#30363E"));
+            }
+        };
+        if (!timer_running)
+            downTimer.start();
+    }
 
     /**
      * @author: Penna
@@ -110,12 +137,18 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 //  TODO: check the valid of the phone number before send message
                 phoneNumber = etPhoneNumber.getText().toString();
                 SMSSDK.getVerificationCode("86", phoneNumber);
+                sendVerificationCode.setClickable(false);
+                sendVerificationCode.setBackgroundColor(Color.parseColor("#898989"));
+                start_verify_timer();
                 break;
 
-//            case R.id.btn_checkVerificationCode:
-//                verificationCode = etVerificationCode.getText().toString();
-//                SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
-//                break;
+            case R.id.btn_checkVerificationCode:
+                Character[] chars = pinCode.getCode();
+                verificationCode = "";
+                for (Character c : chars)
+                    verificationCode += c.toString();
+                SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
+                break;
         }
     }
 
