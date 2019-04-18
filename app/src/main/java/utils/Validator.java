@@ -4,9 +4,9 @@ import java.util.regex.Pattern;
 
 /**
  * @author kemo
- * @description: This class is used for validating input string (e.g. username or password)
+ * @description This class is used for validating input string (e.g. username or password)
  */
-public class Validation {
+public class Validator {
 
     private static Pattern pattern = Pattern.compile("^[a-zA-Z0-9`~!@#$%^&*()_+\\-=\\[\\]{}|\\\\;:'\",./<>?]*$");
 
@@ -15,7 +15,7 @@ public class Validation {
 
     /**
      * @author kemo
-     * @description: Validation result state
+     * @description Validation result state
      */
     public enum ValState {
         Valid,

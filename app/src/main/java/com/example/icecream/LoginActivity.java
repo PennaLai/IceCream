@@ -2,25 +2,24 @@ package com.example.icecream;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mob.MobSDK;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.HashMap;
-
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.OkHttpClient;
+import utils.HttpHandler;
 import utils.User;
-import utils.Validation;
+import utils.Validator;
 
 public class LoginActivity extends AppCompatActivity {
+
+    OkHttpClient client = new OkHttpClient();
+    HttpHandler httpHandler = new HttpHandler(client);
     MaterialEditText usernameEdit;
     MaterialEditText passwordEdit;
     FancyButton login;
@@ -43,9 +42,17 @@ public class LoginActivity extends AppCompatActivity {
      * @Description: click login event
      */
     public void onLogin(View view) {
-        boolean success = checkLoginValid();
+        Object usernameEditText = usernameEdit.getText();
+        Object passwordEditText = passwordEdit.getText();
+        if (usernameEditText == null || passwordEditText == null) {
+            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String username = usernameEditText.toString();
+        String password = passwordEditText.toString();
+        boolean success = checkLoginValid(username, password);
         if (success) {
-            // TODO try to connect server to login
+            // httpHandler.getLoginResponse(phoneNumber, password);
             goToPersonalDetailPage();
         }
     }
@@ -54,22 +61,15 @@ public class LoginActivity extends AppCompatActivity {
      * @author: Penna, Kemo
      * @Description: check the usernameEdit and passwordEdit valid
      */
-    public boolean checkLoginValid() {
-        Object usernameEditText = usernameEdit.getText();
-        Object passwordEditText = passwordEdit.getText();
-        assert usernameEditText != null;
-        assert passwordEditText != null;
-        String username = usernameEditText.toString();
-        String password = passwordEditText.toString();
-
-        Validation.ValState userState = Validation.validate(username);
-        if (userState != Validation.ValState.Valid) {
+    public boolean checkLoginValid(String username, String password) {
+        Validator.ValState userState = Validator.validate(username);
+        if (userState != Validator.ValState.Valid) {
             Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
             return false;
         }
 
-        Validation.ValState passwordState = Validation.validate(password);
-        if (passwordState != Validation.ValState.Valid) {
+        Validator.ValState passwordState = Validator.validate(password);
+        if (passwordState != Validator.ValState.Valid) {
             Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
             return false;
         }
