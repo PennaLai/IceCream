@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         Object phoneEditText = phoneEdit.getText();
         Object passwordEditText = passwordEdit.getText();
         if (phoneEditText == null || passwordEditText == null) {
-            Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "不能为空", Toast.LENGTH_LONG).show();
             return;
         }
         String phoneNumber = phoneEditText.toString();
