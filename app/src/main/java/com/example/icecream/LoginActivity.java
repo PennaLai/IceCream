@@ -15,7 +15,7 @@ import utils.User;
 import utils.Validation;
 
 public class LoginActivity extends AppCompatActivity {
-    private MaterialEditText usernameEdit;
+    private MaterialEditText phoneEdit;
     private MaterialEditText passwordEdit;
     private FancyButton login;
     private TextView signUp;
@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        usernameEdit = (MaterialEditText) findViewById(R.id.username);
+        phoneEdit = (MaterialEditText) findViewById(R.id.phone);
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.t);
         signUp = (TextView) findViewById(R.id.signup);
@@ -48,7 +48,7 @@ public class LoginActivity extends AppCompatActivity {
             if(connectToSever()) {
                 goToPersonalDetailPage();
             }else{
-                // fail to connect
+                ToastMessage("Login Failed, Try again");
             }
         }
     }
@@ -58,32 +58,65 @@ public class LoginActivity extends AppCompatActivity {
         return true;
     }
 
+
     /**
-     * @author: Penna, Kemo
-     * @Description: check the usernameEdit and passwordEdit valid
+     * @ author: Penna, Kemo
+     * @ Description: check the phoneEdit and passwordEdit valid
      */
     public boolean checkLoginValid() {
-        Object usernameEditText = usernameEdit.getText();
+        Object phoneEditText = phoneEdit.getText();
         Object passwordEditText = passwordEdit.getText();
-        assert usernameEditText != null;
+        assert phoneEditText != null;
         assert passwordEditText != null;
-        String username = usernameEditText.toString();
+        String username = phoneEditText.toString();
         String password = passwordEditText.toString();
 
-        Validation.ValState userState = Validation.validate(username);
-        if (userState != Validation.ValState.Valid) {
-            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
-            return false;
+        Validation.ValState phoneState = Validation.CheckPhoneNumberValidate(username);
+        switch (phoneState){
+            case Empty:
+                ToastMessage("Phone number should not be empty");
+                return false;
+            case TooLong:
+                ToastMessage("Phone number too long");
+                return false;
+            case TooShort:
+                ToastMessage("Phone number too short");
+                return false;
+            case InvalidCharacters:
+                ToastMessage("Phone number invalid");
+                return false;
+            case Valid:
+                break;
         }
 
-        Validation.ValState passwordState = Validation.validate(password);
-        if (passwordState != Validation.ValState.Valid) {
-            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
-            return false;
+        Validation.ValState passwordState = Validation.CheckPasswordValidate(password);
+        switch (passwordState){
+            case Empty:
+                ToastMessage("Password should not be empty");
+                return false;
+            case TooLong:
+                ToastMessage("Password too long");
+                return false;
+            case TooShort:
+                ToastMessage("Password too short");
+                return false;
+            case InvalidCharacters:
+                ToastMessage("Password invalid");
+                return false;
+            case Valid:
+                break;
         }
 
-        Toast.makeText(LoginActivity.this, "login succeed", Toast.LENGTH_LONG).show();
         return true;
+    }
+
+
+    /**
+     * @ author: Penna
+     * @ Description: we may change the UI framework later for toast
+     */
+    public void ToastMessage(String message){
+        Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
     /**
@@ -95,7 +128,7 @@ public class LoginActivity extends AppCompatActivity {
         Context context = LoginActivity.this;
         Class destinationActivity = PersonalDetailActivity.class;
         Intent startPersonalActivityIntent = new Intent(context, destinationActivity);
-        startPersonalActivityIntent.putExtra(Intent.EXTRA_TEXT, usernameEdit.getText().toString());
+        startPersonalActivityIntent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
         startActivity(startPersonalActivityIntent);
     }
 
@@ -107,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
         Context context = LoginActivity.this;
         Class destinationActivity = RegisterActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
-        startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, usernameEdit.getText().toString());
+        startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
         startActivity(startRegisterActivityIntent);
     }
 
