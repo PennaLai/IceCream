@@ -41,23 +41,23 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private boolean verificationSuccess = false;
     private String phoneNumber;
     private String verificationCode;
-    private boolean timer_running;
+    private boolean timerRunning;
 
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
+    private final OkHttpClient client = new OkHttpClient();
+    private final HttpHandler httpHandler = new HttpHandler(client);
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
-        etUserName = (EditText) findViewById(R.id.usernameRegister);
-        etPassword = (EditText) findViewById(R.id.passwordRegister);
-        etPhoneNumber = (EditText) findViewById(R.id.phoneNumber);
-        pinCode = (CodeInput) findViewById(R.id.pinCode);
-        goToLogin = (TextView) findViewById(R.id.bt_goToLogin);
-        btSendVerificationCode = (FancyButton) findViewById(R.id.btn_getVerificationCode);
-        btNextStep = (FancyButton) findViewById(R.id.btn_checkVerificationCode);
-        btSignUp = (FancyButton) findViewById(R.id.bt_signUp);
+        etUserName = findViewById(R.id.usernameRegister);
+        etPassword = findViewById(R.id.passwordRegister);
+        etPhoneNumber = findViewById(R.id.phoneNumber);
+        pinCode = findViewById(R.id.pinCode);
+        goToLogin = findViewById(R.id.bt_goToLogin);
+        btSendVerificationCode = findViewById(R.id.btn_getVerificationCode);
+        btNextStep = findViewById(R.id.btn_checkVerificationCode);
+        btSignUp = findViewById(R.id.bt_signUp);
         btSignUp.setOnClickListener(this);
         goToLogin.setOnClickListener(this);
         btSendVerificationCode.setOnClickListener(this);
@@ -75,39 +75,36 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         EventHandler eh = new EventHandler() {
 
             @Override
-            public void afterEvent(int event, int result, Object data) {
+            public void afterEvent(final int event, final int result, final Object data) {
                 // afterEvent会在子线程被调用，因此如果后续有UI相关操作，需要将数据发送到UI线程
                 Message msg = new Message();
                 msg.arg1 = event;
                 msg.arg2 = result;
                 msg.obj = data;
-                new Handler(Looper.getMainLooper(), new Handler.Callback() {
-                    @Override
-                    public boolean handleMessage(Message msg) {
-                        int event = msg.arg1;
-                        int result = msg.arg2;
-                        Object data = msg.obj;
-                        if (event == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                            if (result == SMSSDK.RESULT_COMPLETE) {
-                                // TODO 处理成功得到验证码的结果
-                                Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
-                                // 请注意，此时只是完成了发送验证码的请求，验证码短信还需要几秒钟之后才送达
-                            } else {
-                                // TODO 处理没有得到验证码错误的结果
-                                ((Throwable) data).printStackTrace();
-                            }
-                        } else if (event == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                            if (result == SMSSDK.RESULT_COMPLETE) {
-                                verificationSuccess = true;
-                                Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
-                            } else {
-                                verificationSuccess = false;
-                                Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
-                                ((Throwable) data).printStackTrace();
-                            }
+                new Handler(Looper.getMainLooper(), msg1 -> {
+                    int event1 = msg1.arg1;
+                    int result1 = msg1.arg2;
+                    Object data1 = msg1.obj;
+                    if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+                        if (result1 == SMSSDK.RESULT_COMPLETE) {
+                            // TODO 处理成功得到验证码的结果
+                            Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
+                            // 请注意，此时只是完成了发送验证码的请求，验证码短信还需要几秒钟之后才送达
+                        } else {
+                            // TODO 处理没有得到验证码错误的结果
+                            ((Throwable) data1).printStackTrace();
                         }
-                        return false;
+                    } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                        if (result1 == SMSSDK.RESULT_COMPLETE) {
+                            verificationSuccess = true;
+                            Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
+                        } else {
+                            verificationSuccess = false;
+                            Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
+                            ((Throwable) data1).printStackTrace();
+                        }
                     }
+                    return false;
                 }).sendMessage(msg);
 
             }
@@ -120,24 +117,27 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @ author: Airine
      * @ Description: start the verify pin code timer, to set the text per second.
      */
-    private void start_verify_timer() {
-        CountDownTimer downTimer = new CountDownTimer(60 * 1000, 1000) {
+    private void startVerifyTimer() {
+        final long millisInFuture = 60 * 1000;
+        final long countDownInterval = 1000;
+        CountDownTimer downTimer = new CountDownTimer(millisInFuture, countDownInterval) {
             @Override
             public void onTick(long millisUntilFinished) {
-                timer_running = true;
+                timerRunning = true;
                 btSendVerificationCode.setText((millisUntilFinished / 1000) + "s");
             }
 
             @Override
             public void onFinish() {
-                timer_running = false;
+                timerRunning = false;
                 btSendVerificationCode.setText("Get Pin");
                 btSendVerificationCode.setClickable(true);
                 btSendVerificationCode.setBackgroundColor(Color.parseColor("#30363E"));
             }
         };
-        if (!timer_running)
+        if (!timerRunning) {
             downTimer.start();
+        }
     }
 
     /**
@@ -160,6 +160,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case R.id.bt_goToLogin:
                 goToLoginPage();
                 break;
+            default:
+                break;
         }
     }
 
@@ -170,9 +172,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     private void verifyCode() {
         Character[] chars = pinCode.getCode();
-        verificationCode = "";
-        for (Character c : chars)
-            verificationCode += c.toString();
+        StringBuilder sb = new StringBuilder();
+        for (Character c : chars) {
+            sb.append(c.toString());
+        }
+        verificationCode = sb.toString();
         SMSSDK.submitVerificationCode("86", phoneNumber, verificationCode);
     }
 
@@ -182,7 +186,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      */
     public void onClickGetVerificationCode() {
         phoneNumber = etPhoneNumber.getText().toString();
-        Validator.ValState phoneNumberState = Validator.CheckPhoneNumberValidate(phoneNumber);
+        Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
         if (phoneNumberState != Validator.ValState.Valid) {
             Toast.makeText(RegisterActivity.this, "Phone number not valid", Toast.LENGTH_LONG).show();
             return;
@@ -190,7 +194,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         SMSSDK.getVerificationCode("86", phoneNumber);
         btSendVerificationCode.setClickable(false);
         btSendVerificationCode.setBackgroundColor(Color.parseColor("#898989"));
-        start_verify_timer();
+        startVerifyTimer();
     }
 
     /**
@@ -201,8 +205,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         String userName = etUserName.getText().toString();
         String password = etPassword.getText().toString();
 
-        Validator.ValState userNameState = Validator.CheckUserNameValidate(userName);
-        Validator.ValState passwordState = Validator.CheckPasswordValidate(password);
+        Validator.ValState userNameState = Validator.validateUsername(userName);
+        Validator.ValState passwordState = Validator.validatePassword(password);
 
         switch (userNameState) {
             case Valid:
@@ -218,6 +222,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 return;
             case Empty:
                 Toast.makeText(RegisterActivity.this, "用户名不能为空", Toast.LENGTH_LONG).show();
+                return;
+            default:
                 return;
         }
 
@@ -235,6 +241,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 return;
             case Empty:
                 Toast.makeText(RegisterActivity.this, "密码不能为空", Toast.LENGTH_LONG).show();
+                return;
+            default:
                 return;
         }
 
@@ -256,7 +264,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     /**
      * @ author: Penna
      * @ Description: go goToLogin to the login page
-     * @ TODO: There is a bug that if we already have a login page, this method just create a new page, we just want to go goToLogin to previous one
+     * TODO: There is a bug that if we already have a login page, this method just create a new page, we just want to go goToLogin to previous one
      */
     public void goToLoginPage() {
         Context context = RegisterActivity.this;

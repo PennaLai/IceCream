@@ -7,7 +7,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 
-import okhttp3.FormBody;
+import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
@@ -18,15 +18,18 @@ import static android.content.ContentValues.TAG;
 public class HttpHandler {
 
     private final OkHttpClient okHttpClient;
-    private final static String PROTOCOL = "http";
-    private final static String HOST = "39.108.73.166";
-    private final static String PORT = "8080";
-    private final static String PRE_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
+    private static final String PROTOCOL = "http";
+    private static final String HOST = "39.108.73.166";
+    private static final String PORT = "8080";
+    private static final String PRE_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
-    private final static String LOGIN_URL = PRE_URL + "login";
-    private final static String REGISTER_URL = PRE_URL + "register";
+    private static final String LOGIN_URL = PRE_URL + "login";
+    private static final String REGISTER_URL = PRE_URL + "register";
 
-    public HttpHandler(OkHttpClient okHttpClient) {
+    private static final MediaType JSON
+            = MediaType.parse("application/json; charset=utf-8");
+
+    public HttpHandler(final OkHttpClient okHttpClient) {
         this.okHttpClient = okHttpClient;
     }
 
@@ -38,14 +41,18 @@ public class HttpHandler {
     }
 
     /**
-     * @param phoneNumber
-     * @param password
-     * @return
+     * @param phoneNumber The phone number string that used for login
+     * @param password    The password string that used for login
+     * @return The validation result state
+     * @author Kemo
      * @description login
      */
-    public State getLoginResponseState(String phoneNumber, String password) {
+    public State getLoginResponseState(final String phoneNumber, final String password) {
         String url = LOGIN_URL + String.format(
-                "?phone=%s&password=%s", phoneNumber, password);
+                "?phone=%s&password=%s",
+                phoneNumber,
+                password
+        );
         return parseResponseJson(getHttpResponseString(url));
     }
 
@@ -54,26 +61,31 @@ public class HttpHandler {
      * @param username
      * @param password
      * @return
+     * @author Kemo
      * @description register
      */
-    public State getRegisterResponseState(String phoneNumber, String username, String password) {
+    public State getRegisterResponseState(final String phoneNumber, final String username, final String password) {
         String url = REGISTER_URL + String.format(
-                "?phone=%s&username=%s&password=%s", phoneNumber, username, password);
+                "?phone=%s&username=%s&password=%s",
+                phoneNumber,
+                username,
+                password
+        );
         return parseResponseJson(getHttpResponseString(url));
     }
 
-    private String getHttpResponseString(String url) {
+    private String getHttpResponseString(final String url) {
         Request request = new Request.Builder()
                 .url(url)
                 .header("Content-Type", "application/json")
                 .build();
         try {
             Response response = okHttpClient.newCall(request).execute();
-            if (response.body() == null) {
-                Log.e(TAG, "response body is null");
-                return null;
+            if (response.isSuccessful()) {
+                Log.e(TAG, "Got response from server");
+                assert response.body() != null;
+                return response.body().string();
             }
-            return response.body().string();
         } catch (IOException e) {
             Log.e(TAG, "error in response of get request");
             e.printStackTrace();
@@ -81,15 +93,12 @@ public class HttpHandler {
         return null;
     }
 
-    private String postHttpResponseString(String url, String name, String value) {
+    private String postHttpResponseString(final String url, final String json) {
         OkHttpClient httpClient = new OkHttpClient();
-
-        RequestBody formBody = new FormBody.Builder()
-                .add(name, value)
-                .build();
+        RequestBody body = RequestBody.create(JSON, json);
         Request request = new Request.Builder()
                 .url(url)
-                .post(formBody)
+                .post(body)
                 .build();
         try {
             Response response = httpClient.newCall(request).execute();
@@ -105,11 +114,11 @@ public class HttpHandler {
         return null;
     }
 
-    private State parseResponseJson(String jsonData) {
-        JSONObject Jobject;
+    private State parseResponseJson(final String jsonData) {
+        JSONObject jsonObject;
         try {
-            Jobject = new JSONObject(jsonData);
-            switch (Jobject.getString("state")) {
+            jsonObject = new JSONObject(jsonData);
+            switch (jsonObject.getString("state")) {
                 case "DuplicatePhoneNumber":
                     return State.DuplicatePhoneNumber;
                 case "NoSuchUser":
@@ -118,6 +127,8 @@ public class HttpHandler {
                     return State.WrongPassword;
                 case "Valid":
                     return State.Valid;
+                default:
+                    return null;
             }
         } catch (JSONException e) {
             e.printStackTrace();
