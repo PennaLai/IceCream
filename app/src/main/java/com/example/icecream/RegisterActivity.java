@@ -38,13 +38,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private FancyButton btSignUp;
     private TextView goToLogin;
 
-    private boolean hasTryVerify = false;
     private boolean verificationSuccess = false;
     private String phoneNumber;
     private String verificationCode;
     private boolean timer_running;
-
-    boolean success = false;
 
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
@@ -155,13 +152,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 onClickGetVerificationCode();
                 break;
             case R.id.btn_checkVerificationCode:
-                if (!hasTryVerify) {
-                    verifyCode();
-                    hasTryVerify = true;
-                }
+                verifyCode();
                 break;
             case R.id.bt_signUp:
                 submitRegister();
+                break;
             case R.id.bt_goToLogin:
                 goToLoginPage();
                 break;
@@ -169,7 +164,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
 
-    public void verifyCode() {
+    /**
+     * @ author: Penna
+     * @ Description: Check the valid of phone and try to verify code
+     */
+    private void verifyCode() {
         Character[] chars = pinCode.getCode();
         verificationCode = "";
         for (Character c : chars)
@@ -209,16 +208,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case Valid:
                 break;
             case TooShort:
-                Toast.makeText(RegisterActivity.this, "UserName too short", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "用户名过短", Toast.LENGTH_LONG).show();
                 return;
             case TooLong:
-                Toast.makeText(RegisterActivity.this, "UserName too long", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "用户名过长", Toast.LENGTH_LONG).show();
                 return;
             case InvalidCharacters:
-                Toast.makeText(RegisterActivity.this, "UserName has invalid character", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "用户名含有非法字符", Toast.LENGTH_LONG).show();
                 return;
             case Empty:
-                Toast.makeText(RegisterActivity.this, "UserName should not be empty", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "用户名不能为空", Toast.LENGTH_LONG).show();
                 return;
         }
 
@@ -226,34 +225,32 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             case Valid:
                 break;
             case InvalidCharacters:
-                Toast.makeText(RegisterActivity.this, "Password has invalid character", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "密码含有非法字符", Toast.LENGTH_LONG).show();
                 return;
             case TooShort:
-                Toast.makeText(RegisterActivity.this, "Password too short", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "密码太短", Toast.LENGTH_LONG).show();
                 return;
             case TooLong:
-                Toast.makeText(RegisterActivity.this, "Password too long", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "密码太长", Toast.LENGTH_LONG).show();
                 return;
             case Empty:
-                Toast.makeText(RegisterActivity.this, "Password should not be empty", Toast.LENGTH_LONG).show();
+                Toast.makeText(RegisterActivity.this, "密码不能为空", Toast.LENGTH_LONG).show();
                 return;
         }
 
-//        if (!hasTryVerify) {
-//            verifyCode();
-//            hasTryVerify = true;
-//        }
-//
-//        if (!verificationSuccess) {
-//            Toast.makeText(RegisterActivity.this, "Verification fail", Toast.LENGTH_LONG).show();
-//            return;
-//        }
 
-        if (httpHandler.getRegisterResponseState("12984726323", userName, password) == DuplicatePhoneNumber) {
-            Toast.makeText(RegisterActivity.this, "This phone has been registered", Toast.LENGTH_LONG).show();
+        if (!verificationSuccess) {
+            Toast.makeText(RegisterActivity.this, "手机号验证未通过", Toast.LENGTH_LONG).show();
             return;
         }
-        Toast.makeText(RegisterActivity.this, "Sign up succeed", Toast.LENGTH_LONG).show();
+
+        if (httpHandler.getRegisterResponseState(phoneNumber, userName, password) == DuplicatePhoneNumber) {
+            Toast.makeText(RegisterActivity.this, "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        Toast.makeText(RegisterActivity.this, "注册成功", Toast.LENGTH_LONG).show();
+
     }
 
     /**
