@@ -37,14 +37,26 @@ public class HttpHandler {
         Valid
     }
 
-
-    public Object getLoginResponseState(String phoneNumber, String password) {
+    /**
+     * @param phoneNumber
+     * @param password
+     * @return
+     * @description login
+     */
+    public State getLoginResponseState(String phoneNumber, String password) {
         String url = LOGIN_URL + String.format(
                 "?phone={%s}&password={%s}", phoneNumber, password);
         return parseResponseJson(getHttpResponseString(url));
     }
 
-    public Object getRegisterResponseState(String phoneNumber, String username, String password) {
+    /**
+     * @param phoneNumber
+     * @param username
+     * @param password
+     * @return
+     * @description register
+     */
+    public State getRegisterResponseState(String phoneNumber, String username, String password) {
         String url = REGISTER_URL + String.format(
                 "?phone={%s}&username={%s}&password={%s}", phoneNumber, username, password);
         return parseResponseJson(getHttpResponseString(url));
