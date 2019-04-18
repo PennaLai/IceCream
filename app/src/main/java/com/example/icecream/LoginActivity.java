@@ -56,7 +56,7 @@ public class LoginActivity extends AppCompatActivity {
         Object phoneEditText = phoneEdit.getText();
         Object passwordEditText = passwordEdit.getText();
         if (phoneEditText == null || passwordEditText == null) {
-            Toast.makeText(LoginActivity.this, "login fail", Toast.LENGTH_LONG).show();
+            Toast.makeText(LoginActivity.this, "登录失败", Toast.LENGTH_LONG).show();
             return;
         }
         String phoneNumber = phoneEditText.toString();
@@ -65,17 +65,17 @@ public class LoginActivity extends AppCompatActivity {
         if (success) {
             switch (httpHandler.getLoginResponseState(phoneNumber, password)) {
                 case NoSuchUser:
-                    ToastMessage("No such user, please sign up");
+                    ToastMessage("用户账号不存在");
                     break;
                 case WrongPassword:
-                    ToastMessage("Wrong password, please try again");
+                    ToastMessage("密码错误");
                     break;
                 case Valid:
-                    ToastMessage("Succeed");
+                    ToastMessage("成功登录");
                     goToPersonalDetailPage();
                     break;
                 default:
-                    ToastMessage("Login failed, please try again");
+                    ToastMessage("登录失败，请重试");
                     break;
             }
         }
@@ -90,16 +90,16 @@ public class LoginActivity extends AppCompatActivity {
         Validator.ValState phoneState = Validator.CheckPhoneNumberValidate(phoneNumber);
         switch (phoneState) {
             case Empty:
-                ToastMessage("Phone number should not be empty");
+                ToastMessage("手机号不能为空");
                 return false;
             case TooLong:
-                ToastMessage("Phone number too long");
+                ToastMessage("手机号太长了");
                 return false;
             case TooShort:
-                ToastMessage("Phone number too short");
+                ToastMessage("手机号太短了");
                 return false;
             case InvalidCharacters:
-                ToastMessage("Phone number invalid");
+                ToastMessage("手机号格式不正确");
                 return false;
             case Valid:
                 break;
@@ -108,16 +108,16 @@ public class LoginActivity extends AppCompatActivity {
         Validator.ValState passwordState = Validator.CheckPasswordValidate(password);
         switch (passwordState) {
             case Empty:
-                ToastMessage("Password should not be empty");
+                ToastMessage("密码不能为空");
                 return false;
             case TooLong:
-                ToastMessage("Password too long");
+                ToastMessage("密码太长");
                 return false;
             case TooShort:
-                ToastMessage("Password too short");
+                ToastMessage("密码太短");
                 return false;
             case InvalidCharacters:
-                ToastMessage("Password invalid");
+                ToastMessage("密码不正确");
                 return false;
             case Valid:
                 break;
