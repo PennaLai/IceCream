@@ -239,17 +239,17 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 return;
         }
 
-        if (!hasTryVerify) {
-            verifyCode();
-            hasTryVerify = true;
-        }
+//        if (!hasTryVerify) {
+//            verifyCode();
+//            hasTryVerify = true;
+//        }
+//
+//        if (!verificationSuccess) {
+//            Toast.makeText(RegisterActivity.this, "Verification fail", Toast.LENGTH_LONG).show();
+//            return;
+//        }
 
-        if (!verificationSuccess) {
-            Toast.makeText(RegisterActivity.this, "Verification fail", Toast.LENGTH_LONG).show();
-            return;
-        }
-
-        if (httpHandler.getRegisterResponseState(phoneNumber, userName, password) == DuplicatePhoneNumber) {
+        if (httpHandler.getRegisterResponseState("12984726323", userName, password) == DuplicatePhoneNumber) {
             Toast.makeText(RegisterActivity.this, "This phone has been registered", Toast.LENGTH_LONG).show();
             return;
         }
