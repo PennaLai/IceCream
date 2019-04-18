@@ -45,7 +45,7 @@ public class HttpHandler {
      */
     public State getLoginResponseState(String phoneNumber, String password) {
         String url = LOGIN_URL + String.format(
-                "?phone={%s}&password={%s}", phoneNumber, password);
+                "?phone=%s&password=%s", phoneNumber, password);
         return parseResponseJson(getHttpResponseString(url));
     }
 
@@ -58,7 +58,7 @@ public class HttpHandler {
      */
     public State getRegisterResponseState(String phoneNumber, String username, String password) {
         String url = REGISTER_URL + String.format(
-                "?phone={%s}&username={%s}&password={%s}", phoneNumber, username, password);
+                "?phone=%s&username=%s&password=%s", phoneNumber, username, password);
         return parseResponseJson(getHttpResponseString(url));
     }
 
@@ -76,6 +76,7 @@ public class HttpHandler {
             return response.body().string();
         } catch (IOException e) {
             Log.e(TAG, "error in response of get request");
+            e.printStackTrace();
         }
         return null;
     }

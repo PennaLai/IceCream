@@ -52,16 +52,16 @@ public class Validator {
     }
 
     public static ValState CheckPasswordValidate(String input) {
-        return validate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN  );
+        return validate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN);
     }
 
 
-    public static ValState CheckUserNameValidate(String input){
+    public static ValState CheckUserNameValidate(String input) {
         return validate(input, userNamePattern, USERNAME_MAX_LEN, USERNAME_MIN_LEN);
     }
 
 
-    public static ValState CheckPhoneNumberValidate(String input){
+    public static ValState CheckPhoneNumberValidate(String input) {
         return validate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);
     }
 

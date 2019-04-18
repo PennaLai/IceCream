@@ -3,21 +3,17 @@ package com.example.icecream;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.mob.MobSDK;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import java.util.HashMap;
+import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
 import utils.HttpHandler;
-import cn.smssdk.EventHandler;
-import cn.smssdk.SMSSDK;
-import cn.smssdk.gui.RegisterPage;
-import mehdi.sakout.fancybuttons.FancyButton;
 import utils.User;
 import utils.Validator;
 
@@ -37,6 +33,11 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // thread problem for request
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         phoneEdit = (MaterialEditText) findViewById(R.id.phone);
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.t);
@@ -48,8 +49,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: click login event
+     * @author Penna, Kemo
+     * @Description click login event
      */
     public void onLogin(View view) {
         Object phoneEditText = phoneEdit.getText();
@@ -62,18 +63,22 @@ public class LoginActivity extends AppCompatActivity {
         String password = passwordEditText.toString();
         boolean success = checkLoginValid(phoneNumber, password);
         if (success) {
-            // TODO try to connect server to login
-            if(connectToSever()) {
-                goToPersonalDetailPage();
-            }else{
-                ToastMessage("Login Failed, Try again");
+            switch (httpHandler.getLoginResponseState(phoneNumber, password)) {
+                case NoSuchUser:
+                    ToastMessage("No such user, please sign up");
+                    break;
+                case WrongPassword:
+                    ToastMessage("Wrong password, please try again");
+                    break;
+                case Valid:
+                    ToastMessage("Succeed");
+                    goToPersonalDetailPage();
+                    break;
+                default:
+                    ToastMessage("Login failed, please try again");
+                    break;
             }
         }
-    }
-
-
-    public boolean connectToSever(){
-        return true;
     }
 
 
@@ -83,7 +88,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     public boolean checkLoginValid(String phoneNumber, String password) {
         Validator.ValState phoneState = Validator.CheckPhoneNumberValidate(phoneNumber);
-        switch (phoneState){
+        switch (phoneState) {
             case Empty:
                 ToastMessage("Phone number should not be empty");
                 return false;
@@ -101,7 +106,7 @@ public class LoginActivity extends AppCompatActivity {
         }
 
         Validator.ValState passwordState = Validator.CheckPasswordValidate(password);
-        switch (passwordState){
+        switch (passwordState) {
             case Empty:
                 ToastMessage("Password should not be empty");
                 return false;
@@ -125,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: we may change the UI framework later for toast
      */
-    public void ToastMessage(String message){
+    public void ToastMessage(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
@@ -158,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: Skip login
      */
-    public void onSkip(View view){
+    public void onSkip(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = PersonalDetailActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
@@ -169,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: Jump to find password page
      */
-    public void onForget(View view){
+    public void onForget(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = ForgetPasswordActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
