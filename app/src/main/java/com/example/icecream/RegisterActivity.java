@@ -90,11 +90,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                     Object data1 = msg1.obj;
                     if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
                         if (result1 == SMSSDK.RESULT_COMPLETE) {
-                            // TODO 处理成功得到验证码的结果
                             Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
-                            // 请注意，此时只是完成了发送验证码的请求，验证码短信还需要几秒钟之后才送达
                         } else {
-                            // TODO 处理没有得到验证码错误的结果
+                            Toast.makeText(RegisterActivity.this, "发送失败，请重试", Toast.LENGTH_LONG).show();
                             ((Throwable) data1).printStackTrace();
                         }
                     } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
@@ -112,7 +110,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
             }
         };
-        SMSSDK.registerEventHandler(eh); //注册短信回调
+        SMSSDK.registerEventHandler(eh);
     }
 
 

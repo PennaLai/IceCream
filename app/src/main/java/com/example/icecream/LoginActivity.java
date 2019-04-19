@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
 
         phoneEdit = findViewById(R.id.phone);
         passwordEdit = findViewById(R.id.password);
-        login = findViewById(R.id.t);
+        login = findViewById(R.id.bt_login);
         signUp = findViewById(R.id.signup);
         skip = findViewById(R.id.tv_skip);
         forget = findViewById(R.id.tv_forget);

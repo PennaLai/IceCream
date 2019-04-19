@@ -35,14 +35,15 @@ public class LoginActivityTest{
             LoginActivity.class);
 
     @Test
-    public void loginPasswordEmpty(){
+    public void loginEmptyPhoneNumber(){
         onView(withId(R.id.phone)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("wdhkjasdhjk"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             onView(withText("手机号不能为空"))
-                    .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
-                    .check(matches(isDisplayed()));
+                    .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                    .perform(click());
         }catch (Exception e){
             e.getStackTrace();
         }
@@ -61,6 +62,28 @@ public class LoginActivityTest{
         }catch (Exception e){
             e.getStackTrace();
         }
+
+    }
+
+
+    @Test
+    public void loginWrongPassword(){
+
+    }
+
+
+    @Test
+    public void loginDupAccount(){
+
+    }
+
+    @Test
+    public void loginSuccess(){
+
+    }
+
+    @Test
+    public void loginInvalidPhoneNumber(){
 
     }
 
