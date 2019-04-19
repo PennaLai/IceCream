@@ -15,6 +15,15 @@ import okhttp3.Response;
 
 import static android.content.ContentValues.TAG;
 
+
+
+/**
+ * A util class to handle the http request.
+ *
+ * @author Kemo
+ * @author Hanmei
+ * @version V1.0
+ */
 public class HttpHandler {
 
     private final OkHttpClient okHttpClient;
@@ -33,6 +42,11 @@ public class HttpHandler {
         this.okHttpClient = okHttpClient;
     }
 
+    /**
+     * Validation result states.
+     *
+     * @author kemo
+     */
     public enum State {
         DuplicatePhoneNumber,
         NoSuchUser,
@@ -41,12 +55,11 @@ public class HttpHandler {
     }
 
     /**
-     * login.
-     * @param phoneNumber The phone number string that used for login
-     * @param password    The password string that used for login
-     * @return The validation result state
-     * @author Kemo
+     * This method is to get the login response state from the server.
      *
+     * @param phoneNumber The phone number string that used for login.
+     * @param password    The password string that used for login.
+     * @return The validation result state.
      */
     public State getLoginResponseState(final String phoneNumber, final String password) {
         String url = LOGIN_URL + String.format(
@@ -58,12 +71,11 @@ public class HttpHandler {
     }
 
     /**
-     * @param phoneNumber
-     * @param username
-     * @param password
-     * @return
-     * @author Kemo
-     * @description register
+     * This method is to get the register response state from the server.
+     * @param phoneNumber The phone number string that used for register.
+     * @param username    The username string that used for register.
+     * @param password    The password string that used for register.
+     * @return The validation result state.
      */
     public State getRegisterResponseState(final String phoneNumber, final String username, final String password) {
         String url = REGISTER_URL + String.format(
@@ -75,6 +87,12 @@ public class HttpHandler {
         return parseResponseJson(getHttpResponseString(url));
     }
 
+    /**
+     * To get the content of a get http response.
+     *
+     * @param url The request url.
+     * @return The http response.
+     */
     private String getHttpResponseString(final String url) {
         Request request = new Request.Builder()
                 .url(url)
@@ -94,6 +112,13 @@ public class HttpHandler {
         return null;
     }
 
+    /**
+     * To get the content of a post http response.
+     *
+     * @param url The post request url.
+     * @param json The post content.
+     * @return The response from the server.
+     */
     private String postHttpResponseString(final String url, final String json) {
         OkHttpClient httpClient = new OkHttpClient();
         RequestBody body = RequestBody.create(JSON, json);
@@ -115,6 +140,12 @@ public class HttpHandler {
         return null;
     }
 
+    /**
+     * This method is to parse the json format response.
+     *
+     * @param jsonData The json String needed to parse.
+     * @return The validation result state.
+     */
     private State parseResponseJson(final String jsonData) {
         JSONObject jsonObject;
         try {

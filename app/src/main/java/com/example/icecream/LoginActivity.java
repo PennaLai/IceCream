@@ -17,6 +17,14 @@ import utils.HttpHandler;
 import utils.User;
 import utils.Validator;
 
+/**
+ * The login activity.
+ *
+ * @author aaron
+ * @author penna
+ * @author kemo
+ * @version V1.0
+ */
 public class LoginActivity extends AppCompatActivity {
 
     private final OkHttpClient client = new OkHttpClient();
@@ -49,8 +57,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author Penna, Kemo
-     * @Description click login event
+     * The <em>onClick</em> listener function for the login button.
+     * @param view The system stipulated view object.
      */
     public void onLogin(final View view) {
         final Object phoneEditText = phoneEdit.getText();
@@ -80,6 +88,13 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Invoke the {@link Validator#validatePhoneNumber(String)} to jude whether
+     * the password is valid or not.
+     *
+     * @param phoneNumber The input phoneNumber from the phoneNumber input <em>textview</em>.
+     * @return boolean Whether the phoneNumber is valid or not.
+     */
     private boolean checkPhoneNumber(final String phoneNumber) {
         Validator.ValState phoneState = Validator.validatePhoneNumber(phoneNumber);
         switch (phoneState) {
@@ -102,7 +117,15 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Invoke the {@link Validator#validatePassword(String) validatePassword} to jude whether
+     * the password is valid or not.
+     *
+     * @param password The input password from the password input <em>textview</em>.
+     * @return boolean Whether the password is valid or not.
+     */
     private boolean checkPassword(final String password) {
+
         Validator.ValState passwordState = Validator.validatePassword(password);
         switch (passwordState) {
             case Empty:
@@ -125,8 +148,11 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna, Kemo
-     * @Description:
+     * This method is to jude the login request is valid or not.
+     *
+     * @param phoneNumber The phone number user entered.
+     * @param password The password user entered.
+     * @return boolean Whether the login request is valid.
      */
     public boolean checkLoginValid(final String phoneNumber, final String password) {
         return checkPhoneNumber(phoneNumber) && checkPassword(password);
@@ -134,17 +160,17 @@ public class LoginActivity extends AppCompatActivity {
 
 
     /**
-     * @ author: Penna
-     * @ Description: we may change the UI framework later for toast
+     * The method is to show message in a toast from the bottom of the screen,
+     * we may change the UI framework later for toast.
+     *
+     * @param message The message to show.
      */
     public void showToastMessage(final String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
     /**
-     * @ author: Penna
-     * @ Description: Jump to the PersonalDetailPage
-     * @ Todo:
+     * Jump to the PersonalDetailPage.
      */
     public void goToPersonalDetailPage() {
         Context context = LoginActivity.this;
@@ -155,8 +181,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: onClick sign up function
+     * The <em>onClick</em> listener function of sign up text.
+     *
+     * @param view The system stipulated view object.
      */
     public void onSignUp(final View view) {
         Context context = LoginActivity.this;
@@ -167,8 +194,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @ author: Penna
-     * @ Description: Skip login
+     * The <em>onClick</em> listener function of Skip text to skip the login procedure.
+     *
+     * @param view The system stipulated view object.
      */
     public void onSkip(final View view) {
         Context context = LoginActivity.this;
@@ -178,8 +206,9 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @ author: Penna
-     * @ Description: Jump to find password page
+     * The <em>onClick</em> listener function of Skip text to jump to find password page.
+     *
+     * @param view The system stipulated view object.
      */
     public void onForget(final View view) {
         Context context = LoginActivity.this;

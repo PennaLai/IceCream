@@ -26,6 +26,14 @@ import utils.Validator;
 
 import static utils.HttpHandler.State.DuplicatePhoneNumber;
 
+/**
+ * The register activity.
+ *
+ * @author aaron
+ * @author penna
+ * @version V1.0
+ */
+
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
     // component
@@ -45,6 +53,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     private final OkHttpClient client = new OkHttpClient();
     private final HttpHandler httpHandler = new HttpHandler(client);
+
 
     @Override
     protected void onCreate(final Bundle savedInstanceState) {
@@ -69,8 +78,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     /**
-     * init the sdk handler
-     * @author Penna
+     * This method is to init the sdk handler.
      */
     private void initSMSSDK() {
         MobSDK.init(this);
@@ -115,8 +123,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     /**
-     * start the verify pin code timer, to set the text per second.
-     * @author Airine
+     * Start the verify pin code timer, to set the text of the <em>btn_checkVerificationCode</em>
+     * button per second.
      */
     private void startVerifyTimer() {
         final long millisInFuture = 60 * 1000;
@@ -142,9 +150,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * @ author: Penna
-     * @ Description: onClick function, to check what component the user click
+     * This <em>onClick</em> method is to check what component the user click
      * and do the corresponding operation.
+     *
+     * @param v The system stipulated view object.
      */
     @Override
     public void onClick(View v) {
@@ -168,8 +177,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     /**
-     *  Check the valid of phone and try to verify code.
-     * @author Penna
+     * Check the valid of phone and try to verify code.
      */
     private void verifyCode() {
         Character[] chars = pinCode.getCode();
@@ -182,8 +190,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * @ author: Penna
-     * @ Description: to check the valid of phone number and get verification code
+     * This method is to check the valid of phone number and get verification code.
      */
     private void onClickGetVerificationCode() {
         phoneNumber = etPhoneNumber.getText().toString();
@@ -199,8 +206,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * @ author: Penna
-     * @ Description: submit all information and register
+     * This method is to submit all information and the register request.
      */
     private void submitRegister() {
         String userName = etUserName.getText().toString();
@@ -263,8 +269,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
 
     /**
-     * @ author: Penna
-     * @ Description: go goToLogin to the login page
+     * This method is to go to the login page.
      * TODO: There is a bug that if we already have a login page, this method just create a new page, we just want to go goToLogin to previous one
      */
     private void goToLoginPage() {
