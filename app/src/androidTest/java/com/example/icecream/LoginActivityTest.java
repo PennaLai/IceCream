@@ -35,12 +35,27 @@ public class LoginActivityTest{
             LoginActivity.class);
 
     @Test
-    public void login(){
+    public void loginPasswordEmpty(){
         onView(withId(R.id.phone)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("wdhkjasdhjk"), closeSoftKeyboard());
         try {
             Thread.sleep(5000);
             onView(withText("手机号不能为空"))
+                    .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
+                    .check(matches(isDisplayed()));
+        }catch (Exception e){
+            e.getStackTrace();
+        }
+
+    }
+
+    @Test
+    public void loginPasswordWrong(){
+        onView(withId(R.id.phone)).perform(typeText("15602432271"), closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("sadhkadhj"), closeSoftKeyboard());
+        try {
+            Thread.sleep(5000);
+            onView(withText("密码错误"))
                     .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
                     .check(matches(isDisplayed()));
         }catch (Exception e){
