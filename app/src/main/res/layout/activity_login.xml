@@ -41,7 +41,7 @@
 
 
     <mehdi.sakout.fancybuttons.FancyButton
-        android:id="@+id/t"
+        android:id="@+id/bt_login"
         android:layout_width="336dp"
         android:layout_height="60dp"
         android:layout_marginTop="8dp"

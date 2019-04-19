@@ -38,6 +38,7 @@ public class LoginActivityTest{
     public void loginEmptyPhoneNumber(){
         onView(withId(R.id.phone)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("wdhkjasdhjk"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
         try {
             Thread.sleep(1000);
             onView(withText("手机号不能为空"))
@@ -58,6 +59,16 @@ public class LoginActivityTest{
 
     @Test
     public void loginDupAccount(){
+
+    }
+
+    @Test
+    public void loginSuccess(){
+
+    }
+
+    @Test
+    public void loginInvalidPhoneNumber(){
 
     }
 
