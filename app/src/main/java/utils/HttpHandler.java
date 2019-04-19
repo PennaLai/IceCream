@@ -41,7 +41,7 @@ public class HttpHandler {
     }
 
     /**
-     * @param phoneNumber The phone number string that used for login
+     * @paramg phoneNumber The phone number string that used for login
      * @param password    The password string that used for login
      * @return The validation result state
      * @author Kemo
