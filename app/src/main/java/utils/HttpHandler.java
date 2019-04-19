@@ -41,11 +41,12 @@ public class HttpHandler {
     }
 
     /**
-     * @paramg phoneNumber The phone number string that used for login
+     * login.
+     * @param phoneNumber The phone number string that used for login
      * @param password    The password string that used for login
      * @return The validation result state
      * @author Kemo
-     * @description login
+     *
      */
     public State getLoginResponseState(final String phoneNumber, final String password) {
         String url = LOGIN_URL + String.format(

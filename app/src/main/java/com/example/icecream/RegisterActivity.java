@@ -63,13 +63,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         btSendVerificationCode.setOnClickListener(this);
         btNextStep.setOnClickListener(this);
 
-
         initSMSSDK();
 
     }
 
 
-    public void initSMSSDK() {
+    /**
+     * init the sdk handler
+     * @author Penna
+     */
+    private void initSMSSDK() {
         MobSDK.init(this);
         // the event handler for the SMSSDK
         EventHandler eh = new EventHandler() {
@@ -112,8 +115,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     /**
-     * @ author: Airine
-     * @ Description: start the verify pin code timer, to set the text per second.
+     * start the verify pin code timer, to set the text per second.
+     * @author Airine
      */
     private void startVerifyTimer() {
         final long millisInFuture = 60 * 1000;
@@ -165,8 +168,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
 
     /**
-     * @ author: Penna
-     * @ Description: Check the valid of phone and try to verify code
+     *  Check the valid of phone and try to verify code.
+     * @author Penna
      */
     private void verifyCode() {
         Character[] chars = pinCode.getCode();
@@ -182,7 +185,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @ author: Penna
      * @ Description: to check the valid of phone number and get verification code
      */
-    public void onClickGetVerificationCode() {
+    private void onClickGetVerificationCode() {
         phoneNumber = etPhoneNumber.getText().toString();
         Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
         if (phoneNumberState != Validator.ValState.Valid) {
@@ -264,7 +267,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
      * @ Description: go goToLogin to the login page
      * TODO: There is a bug that if we already have a login page, this method just create a new page, we just want to go goToLogin to previous one
      */
-    public void goToLoginPage() {
+    private void goToLoginPage() {
         Context context = RegisterActivity.this;
         Class destinationActivity = LoginActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
