@@ -188,10 +188,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     private void onClickGetVerificationCode() {
         phoneNumber = etPhoneNumber.getText().toString();
         Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
+        if (phoneNumberState == Validator.ValState.Empty) {
+            Toast.makeText(RegisterActivity.this, "手机号不能为空", Toast.LENGTH_LONG).show();
+            return;
+        }
         if (phoneNumberState != Validator.ValState.Valid) {
             Toast.makeText(RegisterActivity.this, "手机号不合法", Toast.LENGTH_LONG).show();
             return;
         }
+        // TODO 在这里加入手机号是否已经注册的检查
+
         SMSSDK.getVerificationCode("86", phoneNumber);
         btSendVerificationCode.setClickable(false);
         btSendVerificationCode.setBackgroundColor(Color.parseColor("#898989"));
@@ -253,6 +259,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
+        //TODO 检查个手机号传个手机号就行了，还有要在发送验证码之前检查
         if (httpHandler.getRegisterResponseState(phoneNumber, userName, password) == DuplicatePhoneNumber) {
             Toast.makeText(RegisterActivity.this, "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
             return;

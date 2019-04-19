@@ -83,12 +83,12 @@ public class HttpHandler {
         try {
             Response response = okHttpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                Log.e(TAG, "Got response from server");
+//                Log.e(TAG, "Got response from server");
                 assert response.body() != null;
                 return response.body().string();
             }
         } catch (IOException e) {
-            Log.e(TAG, "error in response of get request");
+//            Log.e(TAG, "error in response of get request");
             e.printStackTrace();
         }
         return null;
@@ -104,13 +104,13 @@ public class HttpHandler {
         try {
             Response response = httpClient.newCall(request).execute();
             if (response.isSuccessful()) {
-                Log.e(TAG, "Got response from server");
+//                Log.e(TAG, "Got response from server");
                 assert response.body() != null;
                 return response.body().string();
             }
 
         } catch (IOException e) {
-            Log.e(TAG, "error in getting response post request");
+//            Log.e(TAG, "error in getting response post request");
         }
         return null;
     }

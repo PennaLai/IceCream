@@ -1,6 +1,8 @@
 package com.example.icecream;
 
 import static org.junit.Assert.*;
+
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,7 +32,12 @@ import static org.hamcrest.Matchers.not;
 public class RegisterActivityTest {
     @Rule
     public ActivityTestRule<RegisterActivity> mActivityRule = new ActivityTestRule<>(
-            RegisterActivity.class, false /* Initial touch mode */, true /*  launch activity */);
+            RegisterActivity.class);
+
+    @Before
+    public void setUp() {
+        onView(withId(R.id.signup)).perform(click());
+    }
 
     @Test
     public void signUpEmptyPhoneNumber(){
