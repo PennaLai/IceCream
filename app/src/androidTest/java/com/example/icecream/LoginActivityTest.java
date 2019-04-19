@@ -39,52 +39,65 @@ public class LoginActivityTest{
         onView(withId(R.id.phone)).perform(typeText(""), closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("wdhkjasdhjk"), closeSoftKeyboard());
         onView(withId(R.id.bt_login)).perform(click());
-        try {
-            Thread.sleep(1000);
-            onView(withText("手机号不能为空"))
-                    .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
-                    .perform(click());
-        }catch (Exception e){
-            e.getStackTrace();
-        }
-
+        onView(withText("手机号不能为空"))
+                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                .perform(click());
     }
 
     @Test
     public void loginPasswordWrong(){
         onView(withId(R.id.phone)).perform(typeText("15602432271"), closeSoftKeyboard());
         onView(withId(R.id.password)).perform(typeText("sadhkadhj"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
         try {
-            Thread.sleep(5000);
+            Thread.sleep(1000);
             onView(withText("密码错误"))
                     .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
                     .check(matches(isDisplayed()));
         }catch (Exception e){
-            e.getStackTrace();
+            e.printStackTrace();
         }
-
     }
 
 
     @Test
-    public void loginWrongPassword(){
-
-    }
-
-
-    @Test
-    public void loginDupAccount(){
-
+    public void loginNoAccount(){
+        onView(withId(R.id.phone)).perform(typeText("13811111111"), closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("sadhkadhj"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
+        try {
+            Thread.sleep(1000);
+            onView(withText("用户账号不存在"))
+                    .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
+                    .check(matches(isDisplayed()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void loginSuccess(){
-
+        onView(withId(R.id.phone)).perform(typeText("15602432271"), closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("szjjsjdjdd"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
+        try {
+            Thread.sleep(1000);
+            onView(withText("登录成功"))
+                    .inRoot(withDecorView(is(mActivityRule.getActivity().getWindow().getDecorView())))
+                    .check(matches(isDisplayed()));
+        }catch (Exception e){
+            e.printStackTrace();
+        }
     }
 
     @Test
     public void loginInvalidPhoneNumber(){
-
+        onView(withId(R.id.phone)).perform(typeText("15602432xw"), closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("szjjsjdjdd"), closeSoftKeyboard());
+        onView(withId(R.id.bt_login)).perform(click());
+        onView(withText("手机号格式不正确"))
+                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                .perform(click());
     }
 
 

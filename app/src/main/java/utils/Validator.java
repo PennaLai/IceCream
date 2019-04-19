@@ -41,14 +41,14 @@ public final class Validator {
         if (input == null || input.trim().length() == 0) {
             return ValState.Empty;
         }
+        if (!patternType.matcher(input).find()) {
+            return ValState.InvalidCharacters;
+        }
         if (input.length() < minLen) {
             return ValState.TooShort;
         }
         if (input.length() > maxLen) {
             return ValState.TooLong;
-        }
-        if (!patternType.matcher(input).find()) {
-            return ValState.InvalidCharacters;
         }
         return ValState.Valid;
     }

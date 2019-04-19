@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
                     showToastMessage("密码错误");
                     break;
                 case Valid:
-                    showToastMessage("成功登录");
+                    showToastMessage("登录成功");
                     goToPersonalDetailPage();
                     break;
                 default:
