@@ -189,7 +189,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         phoneNumber = etPhoneNumber.getText().toString();
         Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
         if (phoneNumberState != Validator.ValState.Valid) {
-            Toast.makeText(RegisterActivity.this, "Phone number not valid", Toast.LENGTH_LONG).show();
+            Toast.makeText(RegisterActivity.this, "手机号不合法", Toast.LENGTH_LONG).show();
             return;
         }
         SMSSDK.getVerificationCode("86", phoneNumber);
