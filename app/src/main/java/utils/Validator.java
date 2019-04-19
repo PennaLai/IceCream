@@ -3,8 +3,10 @@ package utils;
 import java.util.regex.Pattern;
 
 /**
+ * This class is used for validating input string (e.g. username or password).
+ *
  * @author kemo
- * @description This class is used for validating input string (e.g. username or password)
+ *
  */
 public final class Validator {
 
@@ -25,8 +27,7 @@ public final class Validator {
     }
 
     /**
-     * @author kemo
-     * @description Validation result state
+     * Validation result states.
      */
     public enum ValState {
         Valid,
@@ -36,6 +37,15 @@ public final class Validator {
         InvalidCharacters
     }
 
+    /**
+     * This method is to get the validation state of a input String.
+     *
+     * @param input The input String.
+     * @param patternType Defined regular pattern.
+     * @param maxLen The allowed maximum length.
+     * @param minLen The allowed minimum length.
+     * @return utils.Validator.ValState The defined validation result states.
+     */
     private static ValState validate(final String input, final Pattern patternType,
                                      final int maxLen, final int minLen) {
         if (input == null || input.trim().length() == 0) {
@@ -53,16 +63,33 @@ public final class Validator {
         return ValState.Valid;
     }
 
+    /**
+     * This method is to get the validation state of input password.
+     *
+     * @param input The input password String.
+     * @return utils.Validator.ValState
+     */
     public static ValState validatePassword(final String input) {
         return validate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN);
     }
 
-
+    /**
+     * This method is to get the validation state of input username.
+     *
+     * @param input The input user name String.
+     * @return utils.Validator.ValState The defined validation state.
+     */
     public static ValState validateUsername(final String input) {
         return validate(input, userNamePattern, USERNAME_MAX_LEN, USERNAME_MIN_LEN);
     }
 
 
+    /**
+     * This method is to get the validation state of input phone number.
+     *
+     * @param input The input phone number String.
+     * @return utils.Validator.ValState The defined validation state.
+     */
     public static ValState validatePhoneNumber(final String input) {
         return validate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);
     }

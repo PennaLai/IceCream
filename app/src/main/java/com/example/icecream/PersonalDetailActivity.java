@@ -5,6 +5,13 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.TextView;
 
+/**
+ * The personal detail activity.
+ *
+ * @author penna
+ * @version V1.0
+ */
+
 public class PersonalDetailActivity extends AppCompatActivity {
 
     private String userName;
@@ -19,8 +26,7 @@ public class PersonalDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: get the user information from user page
+     * This method is to get the user information from user page.
      */
     public void getUserInformation() {
         Intent intentFromLogin = getIntent();
@@ -31,8 +37,7 @@ public class PersonalDetailActivity extends AppCompatActivity {
     }
 
     /**
-     * @author: Penna
-     * @Description: update the user information on the screen
+     * This method is to update the user information on the screen.
      */
     public void updateUserInformation() {
         userNameTextView.setText(userName);
