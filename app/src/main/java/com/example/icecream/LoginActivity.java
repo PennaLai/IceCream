@@ -2,8 +2,9 @@ package com.example.icecream;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.os.StrictMode;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -11,22 +12,32 @@ import android.widget.Toast;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.OkHttpClient;
+import utils.HttpHandler;
 import utils.User;
-import utils.Validation;
+import utils.Validator;
 
 public class LoginActivity extends AppCompatActivity {
+
+    OkHttpClient client = new OkHttpClient();
+    HttpHandler httpHandler = new HttpHandler(client);
     private MaterialEditText phoneEdit;
     private MaterialEditText passwordEdit;
     private FancyButton login;
     private TextView signUp;
     private TextView skip;
     private TextView forget;
-    private User user;
+    User user;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // thread problem for request
+        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+        StrictMode.setThreadPolicy(policy);
+
         phoneEdit = (MaterialEditText) findViewById(R.id.phone);
         passwordEdit = (MaterialEditText) findViewById(R.id.password);
         login = (FancyButton) findViewById(R.id.t);
@@ -38,75 +49,79 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @ author: Penna
-     * @ Description: click login event
+     * @author Penna, Kemo
+     * @Description click login event
      */
     public void onLogin(View view) {
-        boolean success = checkLoginValid();
+        Object phoneEditText = phoneEdit.getText();
+        Object passwordEditText = passwordEdit.getText();
+        if (phoneEditText == null || passwordEditText == null) {
+            Toast.makeText(LoginActivity.this, "不能为空", Toast.LENGTH_LONG).show();
+            return;
+        }
+        String phoneNumber = phoneEditText.toString();
+        String password = passwordEditText.toString();
+        boolean success = checkLoginValid(phoneNumber, password);
         if (success) {
-            // TODO try to connect server to login
-            if(connectToSever()) {
-                goToPersonalDetailPage();
-            }else{
-                ToastMessage("Login Failed, Try again");
+            switch (httpHandler.getLoginResponseState(phoneNumber, password)) {
+                case NoSuchUser:
+                    ToastMessage("用户账号不存在");
+                    break;
+                case WrongPassword:
+                    ToastMessage("密码错误");
+                    break;
+                case Valid:
+                    ToastMessage("成功登录");
+                    goToPersonalDetailPage();
+                    break;
+                default:
+                    ToastMessage("登录失败，请重试");
+                    break;
             }
         }
     }
 
 
-    public boolean connectToSever(){
-        return true;
-    }
-
-
     /**
-     * @ author: Penna, Kemo
-     * @ Description: check the phoneEdit and passwordEdit valid
+     * @author: Penna, Kemo
+     * @Description: check the usernameEdit and passwordEdit valid
      */
-    public boolean checkLoginValid() {
-        Object phoneEditText = phoneEdit.getText();
-        Object passwordEditText = passwordEdit.getText();
-        assert phoneEditText != null;
-        assert passwordEditText != null;
-        String username = phoneEditText.toString();
-        String password = passwordEditText.toString();
-
-        Validation.ValState phoneState = Validation.CheckPhoneNumberValidate(username);
-        switch (phoneState){
+    public boolean checkLoginValid(String phoneNumber, String password) {
+        Validator.ValState phoneState = Validator.CheckPhoneNumberValidate(phoneNumber);
+        switch (phoneState) {
             case Empty:
-                ToastMessage("Phone number should not be empty");
+                ToastMessage("手机号不能为空");
                 return false;
             case TooLong:
-                ToastMessage("Phone number too long");
+                ToastMessage("手机号太长了");
                 return false;
             case TooShort:
-                ToastMessage("Phone number too short");
+                ToastMessage("手机号太短了");
                 return false;
             case InvalidCharacters:
-                ToastMessage("Phone number invalid");
+                ToastMessage("手机号格式不正确");
                 return false;
             case Valid:
                 break;
         }
 
-        Validation.ValState passwordState = Validation.CheckPasswordValidate(password);
-        switch (passwordState){
+        Validator.ValState passwordState = Validator.CheckPasswordValidate(password);
+        switch (passwordState) {
             case Empty:
-                ToastMessage("Password should not be empty");
+                ToastMessage("密码不能为空");
                 return false;
             case TooLong:
-                ToastMessage("Password too long");
+                ToastMessage("密码太长");
                 return false;
             case TooShort:
-                ToastMessage("Password too short");
+                ToastMessage("密码太短");
                 return false;
             case InvalidCharacters:
-                ToastMessage("Password invalid");
+                ToastMessage("密码不正确");
                 return false;
             case Valid:
                 break;
         }
-
         return true;
     }
 
@@ -115,7 +130,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: we may change the UI framework later for toast
      */
-    public void ToastMessage(String message){
+    public void ToastMessage(String message) {
         Toast.makeText(LoginActivity.this, message, Toast.LENGTH_LONG).show();
     }
 
@@ -133,8 +148,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     /**
-     * @ author: Penna
-     * @ Description: onClick sign up function
+     * @author: Penna
+     * @Description: onClick sign up function
      */
     public void onSignUp(View view) {
         Context context = LoginActivity.this;
@@ -148,7 +163,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: Skip login
      */
-    public void onSkip(View view){
+    public void onSkip(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = PersonalDetailActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
@@ -159,7 +174,7 @@ public class LoginActivity extends AppCompatActivity {
      * @ author: Penna
      * @ Description: Jump to find password page
      */
-    public void onForget(View view){
+    public void onForget(View view) {
         Context context = LoginActivity.this;
         Class destinationActivity = ForgetPasswordActivity.class;
         Intent startRegisterActivityIntent = new Intent(context, destinationActivity);

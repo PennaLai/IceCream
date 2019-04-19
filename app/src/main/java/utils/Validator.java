@@ -3,10 +3,10 @@ package utils;
 import java.util.regex.Pattern;
 
 /**
- * @ author kemo, Penna
- * @ description: This class is used for validating input string (e.g. username or password)
+ * @author kemo
+ * @description This class is used for validating input string (e.g. username or password)
  */
-public class Validation {
+public class Validator {
 
     private static Pattern userNamePattern = Pattern.compile("^[a-zA-Z0-9`~!@#$%^&*()_+\\-=\\[\\]{}|\\\\;:'\",./<>?]*$");
     private static Pattern passwordPattern = Pattern.compile("^[a-zA-Z0-9`~!@#$%^&*()_+\\-=\\[\\]{}|\\\\;:'\",./<>?]*$");
@@ -24,8 +24,8 @@ public class Validation {
 
 
     /**
-     * @ author kemo
-     * @ description: Validation result state
+     * @author kemo
+     * @description Validation result state
      */
     public enum ValState {
         Valid,
@@ -35,7 +35,7 @@ public class Validation {
         InvalidCharacters
     }
 
-    private static ValState CheckValidate(String input, Pattern patternType, int maxLen, int minLen){
+    private static ValState validate(String input, Pattern patternType, int maxLen, int minLen) {
         if (input == null || input.trim().length() == 0) {
             return ValState.Empty;
         }
@@ -52,17 +52,17 @@ public class Validation {
     }
 
     public static ValState CheckPasswordValidate(String input) {
-        return CheckValidate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN  );
+        return validate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN);
     }
 
 
-    public static ValState CheckUserNameValidate(String input){
-        return CheckValidate(input, userNamePattern, USERNAME_MAX_LEN, USERNAME_MIN_LEN);
+    public static ValState CheckUserNameValidate(String input) {
+        return validate(input, userNamePattern, USERNAME_MAX_LEN, USERNAME_MIN_LEN);
     }
 
 
-    public static ValState CheckPhoneNumberValidate(String input){
-        return CheckValidate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);
+    public static ValState CheckPhoneNumberValidate(String input) {
+        return validate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);
     }
 
 }
