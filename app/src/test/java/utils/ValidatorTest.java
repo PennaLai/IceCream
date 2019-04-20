@@ -54,7 +54,7 @@ public class ValidatorTest {
     public void checkPhoneNumberTooLong() {
         String phoneNumber = "1560241227111";
         Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
-        assertEquals(Validator.ValState.TooLong, phoneNumberState);
+        assertEquals(Validator.ValState.InvalidCharacters, phoneNumberState);
     }
 
     @Test
