@@ -1,7 +1,5 @@
 package utils;
 
-import android.util.Log;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -12,10 +10,6 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import static android.content.ContentValues.TAG;
-
-
 
 /**
  * A util class to handle the http request.
@@ -30,10 +24,11 @@ public class HttpHandler {
     private static final String PROTOCOL = "http";
     private static final String HOST = "39.108.73.166";
     private static final String PORT = "8080";
-    private static final String PRE_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
+    private static final String MAIN_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
-    private static final String LOGIN_URL = PRE_URL + "login";
-    private static final String REGISTER_URL = PRE_URL + "register";
+    private static final String LOGIN_URL = MAIN_URL + "login";
+    private static final String REGISTER_URL = MAIN_URL + "register";
+    private static final String PHONE_URL = MAIN_URL + "beforeregister";
 
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -72,6 +67,7 @@ public class HttpHandler {
 
     /**
      * This method is to get the register response state from the server.
+     *
      * @param phoneNumber The phone number string that used for register.
      * @param username    The username string that used for register.
      * @param password    The password string that used for register.
@@ -84,6 +80,17 @@ public class HttpHandler {
                 username,
                 password
         );
+        return parseResponseJson(getHttpResponseString(url));
+    }
+
+    /**
+     * This method is to check if the phone number has been registered.
+     *
+     * @param phoneNumber The phone number string that used for register.
+     * @return The validation result state.
+     */
+    public State getPhoneResponseState(final String phoneNumber) {
+        String url = PHONE_URL + "?phone=" + phoneNumber;
         return parseResponseJson(getHttpResponseString(url));
     }
 
@@ -115,7 +122,7 @@ public class HttpHandler {
     /**
      * To get the content of a post http response.
      *
-     * @param url The post request url.
+     * @param url  The post request url.
      * @param json The post content.
      * @return The response from the server.
      */
