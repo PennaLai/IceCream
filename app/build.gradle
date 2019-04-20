@@ -52,5 +52,9 @@ dependencies {
     implementation 'com.github.medyo:fancybuttons:1.9.1'
     implementation 'com.github.glomadrian:CodeInput:1.1@aar'
     implementation 'com.squareup.okhttp3:okhttp:3.14.1'
+
+    androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
+    androidTestImplementation "com.android.support.test.espresso:espresso-contrib:3.0.2"
+    androidTestImplementation "com.android.support.test.espresso:espresso-intents:3.0.2"
 //    testImplementation files('libs/json.jar')
 }
