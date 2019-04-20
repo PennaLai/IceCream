@@ -28,7 +28,7 @@ public class HttpHandler {
 
     private static final String LOGIN_URL = MAIN_URL + "login";
     private static final String REGISTER_URL = MAIN_URL + "register";
-    private static final String PHONE_URL = MAIN_URL + "beforeregister";
+    private static final String PHONE_URL = MAIN_URL + "before-register";
 
     private static final MediaType JSON
             = MediaType.parse("application/json; charset=utf-8");
@@ -56,13 +56,20 @@ public class HttpHandler {
      * @param password    The password string that used for login.
      * @return The validation result state.
      */
-    public State getLoginResponseState(final String phoneNumber, final String password) {
+    public State postLoginResponseState(final String phoneNumber, final String password) {
         String url = LOGIN_URL + String.format(
                 "?phone=%s&password=%s",
                 phoneNumber,
                 password
         );
-        return parseResponseJson(getHttpResponseString(url));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("phoneNumber", phoneNumber);
+            jsonObject.put("password", password);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return parseResponseJson(postHttpResponseString(url, jsonObject.toString()));
     }
 
     /**
@@ -73,14 +80,22 @@ public class HttpHandler {
      * @param password    The password string that used for register.
      * @return The validation result state.
      */
-    public State getRegisterResponseState(final String phoneNumber, final String username, final String password) {
+    public State postRegisterResponseState(final String phoneNumber, final String username, final String password) {
         String url = REGISTER_URL + String.format(
                 "?phone=%s&username=%s&password=%s",
                 phoneNumber,
                 username,
                 password
         );
-        return parseResponseJson(getHttpResponseString(url));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("phoneNumber", phoneNumber);
+            jsonObject.put("password", password);
+            jsonObject.put("username", username);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return parseResponseJson(postHttpResponseString(url, jsonObject.toString()));
     }
 
     /**
@@ -91,7 +106,13 @@ public class HttpHandler {
      */
     public State getPhoneResponseState(final String phoneNumber) {
         String url = PHONE_URL + "?phone=" + phoneNumber;
-        return parseResponseJson(getHttpResponseString(url));
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("phoneNumber", phoneNumber);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return parseResponseJson(postHttpResponseString(url, jsonObject.toString()));
     }
 
     /**

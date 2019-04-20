@@ -282,7 +282,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             return;
         }
 
-        if (httpHandler.getRegisterResponseState(phoneNumber, userName, password) != Valid) {
+        if (httpHandler.postRegisterResponseState(phoneNumber, userName, password) != Valid) {
             Toast.makeText(this, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
             return;
         }

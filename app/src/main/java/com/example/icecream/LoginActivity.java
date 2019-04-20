@@ -70,7 +70,7 @@ public class LoginActivity extends AppCompatActivity {
         final String phoneNumber = phoneEditText.toString();
         final String password = passwordEditText.toString();
         if (checkLoginValid(phoneNumber, password)) {
-            switch (httpHandler.getLoginResponseState(phoneNumber, password)) {
+            switch (httpHandler.postLoginResponseState(phoneNumber, password)) {
                 case NoSuchUser:
                     showToastMessage("用户账号不存在");
                     break;

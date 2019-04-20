@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 import okhttp3.OkHttpClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class HttpHandlerTest {
 
@@ -15,7 +15,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateWrongPasswordTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432271", "dhkjahdjka");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
         assertEquals(state, HttpHandler.State.WrongPassword);
     }
 
@@ -23,7 +23,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateNoSuchUserTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432279", "dhkjahdjka");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432279", "dhkjahdjka");
         assertEquals(state, HttpHandler.State.NoSuchUser);
     }
 
@@ -31,7 +31,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateValidTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432271", "zjsjsjdjdd");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "zjsjsjdjdd");
         assertEquals(state, HttpHandler.State.Valid);
     }
 
@@ -39,7 +39,7 @@ public class HttpHandlerTest {
     public void getRegisterResponseStateDupTest(){
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getRegisterResponseState("15602432271", "zjsjdfdjdd", "shdskjashdk");
+        HttpHandler.State state = httpHandler.postRegisterResponseState("15602432271", "zjsjdfdjdd", "shdskjashdk");
         assertEquals(state, HttpHandler.State.DuplicatePhoneNumber);
     }
 
@@ -47,7 +47,7 @@ public class HttpHandlerTest {
     public void getRegisterResponseStateValidTest(){
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getRegisterResponseState("15602432274", "zjsjdfdjdd", "shdskjashdk");
+        HttpHandler.State state = httpHandler.postRegisterResponseState("15602432274", "zjsjdfdjdd", "shdskjashdk");
         assertEquals(state, HttpHandler.State.Valid);
     }
 }
