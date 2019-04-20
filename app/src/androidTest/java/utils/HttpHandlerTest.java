@@ -7,7 +7,7 @@ import org.junit.runner.RunWith;
 
 import okhttp3.OkHttpClient;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 @RunWith(AndroidJUnit4.class)
 public class HttpHandlerTest {
 
@@ -18,7 +18,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateWrongPasswordTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432271", "dhkjahdjka");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
         assertEquals(state, HttpHandler.State.WrongPassword);
     }
 
@@ -40,7 +40,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateValidTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432271", "zjsjsjdjdd");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "zjsjsjdjdd");
         assertEquals(state, HttpHandler.State.Valid);
     }
 
