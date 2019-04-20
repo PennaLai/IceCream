@@ -216,13 +216,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
                 return;
             case Valid:
-                Toast.makeText(this,
-                        "验证码已发送", Toast.LENGTH_LONG).show();
                 break;
             default:
                 return;
         }
-
         SMSSDK.getVerificationCode("86", phoneNumber);
         btSendAuthCode.setClickable(false);
         btSendAuthCode.setBackgroundColor(Color.parseColor("#898989"));
