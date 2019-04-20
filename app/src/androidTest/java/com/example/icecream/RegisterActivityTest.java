@@ -62,6 +62,17 @@ public class RegisterActivityTest {
     }
 
     @Test
+    public void signUpInvalidDupNumber(){
+        onView(withId(R.id.usernameRegister)).perform(typeText("赖鹏楠"), closeSoftKeyboard());
+        onView(withId(R.id.passwordRegister)).perform(typeText("hjkdashdjkashdjk"), closeSoftKeyboard());
+        onView(withId(R.id.phoneNumber)).perform(typeText("15602432271"), closeSoftKeyboard());
+        onView(withId(R.id.bt_signUp)).perform(click());
+        onView(withText("这个手机号已经被注册过了"))
+                .inRoot(withDecorView(not(is(mActivityRule.getActivity().getWindow().getDecorView()))))
+                .perform(click());
+    }
+
+    @Test
     public void signUpUserNameTooLong(){
         onView(withId(R.id.usernameRegister)).perform(typeText("asdjhkasdkjashdjkashdjkashjdkashjkdhasjkdhashdjkashkjdhasdas"), closeSoftKeyboard());
         onView(withId(R.id.passwordRegister)).perform(typeText("hjkdashdjkashdjk"), closeSoftKeyboard());
