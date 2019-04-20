@@ -29,7 +29,7 @@ public class HttpHandlerTest {
     public void getLoginResponseStateNoSuchUserTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.getLoginResponseState("15602432290", "dhkjahdjka");
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432290", "dhkjahdjka");
         assertEquals(state, HttpHandler.State.NoSuchUser);
     }
 
