@@ -8,47 +8,61 @@ import org.junit.runner.RunWith;
 import okhttp3.OkHttpClient;
 
 import static org.junit.Assert.assertEquals;
-
 @RunWith(AndroidJUnit4.class)
 public class HttpHandlerTest {
 
-  @Test
-  public void getLoginResponseStateWrongPasswordTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
-    assertEquals(state, HttpHandler.State.WrongPassword);
-  }
+    /**
+     * check login and assert an error "Wrong password"
+     */
+    @Test
+    public void getLoginResponseStateWrongPasswordTest() {
+        OkHttpClient client = new OkHttpClient();
+        HttpHandler httpHandler = new HttpHandler(client);
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
+        assertEquals(HttpHandler.State.WrongPassword, state);
+    }
 
-  @Test
-  public void getLoginResponseStateNoSuchUserTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432279", "dhkjahdjka");
-    assertEquals(state, HttpHandler.State.NoSuchUser);
-  }
+    /**
+     * check login and assert an error "no such user"
+     */
+    @Test
+    public void getLoginResponseStateNoSuchUserTest() {
+        OkHttpClient client = new OkHttpClient();
+        HttpHandler httpHandler = new HttpHandler(client);
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432290", "dhkjahdjka");
+        assertEquals(HttpHandler.State.NoSuchUser, state);
+    }
 
-  @Test
-  public void getLoginResponseStateValidTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "zjsjsjdjdd");
-    assertEquals(state, HttpHandler.State.Valid);
-  }
+    /**
+     * check login valid
+     */
+    @Test
+    public void getLoginResponseStateValidTest() {
+        OkHttpClient client = new OkHttpClient();
+        HttpHandler httpHandler = new HttpHandler(client);
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "123456");
+        assertEquals(HttpHandler.State.Valid, state);
+    }
 
-  @Test
-  public void getRegisterResponseStateDupTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postRegisterResponseState("15602432271", "zjsjdfdjdd", "shdskjashdk");
-    assertEquals(state, HttpHandler.State.DuplicatePhoneNumber);
-  }
+    /**
+     * check the phone number register duplicate
+     */
+    @Test
+    public void getRegisterResponseStateDupTest(){
+        OkHttpClient client = new OkHttpClient();
+        HttpHandler httpHandler = new HttpHandler(client);
+        HttpHandler.State state = httpHandler.getPhoneResponseState("15602432271");
+        assertEquals(HttpHandler.State.DuplicatePhoneNumber, state);
+    }
 
-  @Test
-  public void getRegisterResponseStateValidTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postRegisterResponseState("15602432274", "zjsjdfdjdd", "shdskjashdk");
-    assertEquals(state, HttpHandler.State.Valid);
-  }
+    /**
+     * check the phone register valid, no duplicate
+     */
+    @Test
+    public void getRegisterResponseStateValidTest(){
+        OkHttpClient client = new OkHttpClient();
+        HttpHandler httpHandler = new HttpHandler(client);
+        HttpHandler.State state = httpHandler.getPhoneResponseState("15602432293");
+        assertEquals(HttpHandler.State.Valid, state);
+    }
 }
