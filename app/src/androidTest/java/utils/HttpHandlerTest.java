@@ -19,7 +19,7 @@ public class HttpHandlerTest {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
         HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
-        assertEquals(state, HttpHandler.State.WrongPassword);
+        assertEquals(HttpHandler.State.WrongPassword, state);
     }
 
     /**
@@ -30,7 +30,7 @@ public class HttpHandlerTest {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
         HttpHandler.State state = httpHandler.postLoginResponseState("15602432290", "dhkjahdjka");
-        assertEquals(state, HttpHandler.State.NoSuchUser);
+        assertEquals(HttpHandler.State.NoSuchUser, state);
     }
 
     /**
@@ -40,8 +40,8 @@ public class HttpHandlerTest {
     public void getLoginResponseStateValidTest() {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
-        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "zjsjsjdjdd");
-        assertEquals(state, HttpHandler.State.Valid);
+        HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "123456");
+        assertEquals(HttpHandler.State.Valid, state);
     }
 
     /**
@@ -52,7 +52,7 @@ public class HttpHandlerTest {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
         HttpHandler.State state = httpHandler.getPhoneResponseState("15602432271");
-        assertEquals(state, HttpHandler.State.DuplicatePhoneNumber);
+        assertEquals(HttpHandler.State.DuplicatePhoneNumber, state);
     }
 
     /**
@@ -63,6 +63,6 @@ public class HttpHandlerTest {
         OkHttpClient client = new OkHttpClient();
         HttpHandler httpHandler = new HttpHandler(client);
         HttpHandler.State state = httpHandler.getPhoneResponseState("15602432293");
-        assertEquals(state, HttpHandler.State.Valid);
+        assertEquals(HttpHandler.State.Valid, state);
     }
 }

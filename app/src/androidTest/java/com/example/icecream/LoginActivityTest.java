@@ -34,6 +34,9 @@ public class LoginActivityTest{
     public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule<>(
             LoginActivity.class);
 
+    /**
+     * check phone number not empty.
+     */
     @Test
     public void loginEmptyPhoneNumber(){
         onView(withId(R.id.phone)).perform(typeText(""), closeSoftKeyboard());
@@ -44,6 +47,9 @@ public class LoginActivityTest{
                 .perform(click());
     }
 
+    /**
+     * check wrong password.
+     */
     @Test
     public void loginPasswordWrong(){
         onView(withId(R.id.phone)).perform(typeText("15602432271"), closeSoftKeyboard());
@@ -59,7 +65,9 @@ public class LoginActivityTest{
         }
     }
 
-
+    /**
+     * check no such account.
+     */
     @Test
     public void loginNoAccount(){
         onView(withId(R.id.phone)).perform(typeText("13811111111"), closeSoftKeyboard());
@@ -75,10 +83,13 @@ public class LoginActivityTest{
         }
     }
 
+    /**
+     * check login success.
+     */
     @Test
     public void loginSuccess(){
         onView(withId(R.id.phone)).perform(typeText("15602432271"), closeSoftKeyboard());
-        onView(withId(R.id.password)).perform(typeText("szjjsjdjdd"), closeSoftKeyboard());
+        onView(withId(R.id.password)).perform(typeText("123456"), closeSoftKeyboard());
         onView(withId(R.id.bt_login)).perform(click());
         try {
             Thread.sleep(1000);
@@ -90,6 +101,9 @@ public class LoginActivityTest{
         }
     }
 
+    /**
+     * check invalid phone number.
+     */
     @Test
     public void loginInvalidPhoneNumber(){
         onView(withId(R.id.phone)).perform(typeText("15602432xw"), closeSoftKeyboard());
