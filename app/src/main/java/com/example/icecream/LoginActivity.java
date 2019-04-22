@@ -14,7 +14,6 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
 import utils.HttpHandler;
-import utils.User;
 import utils.Validator;
 
 /**
@@ -35,7 +34,6 @@ public class LoginActivity extends AppCompatActivity {
   private TextView signUp;
   private TextView skip;
   private TextView forget;
-  private User user;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -53,7 +51,6 @@ public class LoginActivity extends AppCompatActivity {
     signUp = findViewById(R.id.signup);
     skip = findViewById(R.id.tv_skip);
     forget = findViewById(R.id.tv_forget);
-    user = new User();
 
   }
 
