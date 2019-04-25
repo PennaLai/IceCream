@@ -197,11 +197,9 @@ public class LoginActivity extends AppCompatActivity {
    *
    * @param view The system stipulated view object.
    */
-  public void onSkip(final View view) {
-    Context context = LoginActivity.this;
-    Class destinationActivity = PersonalDetailActivity.class;
-    Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
-    startActivity(startRegisterActivityIntent);
+  public void skipLogin(final View view) {
+    Intent intent = new Intent(LoginActivity.this, PersonalDetailActivity.class);
+    startActivity(intent);
   }
 
   /**
@@ -209,7 +207,7 @@ public class LoginActivity extends AppCompatActivity {
    *
    * @param view The system stipulated view object.
    */
-  public void onForget(final View view) {
+  public void goToForgetPasswordPage(final View view) {
     Context context = LoginActivity.this;
     Class destinationActivity = ForgetPasswordActivity.class;
     Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
