@@ -36,39 +36,39 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
   // component
   /**
-   * edit text for username
+   * edit text for username.
    */
   private EditText etUserName;
   /**
-   * edit text for password
+   * edit text for password.
    */
   private EditText etPassword;
   /**
-   * edit text for phone number
+   * edit text for phone number.
    */
   private EditText etPhoneNumber;
   /**
-   * button for sending auth code
+   * button for sending auth code.
    */
   private FancyButton btSendAuthCode;
   /**
-   * code input for pin code
+   * code input for pin code.
    */
   private CodeInput pinCode;
   /**
-   * Used for checking if verification code has been verified
+   * Used for checking if verification code has been verified.
    */
   private boolean verified;
   /**
-   * The phone number that user input
+   * The phone number that user input.
    */
   private String phoneNumber;
   /**
-   * timer running state
+   * timer running state.
    */
   private boolean timerRunning;
   /**
-   * http handler for handling request and response
+   * http handler for handling request and response.
    */
   private HttpHandler httpHandler;
 
@@ -246,7 +246,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * Verify the username
+   * Verify the username.
    *
    * @param username input username
    * @return true if username is valid
@@ -277,7 +277,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * Verify the password
+   * Verify the password.
    *
    * @param password input password
    * @return true if password is valid

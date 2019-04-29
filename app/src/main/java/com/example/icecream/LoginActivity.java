@@ -30,10 +30,6 @@ public class LoginActivity extends AppCompatActivity {
   private final HttpHandler httpHandler = new HttpHandler(client);
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
-  private FancyButton login;
-  private TextView signUp;
-  private TextView skip;
-  private TextView forget;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -47,10 +43,10 @@ public class LoginActivity extends AppCompatActivity {
 
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
-    login = findViewById(R.id.bt_login);
-    signUp = findViewById(R.id.signup);
-    skip = findViewById(R.id.tv_skip);
-    forget = findViewById(R.id.tv_forget);
+    FancyButton login = findViewById(R.id.bt_login);
+    TextView signUp = findViewById(R.id.signup);
+    TextView skip = findViewById(R.id.tv_skip);
+    TextView forget = findViewById(R.id.tv_forget);
 
   }
 
@@ -96,24 +92,27 @@ public class LoginActivity extends AppCompatActivity {
    */
   private boolean checkPhoneNumber(final String phoneNumber) {
     Validator.ValState phoneState = Validator.validatePhoneNumber(phoneNumber);
+    boolean result = false;
     switch (phoneState) {
       case Empty:
         showToastMessage("手机号不能为空");
-        return false;
+        break;
       case TooLong:
         showToastMessage("手机号太长了");
-        return false;
+        break;
       case TooShort:
         showToastMessage("手机号太短了");
-        return false;
+        break;
       case InvalidCharacters:
         showToastMessage("手机号格式不正确");
-        return false;
+        break;
       case Valid:
-        return true;
+        result = true;
+        break;
       default:
-        return false;
+        break;
     }
+    return result;
   }
 
   /**
