@@ -1,12 +1,12 @@
 package com.example.icecream;
 
+import android.app.Fragment;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,13 +25,15 @@ import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
 import java.util.Arrays;
 
+//import android.support.v4.app.Fragment;
+
 /**
  * The main activity.
  *
  * @version V1.0
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener {
 
   private Button btgoToPersonalPage;
   private static final int POS_DASHBOARD = 0;
