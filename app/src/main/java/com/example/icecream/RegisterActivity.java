@@ -35,46 +35,64 @@ import utils.Validator;
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
   // component
+  /**
+   * edit text for username
+   */
   private EditText etUserName;
+  /**
+   * edit text for password
+   */
   private EditText etPassword;
+  /**
+   * edit text for phone number
+   */
   private EditText etPhoneNumber;
+  /**
+   * button for sending auth code
+   */
   private FancyButton btSendAuthCode;
+  /**
+   * code input for pin code
+   */
   private CodeInput pinCode;
-  private FancyButton btNextStep;
-  private FancyButton btSignUp;
-  private TextView goToLogin;
-
-  private boolean verificationSuccess;
+  /**
+   * Used for checking if verification code has been verified
+   */
+  private boolean verified;
+  /**
+   * The phone number that user input
+   */
   private String phoneNumber;
-  private String authCode;
+  /**
+   * timer running state
+   */
   private boolean timerRunning;
-
-  private final OkHttpClient client = new OkHttpClient();
-  private final HttpHandler httpHandler = new HttpHandler(client);
-
-  public RegisterActivity() {
-    super();
-  }
+  /**
+   * http handler for handling request and response
+   */
+  private HttpHandler httpHandler;
 
   @Override
-  protected void onCreate(final Bundle savedInstanceState) {
-    super.onCreate(savedInstanceState);
+  protected void onCreate(final Bundle savedState) {
+    super.onCreate(savedState);
     setContentView(R.layout.activity_register);
     etUserName = findViewById(R.id.usernameRegister);
     etPassword = findViewById(R.id.passwordRegister);
     etPhoneNumber = findViewById(R.id.phoneNumber);
     pinCode = findViewById(R.id.pinCode);
-    goToLogin = findViewById(R.id.bt_goToLogin);
     btSendAuthCode = findViewById(R.id.btn_getVerificationCode);
-    btNextStep = findViewById(R.id.btn_checkVerificationCode);
-    btSignUp = findViewById(R.id.bt_signUp);
+    final TextView goToLogin = findViewById(R.id.bt_goToLogin);
+    final FancyButton btNextStep = findViewById(R.id.btn_checkVerificationCode);
+    final FancyButton btSignUp = findViewById(R.id.bt_signUp);
     btSignUp.setOnClickListener(this);
     goToLogin.setOnClickListener(this);
     btSendAuthCode.setOnClickListener(this);
     btNextStep.setOnClickListener(this);
 
-    initSmsSdk();
+    final OkHttpClient client = new OkHttpClient();
+    httpHandler = new HttpHandler(client);
 
+    initSmsSdk();
   }
 
 
@@ -106,10 +124,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
             }
           } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
             if (result1 == SMSSDK.RESULT_COMPLETE) {
-              verificationSuccess = true;
+              verified = true;
               Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
             } else {
-              verificationSuccess = false;
+              verified = false;
               Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
               ((Throwable) data1).printStackTrace();
             }
@@ -129,13 +147,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    * button per second.
    */
   private void startVerifyTimer() {
-    long millisInFuture = 60 * 1000;
-    long countDownInterval = 1000;
-    final CountDownTimer downTimer = new CountDownTimer(millisInFuture, countDownInterval) {
+    final CountDownTimer downTimer = new CountDownTimer(60 * 1000, 1000) {
       @Override
-      public void onTick(long millisUntilFinished) {
+      public void onTick(final long mills) {
         timerRunning = true;
-        btSendAuthCode.setText((millisUntilFinished / 1000) + "s");
+        btSendAuthCode.setText((mills / 1000) + "s");
       }
 
       @Override
@@ -183,11 +199,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void verifyCode() {
     final Character[] chars = pinCode.getCode();
-    StringBuilder stringBuilder = new StringBuilder();
-    for (Character c : chars) {
+    final StringBuilder stringBuilder = new StringBuilder();
+    for (final Character c : chars) {
       stringBuilder.append(c.toString());
     }
-    authCode = stringBuilder.toString();
+    final String authCode = stringBuilder.toString();
     SMSSDK.submitVerificationCode("86", phoneNumber, authCode);
   }
 
@@ -196,32 +212,99 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void onClickGetVerificationCode() {
     phoneNumber = etPhoneNumber.getText().toString();
-    Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
-    if (phoneNumberState == Validator.ValState.Empty) {
-      Toast.makeText(this,
-          "手机号不能为空", Toast.LENGTH_LONG).show();
-      return;
-    }
-    if (phoneNumberState != Validator.ValState.Valid) {
-      Toast.makeText(this,
-          "手机号不合法", Toast.LENGTH_LONG).show();
-      return;
-    }
-    /* check if duplicate */
-    switch (httpHandler.getPhoneResponseState(phoneNumber)) {
-      case DuplicatePhoneNumber:
+    final Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
+
+    if (phoneNumberState == Validator.ValState.Valid) {
+      /* check if duplicate */
+      boolean isValidPhone = false;
+      switch (httpHandler.getPhoneResponseState(phoneNumber)) {
+        case DuplicatePhoneNumber:
+          Toast.makeText(this,
+              "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
+          break;
+        case Valid:
+          isValidPhone = true;
+          break;
+        default:
+          break;
+      }
+      if (isValidPhone) {
+        SMSSDK.getVerificationCode("86", phoneNumber);
+        btSendAuthCode.setClickable(false);
+        btSendAuthCode.setBackgroundColor(Color.parseColor("#898989"));
+        startVerifyTimer();
+      }
+    } else {
+      if (phoneNumberState == Validator.ValState.Empty) {
         Toast.makeText(this,
-            "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
-        return;
+            "手机号不能为空", Toast.LENGTH_LONG).show();
+      } else {
+        Toast.makeText(this,
+            "手机号不合法", Toast.LENGTH_LONG).show();
+      }
+    }
+  }
+
+  /**
+   * Verify the username
+   *
+   * @param username input username
+   * @return true if username is valid
+   */
+  private boolean verifyUsername(final String username) {
+    boolean result = false;
+    final Validator.ValState userNameState = Validator.validateUsername(username);
+    switch (userNameState) {
       case Valid:
+        result = true;
+        break;
+      case TooShort:
+        Toast.makeText(this, "用户名过短", Toast.LENGTH_LONG).show();
+        break;
+      case TooLong:
+        Toast.makeText(this, "用户名过长", Toast.LENGTH_LONG).show();
+        break;
+      case InvalidCharacters:
+        Toast.makeText(this, "用户名含有非法字符", Toast.LENGTH_LONG).show();
+        break;
+      case Empty:
+        Toast.makeText(this, "用户名不能为空", Toast.LENGTH_LONG).show();
         break;
       default:
-        return;
+        break;
     }
-    SMSSDK.getVerificationCode("86", phoneNumber);
-    btSendAuthCode.setClickable(false);
-    btSendAuthCode.setBackgroundColor(Color.parseColor("#898989"));
-    startVerifyTimer();
+    return result;
+  }
+
+  /**
+   * Verify the password
+   *
+   * @param password input password
+   * @return true if password is valid
+   */
+  private boolean verifyPassword(final String password) {
+    final Validator.ValState passwordState = Validator.validatePassword(password);
+    boolean result = false;
+    switch (passwordState) {
+      case Valid:
+        result = true;
+        break;
+      case InvalidCharacters:
+        Toast.makeText(this, "密码含有非法字符", Toast.LENGTH_LONG).show();
+        break;
+      case TooShort:
+        Toast.makeText(this, "密码太短", Toast.LENGTH_LONG).show();
+        break;
+      case TooLong:
+        Toast.makeText(this, "密码太长", Toast.LENGTH_LONG).show();
+        break;
+      case Empty:
+        Toast.makeText(this, "密码不能为空", Toast.LENGTH_LONG).show();
+        break;
+      default:
+        break;
+    }
+    return result;
   }
 
   /**
@@ -229,74 +312,30 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void submitRegister() {
     final String userName = etUserName.getText().toString();
-
-    Validator.ValState userNameState = Validator.validateUsername(userName);
-    switch (userNameState) {
-      case Valid:
-        break;
-      case TooShort:
-        Toast.makeText(this, "用户名过短", Toast.LENGTH_LONG).show();
-        return;
-      case TooLong:
-        Toast.makeText(this, "用户名过长", Toast.LENGTH_LONG).show();
-        return;
-      case InvalidCharacters:
-        Toast.makeText(this, "用户名含有非法字符", Toast.LENGTH_LONG).show();
-        return;
-      case Empty:
-        Toast.makeText(this, "用户名不能为空", Toast.LENGTH_LONG).show();
-        return;
-      default:
-        return;
-    }
-
     final String password = etPassword.getText().toString();
 
-    Validator.ValState passwordState = Validator.validatePassword(password);
-    switch (passwordState) {
-      case Valid:
-        break;
-      case InvalidCharacters:
-        Toast.makeText(this, "密码含有非法字符", Toast.LENGTH_LONG).show();
-        return;
-      case TooShort:
-        Toast.makeText(this, "密码太短", Toast.LENGTH_LONG).show();
-        return;
-      case TooLong:
-        Toast.makeText(this, "密码太长", Toast.LENGTH_LONG).show();
-        return;
-      case Empty:
-        Toast.makeText(this, "密码不能为空", Toast.LENGTH_LONG).show();
-        return;
-      default:
-        return;
+    if (verifyUsername(userName) && verifyPassword(password)) {
+      if (verified) {
+        if (httpHandler.postRegisterResponseState(phoneNumber, userName, password)
+            == HttpHandler.State.Valid) {
+          Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
+        }
+        Toast.makeText(this, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
+      } else {
+        Toast.makeText(this, "手机号验证未通过", Toast.LENGTH_LONG).show();
+      }
     }
-
-    if (!verificationSuccess) {
-      Toast.makeText(this, "手机号验证未通过", Toast.LENGTH_LONG).show();
-      return;
-    }
-
-    if (httpHandler.postRegisterResponseState(phoneNumber, userName, password)
-        != HttpHandler.State.Valid) {
-      Toast.makeText(this, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
-      return;
-    }
-
-    Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
-
   }
 
   /**
    * This method is to go to the login page.
-   * TODO: There is a bug that if we already have a login page,
-   * TODO: this method just create a new page, we just want to go goToLogin to previous one
+   * TODO: Avoid creating new page for login
    */
   private void goToLoginPage() {
-    Context context = this;
-    Class destinationActivity = LoginActivity.class;
-    Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
-    startActivity(startRegisterActivityIntent);
+    final Context context = this;
+    final Class destActivity = LoginActivity.class;
+    final Intent registerIntent = new Intent(context, destActivity);
+    startActivity(registerIntent);
   }
 
   @Override
