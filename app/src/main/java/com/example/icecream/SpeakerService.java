@@ -13,6 +13,7 @@ import java.io.IOException;
  * the media player, we use on prepared listener to set the other thread to prepare it but not
  * the ui thread.
  * Reference website: https://juejin.im/post/5bdab2495188257f863d19fb
+ *                    https://www.jianshu.com/p/f65e35fc089d
  * @author Penna.
  */
 public class SpeakerService extends Service implements OnPreparedListener {
