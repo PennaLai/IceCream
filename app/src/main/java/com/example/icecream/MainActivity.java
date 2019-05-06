@@ -39,6 +39,7 @@ import java.util.TreeMap;
  */
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener {
+  //TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
   private static final int POS_ACCOUNT = 1;
@@ -55,8 +56,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
-
 
     //定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();

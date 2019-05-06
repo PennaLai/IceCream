@@ -20,6 +20,7 @@ import java.io.IOException;
  */
 public class SpeakerService extends Service implements OnPreparedListener {
   private MediaPlayer speakerPlayer;
+  private SpeakerBinder speakerBinder;
 
   public SpeakerService() {}
 
@@ -28,6 +29,7 @@ public class SpeakerService extends Service implements OnPreparedListener {
    */
   @Override
   public void onCreate() {
+    speakerPlayer = new MediaPlayer();
     super.onCreate();
   }
 
@@ -39,7 +41,7 @@ public class SpeakerService extends Service implements OnPreparedListener {
    */
   @Override
   public IBinder onBind(Intent intent) {
-    return new SpeakerBinder();
+    return speakerBinder;
   }
 
   @Override
@@ -57,12 +59,9 @@ public class SpeakerService extends Service implements OnPreparedListener {
    */
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-
-    if(intent.getAction().equals("START")) {
-      speakerPlayer = new MediaPlayer();
-      speakerPlayer.setOnPreparedListener(this);
-      speakerPlayer.prepareAsync(); // prepare async to not block main ui thread
-    }
+    speakerPlayer = new MediaPlayer();
+    speakerPlayer.setOnPreparedListener(this);
+    speakerPlayer.prepareAsync(); // prepare async to not block main ui thread
     return super.onStartCommand(intent, flags, startId);
   }
 
@@ -133,6 +132,7 @@ public class SpeakerService extends Service implements OnPreparedListener {
         fd = getAssets().openFd("music/Reality.mp3");
         speakerPlayer.setDataSource(fd);
         speakerPlayer.prepare();
+        speakerPlayer.start();
       } catch (IOException e) {
         e.printStackTrace();
       }
