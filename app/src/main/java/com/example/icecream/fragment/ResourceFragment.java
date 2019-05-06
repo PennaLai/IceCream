@@ -15,8 +15,6 @@ import com.example.icecream.R;
 
 public class ResourceFragment extends Fragment{
 
-    private Button btgoToPersonalPage;
-
     public static ResourceFragment newInstance() {
         return new ResourceFragment();
     }
@@ -26,9 +24,8 @@ public class ResourceFragment extends Fragment{
                              ViewGroup container, Bundle savedInstanceState ) {
 
         View view = inflater.inflate(R.layout.fragment_resource, container, false);
-        System.out.println("Fuck You First Time.");
-        btgoToPersonalPage = view.findViewById(R.id.bt_goToPersonalDetail);
-        btgoToPersonalPage.setOnClickListener(v -> System.out.println("Fuck You"));
+        Button btgoToPersonalPage = view.findViewById(R.id.bt_goToPersonalDetail);
+        btgoToPersonalPage.setOnClickListener(v -> System.out.println("Fuck You from resource"));
         return view;
     }
 
