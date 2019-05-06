@@ -2,6 +2,7 @@ package com.example.icecream;
 
 import android.app.Service;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
@@ -13,6 +14,7 @@ import java.io.IOException;
  * the media player, we use on prepared listener to set the other thread to prepare it but not
  * the ui thread.
  * Reference website: https://juejin.im/post/5bdab2495188257f863d19fb
+ *                    https://blog.csdn.net/qq_37077360/article/details/80570684
  *                    https://www.jianshu.com/p/f65e35fc089d
  * @author Penna.
  */
@@ -38,6 +40,12 @@ public class SpeakerService extends Service implements OnPreparedListener {
   @Override
   public IBinder onBind(Intent intent) {
     return new SpeakerBinder();
+  }
+
+  @Override
+  public boolean onUnbind(Intent intent) {
+    //TODO: 回收资源
+    return super.onUnbind(intent);
   }
 
   /**
@@ -108,15 +116,25 @@ public class SpeakerService extends Service implements OnPreparedListener {
      * to change the new player resource.
      * @param url
      */
-    public void startNewResource(String url) {
+    public void setNewResource(String url) {
       if (isPlaying()) {
         speakerPlayer.stop();
         try {
           speakerPlayer.setDataSource(url);
-          speakerPlayer.start();
         } catch (IOException e) {
           e.printStackTrace();
         }
+      }
+    }
+
+    public void testForPlay() {
+      AssetFileDescriptor fd = null;
+      try {
+        fd = getAssets().openFd("music/Reality.mp3");
+        speakerPlayer.setDataSource(fd);
+        speakerPlayer.prepare();
+      } catch (IOException e) {
+        e.printStackTrace();
       }
     }
 
