@@ -21,10 +21,13 @@ import java.io.IOException;
  * @author Penna.
  */
 public class SpeakerService extends Service implements OnPreparedListener, OnCompletionListener {
+
+  /** speak player to play resource. */
   private MediaPlayer speakerPlayer = new MediaPlayer();
+
+  /** binder between fragment and service. */
   private SpeakerBinder speakerBinder = new SpeakerBinder();
 
-  public SpeakerService() {}
 
   /**
    * create this service.
