@@ -17,9 +17,14 @@ public class ResourceFragment extends Fragment {
     return new ResourceFragment();
   }
 
-  // 用于连接mainActivity, 然后再连接playfragment，发送音乐播放
+  /** use to connect to play fragment through main activity*/
   MusicConnector musicConnector;
 
+  /**
+   * this interface is use to connect the play fragment, the main activity should
+   * implement it.
+   * @author Penna
+   */
   public interface MusicConnector {
     public void sendNewMusic();
 

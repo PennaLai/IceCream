@@ -16,6 +16,7 @@ import com.example.icecream.SpeakerService;
 
 public class PlayFragment extends Fragment {
 
+  /** background player service*/
   private SpeakerService speakerService;
 
   public static PlayFragment newInstance() {
