@@ -1,6 +1,6 @@
 package com.example.icecream.fragment;
 
-// import android.app.Fragment;
+
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,14 +10,24 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import com.example.icecream.R;
 
-// import static android.content.ContentValues.TAG;
 
 public class ResourceFragment extends Fragment {
 
-  // TODO: connect to the mainactivity so that we can communicate from resourcefragment to playfragment
-
   public static ResourceFragment newInstance() {
     return new ResourceFragment();
+  }
+
+  // 用于连接mainActivity, 然后再连接playfragment，发送音乐播放
+  MusicConnector musicConnector;
+
+  public interface MusicConnector {
+    public void sendNewMusic();
+
+    public void startPlayer();
+
+    public void stopPlayer();
+
+    public void pausePlayer();
   }
 
   @Override
