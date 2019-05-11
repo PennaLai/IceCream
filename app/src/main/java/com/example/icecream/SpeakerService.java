@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.media.MediaPlayer;
+import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
@@ -16,11 +17,12 @@ import java.io.IOException;
  * Reference website: https://juejin.im/post/5bdab2495188257f863d19fb
  *                    https://blog.csdn.net/qq_37077360/article/details/80570684
  *                    https://www.jianshu.com/p/f65e35fc089d
+ *                    https://blog.csdn.net/u014365133/article/details/53330776
  * @author Penna.
  */
-public class SpeakerService extends Service implements OnPreparedListener {
-  private MediaPlayer speakerPlayer;
-  private SpeakerBinder speakerBinder;
+public class SpeakerService extends Service implements OnPreparedListener, OnCompletionListener {
+  private MediaPlayer speakerPlayer = new MediaPlayer();
+  private SpeakerBinder speakerBinder = new SpeakerBinder();
 
   public SpeakerService() {}
 
@@ -29,7 +31,6 @@ public class SpeakerService extends Service implements OnPreparedListener {
    */
   @Override
   public void onCreate() {
-    speakerPlayer = new MediaPlayer();
     super.onCreate();
   }
 
@@ -59,15 +60,13 @@ public class SpeakerService extends Service implements OnPreparedListener {
    */
   @Override
   public int onStartCommand(Intent intent, int flags, int startId) {
-    speakerPlayer = new MediaPlayer();
-    speakerPlayer.setOnPreparedListener(this);
-    speakerPlayer.prepareAsync(); // prepare async to not block main ui thread
+    speakerPlayer.prepareAsync();
     return super.onStartCommand(intent, flags, startId);
   }
 
   /**
    * after prepared, call back and start to play music.
-   * @param mp
+   * @param mp media player
    */
   @Override
   public void onPrepared(MediaPlayer mp) {
@@ -75,12 +74,12 @@ public class SpeakerService extends Service implements OnPreparedListener {
   }
 
   /**
-   * when destroy this service, we should release all resource.
+   * after one song finish, call back this function to do something, like looping.
+   * @param mp media player
    */
   @Override
-  public void onDestroy() {
-    super.onDestroy();
-    if (speakerPlayer != null) speakerPlayer.release();
+  public void onCompletion(MediaPlayer mp) {
+
   }
 
   /**
@@ -88,71 +87,104 @@ public class SpeakerService extends Service implements OnPreparedListener {
    * @author Penna
    */
   public class SpeakerBinder extends Binder {
-
-    private boolean isPlaying() {
-      return speakerPlayer.isPlaying();
+    public SpeakerService getService() {
+      return SpeakerService.this;
     }
+  }
 
-    /**
-     * play the music.
-     */
-    public void start() {
-      if(!isPlaying()) {
-        speakerPlayer.start();
-      }
+  /**
+   * when destroy this service, we should release all resource.
+   */
+  @Override
+  public void onDestroy() {
+    destroyMediaPlayer();
+    super.onDestroy();
+  }
+
+  private void initMediaPlayer() {
+    speakerPlayer = new MediaPlayer();
+    speakerPlayer.setOnPreparedListener(this);
+    speakerPlayer.setOnCompletionListener(this);
+  }
+
+
+  private boolean isPlaying() {
+    return speakerPlayer.isPlaying();
+  }
+
+  /**
+   * play the music.
+   */
+  public void startMusic() {
+    if(!isPlaying()) {
+      speakerPlayer.start();
     }
+  }
 
-    /**
-     * pause the music.
-     */
-    public void pause() {
-      if(isPlaying()) {
-        speakerPlayer.pause();
-      }
+
+  /**
+   * pause the music.
+   */
+  public void pauseMusic() {
+    if(isPlaying()) {
+      speakerPlayer.pause();
     }
+  }
 
-    /**
-     * to change the new player resource.
-     * @param url
-     */
-    public void setNewResource(String url) {
-      if (isPlaying()) {
-        speakerPlayer.stop();
-        try {
-          speakerPlayer.setDataSource(url);
-        } catch (IOException e) {
-          e.printStackTrace();
-        }
-      }
-    }
-
-    public void testForPlay() {
-      AssetFileDescriptor fd = null;
+  /**
+   * to stop the previous song and start the new player resource.
+   * @param url music url.
+   */
+  public void setNewResource(String url) {
+    if (isPlaying()) {
+      speakerPlayer.stop();
       try {
-        fd = getAssets().openFd("music/Reality.mp3");
-        speakerPlayer.setDataSource(fd);
-        speakerPlayer.prepare();
-        speakerPlayer.start();
+        speakerPlayer.setDataSource(url);
+        speakerPlayer.prepareAsync();
       } catch (IOException e) {
         e.printStackTrace();
       }
     }
-
-    /**
-     * Get the file duration time.
-     * @return current music progress.
-     */
-    public int getDuration() {
-      return speakerPlayer.getDuration();
-    }
-
-    /**
-     * Set the current music file progress.
-     * @param mesc time with millisecond
-     */
-    public void seeTo(int mesc) {
-      speakerPlayer.seekTo(mesc);
-    }
-
   }
+
+
+  public void testForPlay() {
+    AssetFileDescriptor fd = null;
+    try {
+      fd = getAssets().openFd("music/Reality.mp3");
+      speakerPlayer.setDataSource(fd);
+      speakerPlayer.prepareAsync();
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
+  }
+
+  /**
+   * Get the file duration time.
+   * @return current music progress.
+   */
+  public int getDuration() {
+    return speakerPlayer.getDuration();
+  }
+
+  /**
+   * Set the current music file progress.
+   * @param mesc time with millisecond
+   */
+  public void seeTo(int mesc) {
+    speakerPlayer.seekTo(mesc);
+  }
+
+  /**
+   * to release the media player resource.
+   */
+  public void destroyMediaPlayer() {
+    if (speakerPlayer != null) {
+      speakerPlayer.stop();
+      speakerPlayer.release();
+      speakerPlayer = null;
+    }
+  }
+
+
 }

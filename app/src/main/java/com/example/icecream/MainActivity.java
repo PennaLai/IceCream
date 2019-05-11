@@ -38,7 +38,7 @@ import java.util.TreeMap;
  * @version V1.0
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener, ResourceFragment.MusicConnector{
   //TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
@@ -172,4 +172,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     startActivity(intent);
   }
 
+  @Override
+  public void sendNewMusic() {
+    // connect to player fragment
+  }
+
+  @Override
+  public void startPlayer() {
+
+  }
+
+  @Override
+  public void stopPlayer() {
+
+  }
+
+  @Override
+  public void pausePlayer() {
+
+  }
 }
