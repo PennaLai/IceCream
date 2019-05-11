@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 
 
 /**
- * The RSS feed table
+ * The RSS feed table.
  *
  * @author Kemo
  */

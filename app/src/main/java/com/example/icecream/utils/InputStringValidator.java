@@ -29,7 +29,7 @@ public final class InputStringValidator {
   }
 
   /**
-   * States of input string validation results
+   * States of input string validation results.
    * <li>{@link #Valid}</li>
    * <li>{@link #TooLong}</li>
    * <li>{@link #TooShort}</li>
@@ -38,23 +38,23 @@ public final class InputStringValidator {
    */
   public enum ValState {
     /**
-     * Legal string
+     * Legal string.
      */
     Valid,
     /**
-     * String is too long
+     * String is too long.
      */
     TooLong,
     /**
-     * String is too short
+     * String is too short.
      */
     TooShort,
     /**
-     * String is empty or only contains spaces
+     * String is empty or only contains spaces.
      */
     Empty,
     /**
-     * String contains illegal characters
+     * String contains illegal characters.
      */
     InvalidCharacters
   }
@@ -66,7 +66,7 @@ public final class InputStringValidator {
    * @param patternType Defined regular pattern.
    * @param maxLen      The allowed maximum length.
    * @param minLen      The allowed minimum length.
-   * @return com.example.icecream.utils.InputStringValidator.ValState The defined validation result states.
+   * @return The defined validation result states.
    */
   private static ValState validate(final String input, final Pattern patternType,
                                    final int maxLen, final int minLen) {
@@ -89,7 +89,7 @@ public final class InputStringValidator {
    * Validation state of input password.
    *
    * @param input The input password String.
-   * @return com.example.icecream.utils.InputStringValidator.ValState
+   * @return The defined validation state.
    */
   public static ValState validatePassword(final String input) {
     return validate(input, passwordPattern, PASSWORD_MAX_LEN, PASSWORD_MIN_LEN);
@@ -99,7 +99,7 @@ public final class InputStringValidator {
    * Get the validation state of input username.
    *
    * @param input The input user name String.
-   * @return com.example.icecream.utils.InputStringValidator.ValState The defined validation state.
+   * @return The defined validation state.
    */
   public static ValState validateUsername(final String input) {
     return validate(input, userNamePattern, USERNAME_MAX_LEN, USERNAME_MIN_LEN);
@@ -110,7 +110,7 @@ public final class InputStringValidator {
    * Get the validation state of input phone number.
    *
    * @param input The input phone number String.
-   * @return com.example.icecream.utils.InputStringValidator.ValState The defined validation state.
+   * @return The defined validation state.
    */
   public static ValState validatePhoneNumber(final String input) {
     return validate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);

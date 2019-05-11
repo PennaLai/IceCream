@@ -49,7 +49,7 @@ public class HttpHandler {
   }
 
   /**
-   * States of validation results from server
+   * States of validation results from server.
    * <li>{@link #DuplicatePhoneNumber}</li>
    * <li>{@link #NoSuchUser}</li>
    * <li>{@link #WrongPassword}</li>
@@ -59,23 +59,23 @@ public class HttpHandler {
    */
   public enum ResponseState {
     /**
-     * Find duplicate phone number in com.example.icecream.database
+     * Find duplicate phone number in database.
      */
     DuplicatePhoneNumber,
     /**
-     * Cannot find the user in com.example.icecream.database
+     * Cannot find the user in database.
      */
     NoSuchUser,
     /**
-     * Password cannot match in com.example.icecream.database
+     * Password cannot match in database.
      */
     WrongPassword,
     /**
-     * Token is invalid, may be empty or expired, needs to login again
+     * Token is invalid, may be empty or expired, needs to login again.
      */
     InvalidToken,
     /**
-     * user account is matched in com.example.icecream.database
+     * user account is matched in database.
      */
     Valid
   }
@@ -208,9 +208,9 @@ public class HttpHandler {
   }
 
   /**
-   * Send get request to refresh personal RSS feeds for local com.example.icecream.database
+   * Send get request to refresh personal RSS feeds for local database.
    *
-   * @return The response state of token validation
+   * @return The response state of token validation.
    */
   public ResponseState getRefreshState() {
     String url = RSS_FEEDS_URL + "?token=" + token;
@@ -221,15 +221,15 @@ public class HttpHandler {
       responseJsonObject = new JSONObject(responseString);
       switch (responseJsonObject.getString("msgCode")) {
         case "0":
-          // token is invalid
+          // token is invalid.
           responseState = ResponseState.InvalidToken;
           break;
         case "1":
-          // user account may have been deleted
+          // user account may have been deleted.
           responseState = ResponseState.NoSuchUser;
           break;
         case "2":
-          // token valid and store data to local com.example.icecream.database
+          // token valid and store data to local database.
           responseState = ResponseState.Valid;
 
           break;

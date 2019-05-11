@@ -1,21 +1,31 @@
 package com.example.icecream.database;
 
-import com.example.icecream.database.dao.ArticleDao;
-import com.example.icecream.database.dao.RssFeedDao;
-import com.example.icecream.database.dao.UserDao;
-import com.example.icecream.database.entity.RssFeed;
-
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
+import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
+import com.example.icecream.database.dao.ArticleDao;
+import com.example.icecream.database.dao.RssFeedDao;
+import com.example.icecream.database.dao.UserArticleJoinDao;
+import com.example.icecream.database.dao.UserDao;
+import com.example.icecream.database.dao.UserRssFeedJoinDao;
+import com.example.icecream.database.entity.Article;
+import com.example.icecream.database.entity.RssFeed;
+import com.example.icecream.database.entity.User;
+import com.example.icecream.database.entity.UserArticleJoin;
+import com.example.icecream.database.entity.UserRssFeedJoin;
+import com.example.icecream.utils.Converters;
+
 /**
- * The local database class
+ * The local database class.
  *
  * @author Kemo
  */
-@Database(entities = {RssFeed.class}, version = 1)
+@Database(entities = {User.class, RssFeed.class, Article.class,
+    UserRssFeedJoin.class, UserArticleJoin.class}, version = 1)
+@TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
   // singleton
   private static volatile AppDataBase INSTANCE;
@@ -26,18 +36,22 @@ public abstract class AppDataBase extends RoomDatabase {
 
   public abstract ArticleDao articleDao();
 
+  public abstract UserRssFeedJoinDao userRssFeedJoinDao();
+
+  public abstract UserArticleJoinDao userArticleJoinDao();
+
   /**
-   * Get the singleton instance of the database
+   * Get the singleton instance of the database.
    *
-   * @param context app context
-   * @return the singleton instance of the database
+   * @param context app context.
+   * @return the singleton instance of the database.
    * @author Kemo
    */
-  public static AppDataBase getDatabase(final Context context) {
+  static AppDataBase getDatabase(final Context context) {
     if (INSTANCE == null) {
       synchronized (AppDataBase.class) {
         if (INSTANCE == null) {
-          // create com.example.icecream.database
+          // create local database
           INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
               AppDataBase.class, "app_database").build();
         }

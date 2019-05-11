@@ -4,12 +4,10 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 
+import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
-import com.example.icecream.utils.repository.ArticleRepository;
-import com.example.icecream.utils.repository.RssFeedRepository;
-import com.example.icecream.utils.repository.UserRepository;
 
 import java.util.List;
 
@@ -22,11 +20,7 @@ import java.util.List;
  */
 public class ViewModel extends AndroidViewModel {
 
-  private UserRepository mUserRepository;
-
-  private RssFeedRepository mRssFeedRepository;
-
-  private ArticleRepository mArticleRepository;
+  private Repository mRepository;
 
   private LiveData<List<User>> allUsers;
 
@@ -36,44 +30,66 @@ public class ViewModel extends AndroidViewModel {
 
   public ViewModel(Application application) {
     super(application);
-    mUserRepository = new UserRepository(application);
-    mRssFeedRepository = new RssFeedRepository(application);
-    mArticleRepository = new ArticleRepository(application);
-    allUsers = mUserRepository.getAllUsers();
-    allRssFeeds = mRssFeedRepository.getAllFeeds();
-    allArticles = mArticleRepository.getAllArticles();
+    mRepository = new Repository(application);
+    allUsers = mRepository.getAllUsers();
+    allRssFeeds = mRepository.getAllRssFeeds();
+    allArticles = mRepository.getAllArticles();
   }
 
+  /**
+   * Get all the users in local database.
+   *
+   * @return local users.
+   */
   public LiveData<List<User>> getAllUsers() {
     return allUsers;
   }
 
+  /**
+   * Get the user by phone number.
+   *
+   * @param phone input phone number.
+   * @return the user.
+   */
+  public LiveData<User> getUserByPhone(String phone) {
+    return mRepository.getUserByPhone(phone);
+  }
+
+  /**
+   * Get all the RSS feeds of a user.
+   *
+   * @param user user of interest.
+   * @return the RSS feed list of the user.
+   */
+  public LiveData<List<RssFeed>> getRssFeedsOfUser(User user) {
+    return mRepository.getRssFeedsByUser(user);
+  }
+
+  /**
+   * Get all the articles of a user.
+   *
+   * @param user user of interest.
+   * @return the article list of the user.
+   */
+  public LiveData<List<Article>> getArticlesOfUser(User user) {
+    return mRepository.getArticlesByUser(user);
+  }
+
+  /**
+   * Get all the feeds that currently have been stored.
+   *
+   * @return List of RSS feeds.
+   */
   public LiveData<List<RssFeed>> getAllRssFeeds() {
     return allRssFeeds;
   }
 
+  /**
+   * Get all the articles that currently have been stored.
+   *
+   * @return List of articles.
+   */
   public LiveData<List<Article>> getAllArticles() {
     return allArticles;
   }
-
-  public void insertUser(User user) {
-    mUserRepository.insert(user);
-  }
-
-  public void insertRssFeed(RssFeed rssFeed) {
-    mRssFeedRepository.insert(rssFeed);
-  }
-
-  public void insertArticle(Article article) {
-    mArticleRepository.insert(article);
-  }
-
-  public void deleteUser(String phone) {
-    mUserRepository.delete(phone);
-  }
-
-  public void getUserByPhone(String phone) {
-    mUserRepository.getUserByPhone(phone);
-  }
-
 }

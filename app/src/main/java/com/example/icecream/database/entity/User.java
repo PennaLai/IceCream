@@ -1,12 +1,12 @@
 package com.example.icecream.database.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.util.Set;
 
-@Entity
+@Entity(indices = {@Index(value = "phoneNumber", unique = true)})
 public class User {
 
   @PrimaryKey(autoGenerate = true)
@@ -21,16 +21,15 @@ public class User {
   @NonNull
   private String password;
 
-  private Set<RssFeed> rssFeeds;
 
   private String authToken;
 
   /**
-   * Constructor for User class
+   * Constructor for User class.
    *
-   * @param phoneNumber The input phone number
-   * @param username    The input username
-   * @param password    The input password
+   * @param phoneNumber The input phone number.
+   * @param username    The input username.
+   * @param password    The input password.
    */
   public User(@NonNull String phoneNumber, @NonNull String username, @NonNull String password) {
     this.phoneNumber = phoneNumber;
@@ -55,15 +54,16 @@ public class User {
     this.phoneNumber = phoneNumber;
   }
 
+  @NonNull
   public String getUsername() {
     return username;
   }
 
-  public void setUsername(@NonNull String username){
+  public void setUsername(@NonNull String username) {
     this.username = username;
   }
 
-
+  @NonNull
   public String getPassword() {
     return password;
   }
@@ -72,13 +72,6 @@ public class User {
     this.password = password;
   }
 
-  public Set<RssFeed> getRssFeeds() {
-    return rssFeeds;
-  }
-
-  public void setRssFeeds(Set<RssFeed> rssFeeds) {
-    this.rssFeeds = rssFeeds;
-  }
 
   public String getAuthToken() {
     return authToken;

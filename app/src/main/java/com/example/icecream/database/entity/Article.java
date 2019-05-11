@@ -10,7 +10,7 @@ import java.util.Date;
 import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 /**
- * The article table
+ * The article table.
  *
  * @author Kemo
  */
@@ -22,7 +22,9 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
 public class Article {
 
   @PrimaryKey(autoGenerate = true)
-  private int id;
+  private Long id;
+
+  private Long feedId;
 
   @NonNull
   private String title;
@@ -40,12 +42,20 @@ public class Article {
     this.publishTime = publishTime;
   }
 
-  public int getId() {
+  public Long getId() {
     return id;
   }
 
-  public void setId(int id) {
+  public void setId(Long id) {
     this.id = id;
+  }
+
+  public Long getFeedId() {
+    return feedId;
+  }
+
+  public void setFeedId(Long feedId) {
+    this.feedId = feedId;
   }
 
   @NonNull
@@ -80,4 +90,5 @@ public class Article {
   public void setPublishTime(Date publishTime) {
     this.publishTime = publishTime;
   }
+
 }
