@@ -33,7 +33,7 @@ public class PersonalDetailActivity extends AppCompatActivity implements View.On
    * This method is to load the user information
    */
   public void loadUserInformation() {
-    //TODO load user information from database.
+    //TODO load user information from com.example.icecream.database.
   }
 
   /**

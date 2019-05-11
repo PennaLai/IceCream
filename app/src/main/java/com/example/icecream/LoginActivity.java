@@ -13,8 +13,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
-import utils.HttpHandler;
-import utils.Validator;
+import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.InputStringValidator;
 
 /**
  * The login activity.
@@ -69,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     final String phoneNumber = phoneEditText.toString();
     final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
-      switch (httpHandler.postLoginResponseState(phoneNumber, password)) {
+      switch (httpHandler.postLoginState(phoneNumber, password)) {
         case NoSuchUser:
           showToastMessage("用户账号不存在");
           break;
@@ -88,14 +88,14 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Invoke the {@link Validator#validatePhoneNumber(String)} to jude whether
+   * Invoke the {@link InputStringValidator#validatePhoneNumber(String)} to judge whether
    * the password is valid or not.
    *
    * @param phoneNumber The input phoneNumber from the phoneNumber input <em>textview</em>.
    * @return boolean Whether the phoneNumber is valid or not.
    */
   private boolean checkPhoneNumber(final String phoneNumber) {
-    Validator.ValState phoneState = Validator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneState = InputStringValidator.validatePhoneNumber(phoneNumber);
     switch (phoneState) {
       case Empty:
         showToastMessage("手机号不能为空");
@@ -117,7 +117,7 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Invoke the {@link Validator#validatePassword(String) validatePassword} to jude whether
+   * Invoke the {@link InputStringValidator#validatePassword(String) validatePassword} to jude whether
    * the password is valid or not.
    *
    * @param password The input password from the password input <em>textview</em>.
@@ -125,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
    */
   private boolean checkPassword(final String password) {
 
-    Validator.ValState passwordState = Validator.validatePassword(password);
+    InputStringValidator.ValState passwordState = InputStringValidator.validatePassword(password);
     switch (passwordState) {
       case Empty:
         showToastMessage("密码不能为空");

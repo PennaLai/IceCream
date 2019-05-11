@@ -1,4 +1,4 @@
-package utils;
+package com.example.icecream.utils;
 
 import android.support.test.runner.AndroidJUnit4;
 
@@ -19,8 +19,8 @@ public class HttpHandlerTest {
   public void getLoginResponseStateWrongPasswordTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "dhkjahdjka");
-    assertEquals(HttpHandler.State.WrongPassword, state);
+    HttpHandler.ResponseState responseState = httpHandler.postLoginState("15602432271", "dhkjahdjka");
+    assertEquals(HttpHandler.ResponseState.WrongPassword, responseState);
   }
 
   /**
@@ -30,8 +30,8 @@ public class HttpHandlerTest {
   public void getLoginResponseStateNoSuchUserTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432290", "dhkjahdjka");
-    assertEquals(HttpHandler.State.NoSuchUser, state);
+    HttpHandler.ResponseState responseState = httpHandler.postLoginState("15602432290", "dhkjahdjka");
+    assertEquals(HttpHandler.ResponseState.NoSuchUser, responseState);
   }
 
   /**
@@ -41,8 +41,8 @@ public class HttpHandlerTest {
   public void getLoginResponseStateValidTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.postLoginResponseState("15602432271", "123456");
-    assertEquals(HttpHandler.State.Valid, state);
+    HttpHandler.ResponseState responseState = httpHandler.postLoginState("15602432271", "123456");
+    assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 
   /**
@@ -52,8 +52,8 @@ public class HttpHandlerTest {
   public void getRegisterResponseStateDupTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.getPhoneResponseState("15602432271");
-    assertEquals(HttpHandler.State.DuplicatePhoneNumber, state);
+    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("15602432271");
+    assertEquals(HttpHandler.ResponseState.DuplicatePhoneNumber, responseState);
   }
 
   /**
@@ -63,7 +63,7 @@ public class HttpHandlerTest {
   public void getRegisterResponseStateValidTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client);
-    HttpHandler.State state = httpHandler.getPhoneResponseState("15602432293");
-    assertEquals(HttpHandler.State.Valid, state);
+    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("15602432293");
+    assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 }

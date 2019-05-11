@@ -21,8 +21,8 @@ import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
-import utils.HttpHandler;
-import utils.Validator;
+import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.InputStringValidator;
 
 /**
  * The register activity.
@@ -212,12 +212,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void onClickGetVerificationCode() {
     phoneNumber = etPhoneNumber.getText().toString();
-    final Validator.ValState phoneNumberState = Validator.validatePhoneNumber(phoneNumber);
+    final InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
 
-    if (phoneNumberState == Validator.ValState.Valid) {
+    if (phoneNumberState == InputStringValidator.ValState.Valid) {
       /* check if duplicate */
       boolean isValidPhone = false;
-      switch (httpHandler.getPhoneResponseState(phoneNumber)) {
+      switch (httpHandler.postPhoneState(phoneNumber)) {
         case DuplicatePhoneNumber:
           Toast.makeText(this,
               "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
@@ -235,7 +235,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         startVerifyTimer();
       }
     } else {
-      if (phoneNumberState == Validator.ValState.Empty) {
+      if (phoneNumberState == InputStringValidator.ValState.Empty) {
         Toast.makeText(this,
             "手机号不能为空", Toast.LENGTH_LONG).show();
       } else {
@@ -253,7 +253,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private boolean verifyUsername(final String username) {
     boolean result = false;
-    final Validator.ValState userNameState = Validator.validateUsername(username);
+    final InputStringValidator.ValState userNameState = InputStringValidator.validateUsername(username);
     switch (userNameState) {
       case Valid:
         result = true;
@@ -283,7 +283,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    * @return true if password is valid
    */
   private boolean verifyPassword(final String password) {
-    final Validator.ValState passwordState = Validator.validatePassword(password);
+    final InputStringValidator.ValState passwordState = InputStringValidator.validatePassword(password);
     boolean result = false;
     switch (passwordState) {
       case Valid:
@@ -316,8 +316,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     if (verifyUsername(userName) && verifyPassword(password)) {
       if (verified) {
-        if (httpHandler.postRegisterResponseState(phoneNumber, userName, password)
-            == HttpHandler.State.Valid) {
+        if (httpHandler.postRegisterState(phoneNumber, userName, password)
+            == HttpHandler.ResponseState.Valid) {
           Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
         }
         Toast.makeText(this, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
