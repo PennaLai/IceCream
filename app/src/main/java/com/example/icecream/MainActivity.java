@@ -19,7 +19,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.View;
 
-import com.example.icecream.database.entity.User;
+//import com.example.icecream.database.entity.User;
 import com.example.icecream.fragment.CenteredTextFragment;
 import com.example.icecream.fragment.PlayFragment;
 import com.example.icecream.fragment.ResourceFragment;
@@ -27,7 +27,7 @@ import com.example.icecream.menu.DrawerAdapter;
 import com.example.icecream.menu.DrawerItem;
 import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
-import com.example.icecream.utils.ViewModel;
+//import com.example.icecream.utils.ViewModel;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   private SlidingRootNav slidingRootNav;
 
   /** connection between UI and Repository*/
-  private ViewModel mViewMode;
+//  private ViewModel mViewMode;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -67,14 +67,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     setContentView(R.layout.activity_main);
 
     // Get view model
-    mViewMode = ViewModelProviders.of(this).get(ViewModel.class);
-    // listen to live data onChange
-    mViewMode.getAllUsers().observe(this, new Observer<List<User>>() {
-      @Override
-      public void onChanged(@Nullable List<User> users) {
-        // update the cached of user in the adapter
-      }
-    });
+//    mViewMode = ViewModelProviders.of(this).get(ViewModel.class);
+//    // listen to live data onChange
+//    mViewMode.getAllUsers().observe(this, new Observer<List<User>>() {
+//      @Override
+//      public void onChanged(@Nullable List<User> users) {
+//        // update the cached of user in the adapter
+//      }
+//    });
 
     //定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
