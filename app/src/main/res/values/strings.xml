@@ -3,4 +3,5 @@
     <string name="account_balance">Account Balance</string>
     <string name="balance_currency">$</string>
     <string name="balance_amount">524.99</string>
+    <string name="content">Create a new ExpandingItem in the ExpandingList. This method receives the expanding_layout created before. Yes! We can have different layouts for different items in the same list. The items will be created based on expanding_item layout and the sub items will be created based on expanding_sub_item layout:</string>
 </resources>
