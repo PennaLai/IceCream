@@ -34,11 +34,11 @@ public interface UserDao {
   LiveData<List<User>> getAllUsers();
 
   @Query("SELECT * FROM User WHERE id = :id")
-  LiveData<User> getUserById(Long id);
+  User getUserById(Long id);
 
   @Query("SELECT * FROM User WHERE phoneNumber = :phone")
-  LiveData<User> getUserByPhone(String phone);
+  User getUserByPhone(String phone);
 
   @Query("SELECT * FROM User WHERE username = :username")
-  LiveData<List<User>> getUserByUsername(String username);
+  List<User> getUserByUsername(String username);
 }

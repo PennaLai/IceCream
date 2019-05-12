@@ -16,23 +16,18 @@ import com.example.icecream.database.entity.RssFeed;
 public interface RssFeedDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(RssFeed rssFeed);
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(List<RssFeed> rssFeeds);
+  void insert(RssFeed... rssFeed);
 
   @Delete
-  void delete(RssFeed rssFeed);
+  void delete(RssFeed... rssFeed);
 
   @Update
-  void update(RssFeed rssFeed);
+  void update(RssFeed... rssFeed);
 
   @Query("SELECT * FROM RssFeed ORDER BY category")
   LiveData<List<RssFeed>> getAllFeeds();
 
-  @Query("SELECT * FROM RssFeed WHERE id = :feedId")
-  LiveData<RssFeed> loadRssFeed(Long feedId);
+  @Query("SELECT * FROM RssFeed WHERE channelName =:name")
+  List<RssFeed> getRssFeedByName(String name);
 
-  @Query("SELECT * FROM RssFeed WHERE id = :feedId")
-  RssFeed loadRssFeedSync(Long feedId);
 }

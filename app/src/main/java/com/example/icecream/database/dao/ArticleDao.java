@@ -19,26 +19,21 @@ import com.example.icecream.database.entity.Article;
 public interface ArticleDao {
 
   @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(Article article);
-
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(List<Article> articles);
+  void insert(Article... article);
 
   @Update
-  void update(Article article);
+  void update(Article... article);
 
   @Delete
-  void delete(Article article);
-
-  @Query("DELETE FROM article")
-  void deleteAll();
-
-  @Query("SELECT * FROM article WHERE id = :id")
-  LiveData<Article> getArticleById(Long id);
-
-  @Query("SELECT * FROM article WHERE title = :title")
-  LiveData<List<Article>> getArticlesByTitle(String title);
+  void delete(Article... article);
 
   @Query("SELECT * FROM article ORDER BY title")
   LiveData<List<Article>> getAllArticles();
+
+  @Query("SELECT * FROM article WHERE id = :id")
+  Article getArticleById(Long id);
+
+  @Query("SELECT * FROM article WHERE title = :title")
+  List<Article> getArticlesByTitle(String title);
+
 }

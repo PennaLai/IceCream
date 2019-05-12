@@ -81,11 +81,6 @@ public class HttpHandler {
   }
 
   /**
-   * user token
-   */
-  private String token;
-
-  /**
    * User Login <br/>
    * Send post request and get the login response state from the server.
    *
@@ -120,8 +115,9 @@ public class HttpHandler {
           break;
         case "2":
           responseState = ResponseState.Valid;
-          // add token here
-          token = responseJsonObject.getString("token");
+          // TODO add auth token here
+          String token = responseJsonObject.getString("token");
+
           break;
         default:
           break;
@@ -213,6 +209,8 @@ public class HttpHandler {
    * @return The response state of token validation.
    */
   public ResponseState getRefreshState() {
+    // TODO get token here
+    String token = "";
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;

@@ -46,36 +46,6 @@ public class ViewModel extends AndroidViewModel {
   }
 
   /**
-   * Get the user by phone number.
-   *
-   * @param phone input phone number.
-   * @return the user.
-   */
-  public LiveData<User> getUserByPhone(String phone) {
-    return mRepository.getUserByPhone(phone);
-  }
-
-  /**
-   * Get all the RSS feeds of a user.
-   *
-   * @param user user of interest.
-   * @return the RSS feed list of the user.
-   */
-  public LiveData<List<RssFeed>> getRssFeedsOfUser(User user) {
-    return mRepository.getRssFeedsByUser(user);
-  }
-
-  /**
-   * Get all the articles of a user.
-   *
-   * @param user user of interest.
-   * @return the article list of the user.
-   */
-  public LiveData<List<Article>> getArticlesOfUser(User user) {
-    return mRepository.getArticlesByUser(user);
-  }
-
-  /**
    * Get all the feeds that currently have been stored.
    *
    * @return List of RSS feeds.
@@ -92,4 +62,60 @@ public class ViewModel extends AndroidViewModel {
   public LiveData<List<Article>> getAllArticles() {
     return allArticles;
   }
+
+  /**
+   * Find the user by phone number.
+   *
+   * @param phone the input phone number.
+   */
+  public void findUserByPhone(String phone) {
+    mRepository.findUserByPhone(phone);
+  }
+
+  /**
+   * Find all Feeds of the user.
+   *
+   * @param user user of interest.
+   */
+  public void findRssFeedsByUser(User user) {
+    mRepository.findRssFeedsByUser(user);
+  }
+
+  /**
+   * Find all articles of the user.
+   *
+   * @param user user of interest.
+   */
+  public void findArticlesByUser(User user) {
+    mRepository.findArticlesByUser(user);
+  }
+
+  /**
+   * Get all the RSS feeds of a user.
+   *
+   * @return the RSS feed list of the user.
+   */
+  public LiveData<List<RssFeed>> getRssFeedsOfUser() {
+    return mRepository.getPersonalRssFeeds();
+  }
+
+  /**
+   * Get all the articles of a user.
+   *
+   * @return the article list of the user.
+   */
+  public LiveData<List<Article>> getArticlesOfUser() {
+    return mRepository.getPersonalArticles();
+  }
+
+  /**
+   * Execute insertion for user(s) to database.
+   *
+   * @param user input user(s).
+   */
+  public void insertUser(User... user) {
+    mRepository.insertUser(user);
+  }
+
+
 }
