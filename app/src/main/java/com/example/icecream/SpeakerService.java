@@ -1,5 +1,7 @@
 package com.example.icecream;
 
+import static android.content.ContentValues.TAG;
+
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -8,6 +10,8 @@ import android.media.MediaPlayer.OnCompletionListener;
 import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
+import android.util.Log;
+import com.example.icecream.fragment.PlayFragment.OnPlayerUIListener;
 import java.io.IOException;
 
 /**
@@ -23,10 +27,13 @@ import java.io.IOException;
 public class SpeakerService extends Service implements OnPreparedListener, OnCompletionListener {
 
   /** speak player to play resource. */
-  private MediaPlayer speakerPlayer = new MediaPlayer();
+  private MediaPlayer speakerPlayer;
 
   /** binder between fragment and service. */
   private SpeakerBinder speakerBinder = new SpeakerBinder();
+
+  /** used to change the ui layer of player fragment. */
+  private OnPlayerUIListener onPlayerUIListener;
 
 
   /**
@@ -34,6 +41,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
    */
   @Override
   public void onCreate() {
+    initMediaPlayer();
     super.onCreate();
   }
 
@@ -45,27 +53,17 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
    */
   @Override
   public IBinder onBind(Intent intent) {
+    destroyMediaPlayer();
+    initMediaPlayer();
     return speakerBinder;
   }
 
   @Override
   public boolean onUnbind(Intent intent) {
-    //TODO: 回收资源
+    destroyMediaPlayer();
     return super.onUnbind(intent);
   }
 
-  /**
-   * override method. when start this service and receive command.
-   * @param intent
-   * @param flags
-   * @param startId
-   * @return
-   */
-  @Override
-  public int onStartCommand(Intent intent, int flags, int startId) {
-    speakerPlayer.prepareAsync();
-    return super.onStartCommand(intent, flags, startId);
-  }
 
   /**
    * after prepared, call back and start to play music.
@@ -74,6 +72,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   @Override
   public void onPrepared(MediaPlayer mp) {
     mp.start();
+    onPlayerUIListener.UpdateNewSongUi(); // update the ui in play fragment
   }
 
   /**
@@ -82,7 +81,9 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
    */
   @Override
   public void onCompletion(MediaPlayer mp) {
-
+    // 暂时设定为循环播放
+    mp.start();
+    mp.setLooping(true);
   }
 
   /**
@@ -104,6 +105,18 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
     super.onDestroy();
   }
 
+  /**
+   * register the ui listener.
+   * @param onPlayerUIListener used to update the ui
+   */
+  public void setOnPlayerUIListener(OnPlayerUIListener onPlayerUIListener) {
+    this.onPlayerUIListener = onPlayerUIListener;
+  }
+
+
+  /**
+   * initialize the media player.
+   */
   private void initMediaPlayer() {
     speakerPlayer = new MediaPlayer();
     speakerPlayer.setOnPreparedListener(this);
@@ -111,7 +124,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   }
 
 
-  private boolean isPlaying() {
+  public boolean isPlaying() {
     return speakerPlayer.isPlaying();
   }
 
@@ -138,29 +151,22 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
    * to stop the previous song and start the new player resource.
    * @param url music url.
    */
-  public void setNewResource(String url) {
+  public void startNewSong(String url) {
     if (isPlaying()) {
       speakerPlayer.stop();
-      try {
-        speakerPlayer.setDataSource(url);
-        speakerPlayer.prepareAsync();
-      } catch (IOException e) {
-        e.printStackTrace();
       }
-    }
-  }
-
-
-  public void testForPlay() {
-    AssetFileDescriptor fd = null;
+    AssetFileDescriptor fd;
     try {
-      fd = getAssets().openFd("music/Reality.mp3");
+      Log.i(TAG, "startNewSong: "+ url);
+      speakerPlayer.reset();
+      fd = getAssets().openFd(url);
       speakerPlayer.setDataSource(fd);
       speakerPlayer.prepareAsync();
-    } catch (IOException e) {
+      } catch (IOException e) {
       e.printStackTrace();
     }
   }
+
 
   /**
    * Get the file duration time.
@@ -169,6 +175,18 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   public int getDuration() {
     return speakerPlayer.getDuration();
   }
+
+  /**
+   * get the percentage progress.
+   * @return percentage progress of current song
+   */
+  public Double getProgress() {
+    int position = speakerPlayer.getCurrentPosition();
+    int time = getDuration();
+    double progress = (double) position/(double) time;
+    return progress;
+  }
+
 
   /**
    * Set the current music file progress.
