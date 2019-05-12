@@ -10,12 +10,11 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-//import com.diegodobelo.expandingview.ExpandingItem;
-//import com.diegodobelo.expandingview.ExpandingList;
-import com.example.icecream.expanding.expandingview.ExpandingItem;
-import com.example.icecream.expanding.expandingview.ExpandingList;
+import com.diegodobelo.expandingview.ExpandingItem;
+import com.diegodobelo.expandingview.ExpandingList;
 
 import com.example.icecream.R;
+import com.example.icecream.expanding.Article;
 
 
 public class ResourceFragment extends Fragment {
@@ -50,26 +49,10 @@ public class ResourceFragment extends Fragment {
 //    Button btgoToPersonalPage = view.findViewById(R.id.bt_goToPersonalDetail);
 //    btgoToPersonalPage.setOnClickListener(v -> System.out.println("Fuck You from resource"));
     ExpandingList expandingList = (ExpandingList) view.findViewById(R.id.expanding_list_main);
-    ExpandingItem item = expandingList.createNewItem(R.layout.expanding_layout);
-    ExpandingItem item1= expandingList.createNewItem(R.layout.expanding_layout);
-    /*ExpandingItem extends from View, so you can call
-    findViewById to get any View inside the layout*/
-    TextView textView = (TextView) item.findViewById(R.id.title);
-    textView.setText("It works!!");
-    textView = item1.findViewById(R.id.title);
-    textView.setText("It works!!");
+//
+    new Article(expandingList, "知乎", "知乎药丸", 1);
+    new Article(expandingList, "头条", "头条真好", 2);
 
-    //This will create 5 items
-    item.createSubItems(5);
-
-//get a sub item View
-    View subItemZero = item.getSubItemView(0);
-    ((TextView) subItemZero.findViewById(R.id.sub_title)).setText("Cool");
-
-    View subItemOne = item.getSubItemView(1);
-    ((TextView) subItemOne.findViewById(R.id.sub_title)).setText("Awesome");
-    item.setIndicatorColorRes(R.color.blue);
-    item1.setIndicatorIconRes(R.drawable.ic_play);
     return view;
   }
 }
