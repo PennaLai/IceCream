@@ -16,6 +16,11 @@ public class Searchbar extends TransformingToolbar {
 
   private EditText editText;
 
+  /**
+   * create the search bar.
+   * @param context Context
+   * @param attrs attribute set
+   */
   public Searchbar(Context context, AttributeSet attrs) {
     super(context, attrs);
     setBackgroundColor(context.getResources().getColor(android.R.color.white));

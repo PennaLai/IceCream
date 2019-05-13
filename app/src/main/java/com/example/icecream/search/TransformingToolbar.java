@@ -15,14 +15,14 @@ public class TransformingToolbar extends Toolbar {
     super(context, attrs);
   }
 
-  /** Sets the Visibility of all children to GONE */
+  /** Sets the Visibility of all children to GONE. */
   public void hideContent() {
     for (int i = 0; i < getChildCount(); i++) {
       getChildAt(i).setVisibility(GONE);
     }
   }
 
-  /** Sets the Visibility of all children to VISIBLE */
+  /** Sets the Visibility of all children to VISIBLE. */
   public void showContent() {
     for (int i = 0; i < getChildCount(); i++) {
       getChildAt(i).setVisibility(VISIBLE);

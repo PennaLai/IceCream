@@ -33,6 +33,7 @@ public class SpeakerServiceTest {
 
     // Get the reference to the service, or you can call
     // public methods on the binder directly.
+
     SpeakerService service =
         ((SpeakerService.SpeakerBinder) binder).getService();
 

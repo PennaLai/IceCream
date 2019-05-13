@@ -196,7 +196,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void onClickGetVerificationCode() {
     phoneNumber = etPhoneNumber.getText().toString();
-    final InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
+    final InputStringValidator
+        .ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
 
     if (phoneNumberState == InputStringValidator.ValState.Valid) {
       /* check if duplicate */
@@ -230,14 +231,15 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * Verify the username
+   * Verify the username.
    *
    * @param username input username
    * @return true if username is valid
    */
   private boolean verifyUsername(final String username) {
     boolean result = false;
-    final InputStringValidator.ValState userNameState = InputStringValidator.validateUsername(username);
+    final InputStringValidator
+        .ValState userNameState = InputStringValidator.validateUsername(username);
     switch (userNameState) {
       case Valid:
         result = true;
@@ -261,13 +263,14 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * Verify the password
+   * Verify the password.
    *
    * @param password input password
    * @return true if password is valid
    */
   private boolean verifyPassword(final String password) {
-    final InputStringValidator.ValState passwordState = InputStringValidator.validatePassword(password);
+    final InputStringValidator
+        .ValState passwordState = InputStringValidator.validatePassword(password);
     boolean result = false;
     switch (passwordState) {
       case Valid:

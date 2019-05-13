@@ -45,13 +45,13 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
    * @author Penna
    */
   public interface MusicConnector {
-    public void sendNewMusic();
+    void sendNewMusic();
 
-    public void startPlayer();
+    void startPlayer();
 
-    public void stopPlayer();
+    void stopPlayer();
 
-    public void pausePlayer();
+    void pausePlayer();
   }
 
   @Override
