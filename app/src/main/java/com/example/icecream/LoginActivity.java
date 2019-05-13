@@ -31,10 +31,6 @@ public class LoginActivity extends AppCompatActivity {
   private HttpHandler httpHandler;
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
-  private FancyButton login;
-  private TextView signUp;
-  private TextView skip;
-  private TextView forget;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -48,10 +44,10 @@ public class LoginActivity extends AppCompatActivity {
 
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
-    login = findViewById(R.id.bt_login);
-    signUp = findViewById(R.id.signup);
-    skip = findViewById(R.id.tv_skip);
-    forget = findViewById(R.id.tv_forget);
+//    FancyButton login = findViewById(R.id.bt_login);
+//    TextView signUp = findViewById(R.id.signup);
+//    TextView skip = findViewById(R.id.tv_skip);
+//    TextView forget = findViewById(R.id.tv_forget);
 
     final OkHttpClient client = new OkHttpClient();
     httpHandler = new HttpHandler(client, this);

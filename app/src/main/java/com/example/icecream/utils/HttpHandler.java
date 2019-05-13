@@ -1,5 +1,8 @@
 package com.example.icecream.utils;
 
+import android.util.Log;
+import org.json.JSONException;
+import org.json.JSONObject;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -24,6 +27,7 @@ import org.json.JSONObject;
  */
 public class HttpHandler {
 
+  private static final String TAG = HttpHandler.class.getName();
   private final OkHttpClient okHttpClient;
 
   private static final String PROTOCOL = "http";
@@ -122,7 +126,7 @@ public class HttpHandler {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postLoginState: ", e );
     }
     String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
     JSONObject responseJsonObject;
@@ -148,7 +152,7 @@ public class HttpHandler {
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postLoginState: ", e);
     }
     return responseState;
   }
@@ -176,7 +180,7 @@ public class HttpHandler {
       jsonObject.put("password", password);
       jsonObject.put("username", username);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postRegisterState: ", e);
     }
     String responseString = postHttpResponseString(url, jsonObject.toString());
     JSONObject responseJsonObject;
@@ -187,7 +191,7 @@ public class HttpHandler {
         responseState = ResponseState.Valid;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postRegisterState: ",e );
     }
     return responseState;
   }
@@ -204,7 +208,7 @@ public class HttpHandler {
     try {
       requestJsonObject.put("phoneNumber", phoneNumber);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postPhoneState: ", e);
     }
     String responseString = postHttpResponseString(BEFORE_REGISTER, requestJsonObject.toString());
     JSONObject responseJsonObject;
@@ -222,7 +226,7 @@ public class HttpHandler {
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postPhoneState: ", e);
     }
     return responseState;
   }
@@ -258,7 +262,7 @@ public class HttpHandler {
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "getRefreshState: ", e);
     }
     return responseState;
   }
@@ -281,10 +285,9 @@ public class HttpHandler {
       if (response.isSuccessful()) {
         assert response.body() != null;
         result = response.body().string();
-        System.out.println(result);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "getHttpResponseString: ", e);
     }
     return result;
   }
@@ -308,10 +311,9 @@ public class HttpHandler {
       if (response.isSuccessful()) {
         assert response.body() != null;
         result = response.body().string();
-        System.out.println(result);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postHttpResponseString: ", e);
     }
     return result;
   }
