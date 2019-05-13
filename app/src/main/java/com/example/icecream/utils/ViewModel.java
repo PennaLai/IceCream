@@ -3,6 +3,7 @@ package com.example.icecream.utils;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 
 import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.Article;
@@ -28,6 +29,8 @@ public class ViewModel extends AndroidViewModel {
 
   private LiveData<List<Article>> allArticles;
 
+  private MutableLiveData<User> userSearchResult;
+
   /**
    * View model constructor.
    *
@@ -39,6 +42,7 @@ public class ViewModel extends AndroidViewModel {
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     allArticles = repository.getAllArticles();
+    userSearchResult = repository.getUserSearchResult();
   }
 
   /**
@@ -120,6 +124,27 @@ public class ViewModel extends AndroidViewModel {
    */
   public void insertUser(User... user) {
     repository.insertUser(user);
+  }
+
+  /**
+   * Update the user(s).
+   *
+   * @param user input user(s).
+   */
+  public void updateUser(User... user) {
+    repository.updateUser(user);
+  }
+
+  /**
+   * Get the search result of the user.
+   *
+   * @return result user.
+   */
+  public MutableLiveData<User> getUserSearchResult() {
+    if (userSearchResult == null) {
+      userSearchResult = new MutableLiveData<>();
+    }
+    return userSearchResult;
   }
 
 

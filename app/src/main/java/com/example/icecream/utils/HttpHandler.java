@@ -1,13 +1,13 @@
 package com.example.icecream.utils;
 
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.v7.app.AppCompatActivity;
+
+import com.example.icecream.database.entity.User;
 import android.util.Log;
-import org.json.JSONException;
-import org.json.JSONObject;
-import android.app.Activity;
-import android.content.Context;
-import android.content.SharedPreferences;
 
 import java.io.IOException;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -63,20 +63,26 @@ public class HttpHandler {
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
-  /**
-   * Shared preference for token storage.
-   */
-  private final SharedPreferences sharedPreferences;
+  private ViewModel viewModel;
+
+  private Map<String, String> tokenMap;
 
   /**
    * Constructor for http handler.
    *
    * @param okHttpClient http client
-   * @param activity     the caller activity
    */
-  public HttpHandler(final OkHttpClient okHttpClient, Activity activity) {
+  public HttpHandler(final OkHttpClient okHttpClient, AppCompatActivity activity) {
     this.okHttpClient = okHttpClient;
-    this.sharedPreferences = activity.getSharedPreferences(TOKEN_FILE_KEY, Context.MODE_PRIVATE);
+    viewModel = ViewModelProviders.of(activity).get(ViewModel.class);
+    viewModel.getUserSearchResult().observe(activity, user -> {
+      if (user != null) {
+        // update token
+        user.setAuthToken(tokenMap.get(user.getPhoneNumber()));
+      }
+      viewModel.updateUser(user);
+    });
+
   }
 
   /**
@@ -144,9 +150,8 @@ public class HttpHandler {
           responseState = ResponseState.Valid;
           // add auth token here
           String token = responseJsonObject.getString("token");
-          SharedPreferences.Editor editor = sharedPreferences.edit();
-          editor.putString(TOKEN_KEY, token);
-          editor.apply();
+          tokenMap.put(phoneNumber, token);
+          viewModel.findUserByPhone(phoneNumber);
           break;
         default:
           break;
@@ -168,12 +173,6 @@ public class HttpHandler {
    */
   public ResponseState postRegisterState(
       final String phoneNumber, final String username, final String password) {
-    String url = REGISTER_URL + String.format(
-        "?phone=%s&username=%s&password=%s",
-        phoneNumber,
-        username,
-        password
-    );
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
@@ -182,13 +181,16 @@ public class HttpHandler {
     } catch (JSONException e) {
       Log.e(TAG, "postRegisterState: ", e);
     }
-    String responseString = postHttpResponseString(url, jsonObject.toString());
+    String responseString = postHttpResponseString(REGISTER_URL, jsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
       if (responseJsonObject.getString("msgCode").equals("0")) {
         responseState = ResponseState.Valid;
+        // add user to database
+        User user = new User(phoneNumber, username, password);
+        viewModel.insertUser(user);
       }
     } catch (JSONException e) {
       Log.e(TAG, "postRegisterState: ",e );
@@ -236,8 +238,8 @@ public class HttpHandler {
    *
    * @return The response state of token validation.
    */
-  public ResponseState getRefreshState() {
-    String token = sharedPreferences.getString(TOKEN_KEY, "");
+  public ResponseState getRefreshState(User user) {
+    String token = tokenMap.get(user.getPhoneNumber());
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
