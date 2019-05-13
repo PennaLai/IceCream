@@ -3,7 +3,9 @@ package com.example.icecream.utils;
 import org.junit.Before;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
+import java.util.Date;
+
+import static org.junit.Assert.assertEquals;
 
 public class ConvertersTest {
 
@@ -12,10 +14,15 @@ public class ConvertersTest {
   }
 
   @Test
-  public void fromTimestamp() {
+  public void fromTimestampTest() {
+    Long value = 123L;
+    Date date = new Date(value);
+    assertEquals(date, Converters.fromTimestamp(value));
   }
 
   @Test
-  public void dateToTimestamp() {
+  public void dateToTimestampTest() {
+    Date date = new Date(123L);
+    assertEquals(123L, Converters.dateToTimestamp(date).longValue());
   }
 }

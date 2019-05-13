@@ -7,7 +7,7 @@ import android.util.Log;
 import com.example.icecream.database.entity.User;
 
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -51,6 +51,9 @@ public class HttpHandler {
   private static final String SUBSCRIBE_URL = MAIN_URL + "/addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "/deleteChannel";
 
+  private static final String MESSAGE_CODE = "msgCode";
+
+
   /**
    * The token file name.
    */
@@ -65,7 +68,7 @@ public class HttpHandler {
 
   private ViewModel viewModel;
 
-  private HashMap<String, String> tokenMap;
+  private Map<String, String> tokenMap;
 
   /**
    * Constructor for http handler.
@@ -139,7 +142,7 @@ public class HttpHandler {
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "0":
           responseState = ResponseState.NoSuchUser;
           break;
@@ -186,7 +189,7 @@ public class HttpHandler {
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      if (responseJsonObject.getString("msgCode").equals("0")) {
+      if (responseJsonObject.getString(MESSAGE_CODE).equals("0")) {
         responseState = ResponseState.Valid;
         // add user to database
         User user = new User(phoneNumber, username, password);
@@ -217,7 +220,7 @@ public class HttpHandler {
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "1":
           responseState = ResponseState.DuplicatePhoneNumber;
           break;
@@ -247,7 +250,7 @@ public class HttpHandler {
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "0":
           // token is invalid.
           responseState = ResponseState.InvalidToken;
