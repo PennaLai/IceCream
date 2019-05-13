@@ -18,22 +18,22 @@ public class PersonalDetailActivity extends AppCompatActivity implements View.On
 
   private String userName;
   private TextView userNameTextView;
-  private Button btgoToLoginPage;
+
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_personal_detail);
     userNameTextView = findViewById(R.id.username);
-    btgoToLoginPage = findViewById(R.id.bt_goToLogin);
-    btgoToLoginPage.setOnClickListener(this);
+    Button btGoToLoginPage = findViewById(R.id.bt_goToLogin);
+    btGoToLoginPage.setOnClickListener(this);
     loadUserInformation();
   }
 
   /**
-   * This method is to load the user information
+   * This method is to load the user information.
    */
   public void loadUserInformation() {
-    //TODO load user information from database.
+    //TODO load user information from com.example.icecream.database.
   }
 
   /**
@@ -44,7 +44,7 @@ public class PersonalDetailActivity extends AppCompatActivity implements View.On
   }
 
   /**
-   * This method is to go to login page to login the account
+   * This method is to go to login page to login the account.
    */
   public void goToLoginPage() {
     Intent intent = new Intent(PersonalDetailActivity.this, LoginActivity.class);
@@ -52,14 +52,16 @@ public class PersonalDetailActivity extends AppCompatActivity implements View.On
   }
 
   /**
-   * handle the onClick event for widget
-   * @param v
+   * handle the onClick event for widget.
+   * @param v view
    */
   @Override
   public void onClick(View v) {
-    switch(v.getId()) {
+    switch (v.getId()) {
       case R.id.bt_goToLogin:
         goToLoginPage();
+        break;
+      default:
         break;
     }
   }

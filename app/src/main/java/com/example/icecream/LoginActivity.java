@@ -13,8 +13,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
-import utils.HttpHandler;
-import utils.Validator;
+import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.InputStringValidator;
 
 /**
  * The login activity.
@@ -30,6 +30,10 @@ public class LoginActivity extends AppCompatActivity {
   private final HttpHandler httpHandler = new HttpHandler(client);
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
+  private FancyButton login;
+  private TextView signUp;
+  private TextView skip;
+  private TextView forget;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -43,10 +47,10 @@ public class LoginActivity extends AppCompatActivity {
 
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
-    FancyButton login = findViewById(R.id.bt_login);
-    TextView signUp = findViewById(R.id.signup);
-    TextView skip = findViewById(R.id.tv_skip);
-    TextView forget = findViewById(R.id.tv_forget);
+    login = findViewById(R.id.bt_login);
+    signUp = findViewById(R.id.signup);
+    skip = findViewById(R.id.tv_skip);
+    forget = findViewById(R.id.tv_forget);
 
   }
 
@@ -65,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
     final String phoneNumber = phoneEditText.toString();
     final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
-      switch (httpHandler.postLoginResponseState(phoneNumber, password)) {
+      switch (httpHandler.postLoginState(phoneNumber, password)) {
         case NoSuchUser:
           showToastMessage("用户账号不存在");
           break;
@@ -84,39 +88,36 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Invoke the {@link Validator#validatePhoneNumber(String)} to jude whether
+   * Invoke the {@link InputStringValidator#validatePhoneNumber(String)} to judge whether
    * the password is valid or not.
    *
    * @param phoneNumber The input phoneNumber from the phoneNumber input <em>textview</em>.
    * @return boolean Whether the phoneNumber is valid or not.
    */
   private boolean checkPhoneNumber(final String phoneNumber) {
-    Validator.ValState phoneState = Validator.validatePhoneNumber(phoneNumber);
-    boolean result = false;
+    InputStringValidator.ValState phoneState = InputStringValidator.validatePhoneNumber(phoneNumber);
     switch (phoneState) {
       case Empty:
         showToastMessage("手机号不能为空");
-        break;
+        return false;
       case TooLong:
         showToastMessage("手机号太长了");
-        break;
+        return false;
       case TooShort:
         showToastMessage("手机号太短了");
-        break;
+        return false;
       case InvalidCharacters:
         showToastMessage("手机号格式不正确");
-        break;
+        return false;
       case Valid:
-        result = true;
-        break;
+        return true;
       default:
-        break;
+        return false;
     }
-    return result;
   }
 
   /**
-   * Invoke the {@link Validator#validatePassword(String) validatePassword} to jude whether
+   * Invoke the {@link InputStringValidator#validatePassword(String) validatePassword} to jude whether
    * the password is valid or not.
    *
    * @param password The input password from the password input <em>textview</em>.
@@ -124,7 +125,7 @@ public class LoginActivity extends AppCompatActivity {
    */
   private boolean checkPassword(final String password) {
 
-    Validator.ValState passwordState = Validator.validatePassword(password);
+    InputStringValidator.ValState passwordState = InputStringValidator.validatePassword(password);
     switch (passwordState) {
       case Empty:
         showToastMessage("密码不能为空");
