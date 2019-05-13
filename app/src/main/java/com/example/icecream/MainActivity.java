@@ -45,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 //import android.support.v4.app.Fragment;
 
 /**
@@ -88,8 +90,6 @@ public class MainActivity extends BoilerplateActivity implements View.OnClickLis
 //      }
 //    });
 
-//    toolbar = (SimpleToolbar) findViewById(R.id.toolbar);
-
     //定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
     data.put(0, ResourceFragment.newInstance());
@@ -115,6 +115,7 @@ public class MainActivity extends BoilerplateActivity implements View.OnClickLis
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+
     slidingRootNav = new SlidingRootNavBuilder(this)
             .withToolbarMenuToggle(toolbar)
             .withMenuOpened(false)
@@ -135,10 +136,11 @@ public class MainActivity extends BoilerplateActivity implements View.OnClickLis
             createItemFor(POS_LOGOUT)));
     adapter.setListener(this);
 
-    RecyclerView list = findViewById(R.id.list);
-    list.setNestedScrollingEnabled(false);
-    list.setLayoutManager(new LinearLayoutManager(this));
-    list.setAdapter(adapter);
+    RecyclerView draw_list = findViewById(R.id.draw_list);
+
+    draw_list.setNestedScrollingEnabled(false);
+    draw_list.setLayoutManager(new LinearLayoutManager(this));
+    draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
   }
@@ -209,15 +211,8 @@ public class MainActivity extends BoilerplateActivity implements View.OnClickLis
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
-      case R.id.bt_goToPersonalDetail:
-        goToPersonalDetail();
-        break;
+      // do nothing
     }
-  }
-
-  private void goToPersonalDetail() {
-    Intent intent = new Intent(MainActivity.this, PersonalDetailActivity.class);
-    startActivity(intent);
   }
 
   @Override
@@ -239,59 +234,6 @@ public class MainActivity extends BoilerplateActivity implements View.OnClickLis
   public void pausePlayer() {
 
   }
-//
-//
-//  private void transitionToSearch() {
-//    // create a transition that navigates to search when complete
-//    Transition transition = FadeOutTransition.withAction(navigateToSearchWhenDone());
-//
-//    // let the TransitionManager do the heavy work for us!
-//    // all we have to do is change the attributes of the toolbar and the TransitionManager animates the changes
-//    // in this case I am removing the bounds of the toolbar (to hide the blue padding on the screen) and
-//    // I am hiding the contents of the Toolbar (Navigation icon, Title and Option Items)
-//    TransitionManager.beginDelayedTransition(toolbar, transition);
-//    FrameLayout.LayoutParams frameLP = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
-//    frameLP.setMargins(0, 0, 0, 0);
-//    toolbar.setLayoutParams(frameLP);
-//    toolbar.hideContent();
-//  }
-//
-//  private Transition.TransitionListener navigateToSearchWhenDone() {
-//    return new SimpleTransitionListener() {
-//      @Override
-//      public void onTransitionEnd(Transition transition) {
-//        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
-//        startActivity(intent);
-//
-//        // we are handing the enter transitions ourselves
-//        // this line overrides that
-//        overridePendingTransition(0, 0);
-//
-//        // by this point of execution we have animated the 'expansion' of the Toolbar and hidden its contents.
-//        // We are half way there. Continue to the SearchActivity to finish the animation
-//      }
-//    };
-//  }
-
-//  @Override
-//  protected void onResume() {
-//    super.onResume();
-//
-//    // when you are back from the SearchActivity animate the 'shrinking' of the Toolbar and
-//    // fade its contents back in
-//    fadeToolbarIn();
-//
-//    // in case we are not coming here from the SearchActivity the Toolbar would have been already visible
-//    // so the above method has no effect
-//  }
-//
-//  private void fadeToolbarIn() {
-//    TransitionManager.beginDelayedTransition(toolbar, FadeInTransition.createTransition());
-//    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
-//    layoutParams.setMargins(toolbarMargin, toolbarMargin, toolbarMargin, toolbarMargin);
-//    toolbar.showContent();
-//    toolbar.setLayoutParams(layoutParams);
-//  }
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {

@@ -77,7 +77,7 @@ public class LoginActivity extends AppCompatActivity {
           break;
         case Valid:
           showToastMessage("登录成功");
-          goToPersonalDetailPage();
+          goToMainPage();
           break;
         default:
           showToastMessage("登录失败，请重试");
@@ -168,14 +168,14 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Jump to the PersonalDetailPage.
+   * Jump to the MainPage.
    */
-  public void goToPersonalDetailPage() {
+  public void goToMainPage() {
     Context context = LoginActivity.this;
-    Class destinationActivity = PersonalDetailActivity.class;
-    Intent startPersonalActivityIntent = new Intent(context, destinationActivity);
-    startPersonalActivityIntent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
-    startActivity(startPersonalActivityIntent);
+    Class destinationActivity = MainActivity.class;
+    Intent intent = new Intent(context, destinationActivity);
+    intent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
+    startActivity(intent);
   }
 
   /**
@@ -197,7 +197,7 @@ public class LoginActivity extends AppCompatActivity {
    * @param view The system stipulated view object.
    */
   public void skipLogin(final View view) {
-    Intent intent = new Intent(LoginActivity.this, PersonalDetailActivity.class);
+    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
     startActivity(intent);
   }
 
