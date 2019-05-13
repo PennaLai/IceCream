@@ -22,6 +22,10 @@ import com.example.icecream.search.SimpleToolbar;
 import java.util.Objects;
 
 
+/**
+ * This is the resource(main) fragment to display the articles.
+ * @author Aaron
+ */
 public class ResourceFragment extends Fragment implements RecycleAdapter.ListItemClickListener {
 
   private static final int NUM_LIST_ITEMS = 100;
@@ -32,6 +36,10 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
 
   private Toast mToast;
 
+  /**
+   * Create a instance of ResourceFragment.
+   * @return com.example.icecream.fragment.ResourceFragment
+   */
   public static ResourceFragment newInstance() {
     return new ResourceFragment();
   }

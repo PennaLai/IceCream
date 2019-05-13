@@ -117,8 +117,6 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
 
       listItemNumberView = (TextView) itemView.findViewById(R.id.tv_item_title);
       viewHolderIndex = (TextView) itemView.findViewById(R.id.tv_view_holder_instance);
-      // COMPLETED (7) Call setOnClickListener on the View passed into the constructor (use 'this'
-      // as the OnClickListener)
       itemView.setOnClickListener(this);
     }
 

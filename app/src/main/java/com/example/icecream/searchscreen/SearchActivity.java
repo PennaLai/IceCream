@@ -12,8 +12,15 @@ import com.example.icecream.transition.FadeInTransition;
 import com.example.icecream.transition.FadeOutTransition;
 import com.example.icecream.transition.SimpleTransitionListener;
 
+/**
+ * The search activity.
+ * @author aaron
+ */
 public class SearchActivity extends BoilerplateActivity {
 
+  /*
+   * The search bar.
+   */
   private Searchbar searchbar;
 
   @Override
@@ -24,11 +31,7 @@ public class SearchActivity extends BoilerplateActivity {
     searchbar = (Searchbar) findViewById(R.id.search_toolbar);
     setSupportActionBar(searchbar);
 
-    // make sure to check if this is the first time running the activity
-    // we don't want to play the enter animation on configuration changes (i.e. orientation)
     if (isFirstTimeRunning(savedInstanceState)) {
-      // Start with an empty looking Toolbar
-      // We are going to fade its contents in, as long as the activity finishes rendering
       searchbar.hideContent();
 
       ViewTreeObserver viewTreeObserver = searchbar.getViewTreeObserver();
@@ -38,17 +41,12 @@ public class SearchActivity extends BoilerplateActivity {
             public void onGlobalLayout() {
               searchbar.getViewTreeObserver().removeOnGlobalLayoutListener(this);
 
-              // after the activity has finished drawing the initial layout, we are going to
-              // continue the animation
-              // that we left off from the MainActivity
               showSearch();
             }
 
             private void showSearch() {
-              // use the TransitionManager to animate the changes of the Toolbar
               TransitionManager.beginDelayedTransition(
                   searchbar, FadeInTransition.createTransition());
-              // here we are just changing all children to VISIBLE
               searchbar.showContent();
             }
           });
@@ -61,16 +59,12 @@ public class SearchActivity extends BoilerplateActivity {
 
   @Override
   public void finish() {
-    // when the user tries to finish the activity we have to animate the exit
-    // let's start by hiding the keyboard so that the exit seems smooth
     hideKeyboard();
 
-    // at the same time, start the exit transition
     exitTransitionWithAction(
         new Runnable() {
           @Override
           public void run() {
-            // which finishes the activity (for real) when done
             SearchActivity.super.finish();
 
             // override the system pending transition as we are handling ourselves

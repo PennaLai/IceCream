@@ -8,18 +8,47 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.icecream.R;
 
-/** Created by yarolegovich on 25.03.2017. */
+/**
+ * This class is the item in the draw.
+ * @author aaron
+ */
 public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
 
+  /*
+   * The selected type icon id.
+   */
   private int selectedItemIconTint;
+
+  /*
+   * The selected type text id.
+   */
   private int selectedItemTextTint;
 
+  /*
+   * The normal type icon id.
+   */
   private int normalItemIconTint;
+
+  /*
+   * The normal type icon id.
+   */
   private int normalItemTextTint;
 
+  /*
+   * The icon.
+   */
   private Drawable icon;
+
+  /*
+   * The text.
+   */
   private String title;
 
+  /**
+   * The Constructor for SimpleItem.
+   * @param icon : icon.
+   * @param title : text.
+   */
   public SimpleItem(Drawable icon, String title) {
     this.icon = icon;
     this.title = title;
@@ -41,21 +70,42 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
     holder.icon.setColorFilter(isChecked ? selectedItemIconTint : normalItemIconTint);
   }
 
+  /**
+   * Set the selected type icon for a SimpleItem instance
+   * @param selectedItemIconTint : the selected icon id.
+   * @return com.example.icecream.menu.SimpleItem the instance.
+   */
   public SimpleItem withSelectedIconTint(int selectedItemIconTint) {
     this.selectedItemIconTint = selectedItemIconTint;
     return this;
   }
 
+  /**
+   * Set the selected type text for a SimpleItem instance
+   * @param selectedItemTextTint : the selected text id.
+   * @return com.example.icecream.menu.SimpleItem the instance.
+   */
   public SimpleItem withSelectedTextTint(int selectedItemTextTint) {
     this.selectedItemTextTint = selectedItemTextTint;
     return this;
   }
 
+
+  /**
+   * Set the normal type icon for a SimpleItem instance
+   * @param normalItemIconTint : the normal icon id.
+   * @return com.example.icecream.menu.SimpleItem the instance.
+   */
   public SimpleItem withIconTint(int normalItemIconTint) {
     this.normalItemIconTint = normalItemIconTint;
     return this;
   }
 
+  /**
+   * Set the normal text for a SimpleItem instance
+   * @param normalItemTextTint : the normal text id.
+   * @return com.example.icecream.menu.SimpleItem the instance.
+   */
   public SimpleItem withTextTint(int normalItemTextTint) {
     this.normalItemTextTint = normalItemTextTint;
     return this;

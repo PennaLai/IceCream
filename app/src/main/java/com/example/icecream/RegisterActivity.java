@@ -83,44 +83,44 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     MobSDK.init(this);
     // the event handler for the SMSSDK
     final EventHandler eventHandler =
-        new EventHandler() {
+      new EventHandler() {
 
-          @Override
-          public void afterEvent(final int event, final int result, final Object data) {
-            // afterEvent会在子线程被调用，因此如果后续有UI相关操作，需要将数据发送到UI线程
-            Message msg = new Message();
-            msg.arg1 = event;
-            msg.arg2 = result;
-            msg.obj = data;
-            new Handler(
-                Looper.getMainLooper(),
-                msg1 -> {
-                  int event1 = msg1.arg1;
-                  int result1 = msg1.arg2;
-                  Object data1 = msg1.obj;
-                  if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-                    if (result1 == SMSSDK.RESULT_COMPLETE) {
-                      Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
-                    } else {
-                      Toast.makeText(RegisterActivity.this, "发送失败，请重试", Toast.LENGTH_LONG)
-                          .show();
-                      ((Throwable) data1).printStackTrace();
-                    }
-                  } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-                    if (result1 == SMSSDK.RESULT_COMPLETE) {
-                      verified = true;
-                      Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
-                    } else {
-                      verified = false;
-                      Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
-                      ((Throwable) data1).printStackTrace();
-                    }
-                  }
-                  return false;
-                })
-                .sendMessage(msg);
-          }
-        };
+        @Override
+        public void afterEvent(final int event, final int result, final Object data) {
+        // afterEvent会在子线程被调用，因此如果后续有UI相关操作，需要将数据发送到UI线程
+        Message msg = new Message();
+        msg.arg1 = event;
+        msg.arg2 = result;
+        msg.obj = data;
+        new Handler(
+          Looper.getMainLooper(),
+          msg1 -> {
+            int event1 = msg1.arg1;
+            int result1 = msg1.arg2;
+            Object data1 = msg1.obj;
+            if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+              if (result1 == SMSSDK.RESULT_COMPLETE) {
+                Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
+              } else {
+                Toast.makeText(RegisterActivity.this, "发送失败，请重试", Toast.LENGTH_LONG)
+                    .show();
+                ((Throwable) data1).printStackTrace();
+              }
+            } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+              if (result1 == SMSSDK.RESULT_COMPLETE) {
+                verified = true;
+                Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
+              } else {
+                verified = false;
+                Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
+                ((Throwable) data1).printStackTrace();
+              }
+            }
+            return false;
+          })
+          .sendMessage(msg);
+        }
+      };
     SMSSDK.registerEventHandler(eventHandler);
   }
 
