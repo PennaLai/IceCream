@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.icecream.database.entity.User;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.MediaType;
@@ -85,7 +86,7 @@ public class HttpHandler {
       }
       viewModel.updateUser(user);
     });
-
+    tokenMap = new HashMap<>();
   }
 
   /**

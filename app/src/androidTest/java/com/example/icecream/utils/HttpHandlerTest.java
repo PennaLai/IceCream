@@ -43,7 +43,7 @@ public class HttpHandlerTest {
   public void postLoginStateValidTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    HttpHandler.ResponseState responseState = httpHandler.postLoginState("15602432271", "123456");
+    HttpHandler.ResponseState responseState = httpHandler.postLoginState("18929357397", "123456");
     assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 
@@ -54,7 +54,7 @@ public class HttpHandlerTest {
   public void postLoginStateWrongPwdTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    HttpHandler.ResponseState responseState = httpHandler.postLoginState("15602432271", "dhkjahdjka");
+    HttpHandler.ResponseState responseState = httpHandler.postLoginState("18929357397", "1231232");
     assertEquals(HttpHandler.ResponseState.WrongPassword, responseState);
   }
 
@@ -65,8 +65,8 @@ public class HttpHandlerTest {
   public void postRegisterStateValidTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("15602432293");
-//    assertEquals(HttpHandler.ResponseState.Valid, responseState);
+    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("12346546627");
+    assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 
   /**
@@ -76,8 +76,8 @@ public class HttpHandlerTest {
   public void postPhoneStateDuplicateTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("15602432271");
-//    assertEquals(HttpHandler.ResponseState.DuplicatePhoneNumber, responseState);
+    HttpHandler.ResponseState responseState = httpHandler.postPhoneState("18929357397");
+    assertEquals(HttpHandler.ResponseState.DuplicatePhoneNumber, responseState);
   }
 
   /**
@@ -89,6 +89,6 @@ public class HttpHandlerTest {
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
     User user = new User("18929357397", "kemo", "123456");
     HttpHandler.ResponseState responseState = httpHandler.getRefreshState(user);
-//    assertEquals(HttpHandler.ResponseState.InvalidToken, responseState);
+    assertEquals(HttpHandler.ResponseState.InvalidToken, responseState);
   }
 }
