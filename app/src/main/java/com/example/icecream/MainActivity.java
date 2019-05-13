@@ -1,8 +1,6 @@
 package com.example.icecream;
 
 import android.app.Fragment;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -17,7 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 //import com.example.icecream.database.entity.User;
 import com.example.icecream.fragment.CenteredTextFragment;
@@ -28,6 +31,12 @@ import com.example.icecream.menu.DrawerItem;
 import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
 //import com.example.icecream.utils.ViewModel;
+import com.example.icecream.search.BoilerplateActivity;
+import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.searchscreen.SearchActivity;
+import com.example.icecream.transition.FadeInTransition;
+import com.example.icecream.transition.FadeOutTransition;
+import com.example.icecream.transition.SimpleTransitionListener;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
@@ -35,6 +44,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 //import android.support.v4.app.Fragment;
 
@@ -44,7 +55,7 @@ import java.util.TreeMap;
  * @version V1.0
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener, ResourceFragment.MusicConnector{
+public class MainActivity extends BoilerplateActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener, ResourceFragment.MusicConnector{
   //TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
@@ -52,6 +63,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   private static final int POS_MESSAGES = 2;
   private static final int POS_CART = 3;
   private static final int POS_LOGOUT = 5;
+
+  private SimpleToolbar toolbar;
+  private int toolbarMargin;
 
   private String[] screenTitles;
   private Drawable[] screenIcons;
@@ -101,6 +115,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     Toolbar toolbar = findViewById(R.id.toolbar);
     setSupportActionBar(toolbar);
 
+
     slidingRootNav = new SlidingRootNavBuilder(this)
             .withToolbarMenuToggle(toolbar)
             .withMenuOpened(false)
@@ -121,14 +136,30 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             createItemFor(POS_LOGOUT)));
     adapter.setListener(this);
 
-    RecyclerView list = findViewById(R.id.list);
-    list.setNestedScrollingEnabled(false);
-    list.setLayoutManager(new LinearLayoutManager(this));
-    list.setAdapter(adapter);
+    RecyclerView draw_list = findViewById(R.id.draw_list);
+
+    draw_list.setNestedScrollingEnabled(false);
+    draw_list.setLayoutManager(new LinearLayoutManager(this));
+    draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
   }
 
+  public void setUpToolbar(SimpleToolbar tb){
+    toolbar = tb;
+    setSupportActionBar(toolbar);
+
+    toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
+    toolbar.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // Prepare the keyboard as soon as the user touches the Toolbar
+        // This will make the transition look faster
+        showKeyboard();
+//        transitionToSearch();
+      }
+    });
+  }
 
   @Override
   public void onItemSelected(int position) {
@@ -180,15 +211,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
-      case R.id.bt_goToPersonalDetail:
-        goToPersonalDetail();
-        break;
+      // do nothing
     }
-  }
-
-  private void goToPersonalDetail() {
-    Intent intent = new Intent(MainActivity.this, PersonalDetailActivity.class);
-    startActivity(intent);
   }
 
   @Override
@@ -210,4 +234,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   public void pausePlayer() {
 
   }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.main_action_share) {
+      shareDemo();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 }

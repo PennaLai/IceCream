@@ -21,6 +21,8 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
 
     private OnItemSelectedListener listener;
 
+    private View.OnClickListener listener_test;
+
     public DrawerAdapter(List<DrawerItem> items) {
         this.items = items;
         this.viewTypes = new HashMap<>();
