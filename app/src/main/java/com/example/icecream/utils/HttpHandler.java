@@ -3,6 +3,9 @@ package com.example.icecream.utils;
 import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
+import android.app.Activity;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 import java.io.IOException;
 
@@ -11,6 +14,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A util class to handle the http request and response.<br/>
@@ -23,31 +29,54 @@ public class HttpHandler {
 
   private static final String TAG = HttpHandler.class.getName();
   private final OkHttpClient okHttpClient;
+
   private static final String PROTOCOL = "http";
-  private static final String HOST = "39.108.73.166";
+  //  private static final String HOST = "39.108.73.166";
+  private static final String HOST = "10.0.2.2";
   private static final String PORT = "8080";
   private static final String MAIN_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
   /**
-   * User login and register urls
+   * User login and register urls.
    */
   private static final String LOGIN_URL = MAIN_URL + "signin";
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
 
   /**
-   * User feeds and articles urls
+   * User feeds and articles urls.
    */
   private static final String RSS_FEEDS_URL = MAIN_URL + "list/feeds";
   private static final String ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
   private static final String SUBSCRIBE_URL = MAIN_URL + "/addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "/deleteChannel";
 
+  /**
+   * The token file name.
+   */
+  public static final String TOKEN_FILE_KEY = "com.icecream.token";
+  /**
+   * The token key name.
+   */
+  public static final String TOKEN_KEY = "tokenKey";
+
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
-  public HttpHandler(final OkHttpClient okHttpClient) {
+  /**
+   * Shared preference for token storage.
+   */
+  private final SharedPreferences sharedPreferences;
+
+  /**
+   * Constructor for http handler.
+   *
+   * @param okHttpClient http client
+   * @param activity     the caller activity
+   */
+  public HttpHandler(final OkHttpClient okHttpClient, Activity activity) {
     this.okHttpClient = okHttpClient;
+    this.sharedPreferences = activity.getSharedPreferences(TOKEN_FILE_KEY, Context.MODE_PRIVATE);
   }
 
   /**
@@ -92,11 +121,6 @@ public class HttpHandler {
    * @author Kemo
    */
   public ResponseState postLoginState(final String phoneNumber, final String password) {
-    String url = LOGIN_URL + String.format(
-        "?phone=%s&password=%s",
-        phoneNumber,
-        password
-    );
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
@@ -104,7 +128,7 @@ public class HttpHandler {
     } catch (JSONException e) {
       Log.e(TAG, "postLoginState: ", e );
     }
-    String responseString = postHttpResponseString(url, jsonObject.toString());
+    String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -118,9 +142,11 @@ public class HttpHandler {
           break;
         case "2":
           responseState = ResponseState.Valid;
-          // TODO add auth token here
+          // add auth token here
           String token = responseJsonObject.getString("token");
-
+          SharedPreferences.Editor editor = sharedPreferences.edit();
+          editor.putString(TOKEN_KEY, token);
+          editor.apply();
           break;
         default:
           break;
@@ -178,14 +204,13 @@ public class HttpHandler {
    * @return The validation result state.
    */
   public ResponseState postPhoneState(final String phoneNumber) {
-    String url = BEFORE_REGISTER + "?phone=" + phoneNumber;
     JSONObject requestJsonObject = new JSONObject();
     try {
       requestJsonObject.put("phoneNumber", phoneNumber);
     } catch (JSONException e) {
       Log.e(TAG, "postPhoneState: ", e);
     }
-    String responseString = postHttpResponseString(url, requestJsonObject.toString());
+    String responseString = postHttpResponseString(BEFORE_REGISTER, requestJsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -212,8 +237,7 @@ public class HttpHandler {
    * @return The response state of token validation.
    */
   public ResponseState getRefreshState() {
-    // TODO get token here
-    String token = "";
+    String token = sharedPreferences.getString(TOKEN_KEY, "");
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
@@ -232,7 +256,7 @@ public class HttpHandler {
         case "2":
           // token valid and store data to local database.
           responseState = ResponseState.Valid;
-
+          // TODO
           break;
         default:
           break;
@@ -276,7 +300,6 @@ public class HttpHandler {
    * @return The response from the server.
    */
   private String postHttpResponseString(final String url, final String json) {
-    OkHttpClient httpClient = new OkHttpClient();
     RequestBody body = RequestBody.create(JSON, json);
     Request request = new Request.Builder()
         .url(url)
@@ -284,7 +307,7 @@ public class HttpHandler {
         .build();
     String result = null;
     try {
-      Response response = httpClient.newCall(request).execute();
+      Response response = okHttpClient.newCall(request).execute();
       if (response.isSuccessful()) {
         assert response.body() != null;
         result = response.body().string();

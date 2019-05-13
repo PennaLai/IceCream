@@ -11,10 +11,12 @@ import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 
-import mehdi.sakout.fancybuttons.FancyButton;
-import okhttp3.OkHttpClient;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
+
+import mehdi.sakout.fancybuttons.FancyButton;
+import okhttp3.OkHttpClient;
+
 
 /**
  * The login activity.
@@ -26,8 +28,7 @@ import com.example.icecream.utils.InputStringValidator;
  */
 public class LoginActivity extends AppCompatActivity {
 
-  private final OkHttpClient client = new OkHttpClient();
-  private final HttpHandler httpHandler = new HttpHandler(client);
+  private HttpHandler httpHandler;
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
 
@@ -48,6 +49,8 @@ public class LoginActivity extends AppCompatActivity {
 //    TextView skip = findViewById(R.id.tv_skip);
 //    TextView forget = findViewById(R.id.tv_forget);
 
+    final OkHttpClient client = new OkHttpClient();
+    httpHandler = new HttpHandler(client, this);
   }
 
   /**
@@ -84,14 +87,14 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Invoke the {@link InputStringValidator#validatePhoneNumber(String)} to judge whether
+   * Invoke the {@link InputStringValidator#validatePhone(String)} to judge whether
    * the password is valid or not.
    *
    * @param phoneNumber The input phoneNumber from the phoneNumber input <em>textview</em>.
    * @return boolean Whether the phoneNumber is valid or not.
    */
   private boolean checkPhoneNumber(final String phoneNumber) {
-    InputStringValidator.ValState phoneState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneState = InputStringValidator.validatePhone(phoneNumber);
     switch (phoneState) {
       case Empty:
         showToastMessage("手机号不能为空");

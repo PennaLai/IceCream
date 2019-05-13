@@ -8,6 +8,7 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
+import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -67,8 +68,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     btSendAuthCode.setOnClickListener(this);
     btNextStep.setOnClickListener(this);
 
+    final StrictMode.ThreadPolicy policy =
+        new StrictMode.ThreadPolicy.Builder().permitAll().build();
+    StrictMode.setThreadPolicy(policy);
+
     final OkHttpClient client = new OkHttpClient();
-    httpHandler = new HttpHandler(client);
+    httpHandler = new HttpHandler(client, this);
 
     initSmsSdk();
   }
@@ -119,35 +124,36 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     SMSSDK.registerEventHandler(eventHandler);
   }
 
+
   /**
-   * Start the verify pin code timer, to set the text of the <em>btn_checkVerificationCode</em>
+   * Start the verify pin code timer, to set the text of the
+   * <em>btn_checkVerificationCode</em>
    * button per second.
    */
   private void startVerifyTimer() {
-    final CountDownTimer downTimer =
-        new CountDownTimer(60 * 1000, 1000) {
-          @Override
-          public void onTick(final long mills) {
-            timerRunning = true;
-            btSendAuthCode.setText((mills / 1000) + "s");
-          }
+    final CountDownTimer downTimer = new CountDownTimer(60 * 1000, 1000) {
+      @Override
+      public void onTick(final long mills) {
+        timerRunning = true;
+        btSendAuthCode.setText((mills / 1000) + "s");
+      }
 
-          @Override
-          public void onFinish() {
-            timerRunning = false;
-            btSendAuthCode.setText("Get Pin");
-            btSendAuthCode.setClickable(true);
-            btSendAuthCode.setBackgroundColor(Color.parseColor("#30363E"));
-          }
-        };
+      @Override
+      public void onFinish() {
+        timerRunning = false;
+        btSendAuthCode.setText("Get Pin");
+        btSendAuthCode.setClickable(true);
+        btSendAuthCode.setBackgroundColor(Color.parseColor("#30363E"));
+      }
+    };
     if (!timerRunning) {
       downTimer.start();
     }
   }
 
   /**
-   * This <em>onClick</em> method is to check what component the user click and do the corresponding
-   * operation.
+   * This <em>onClick</em> method is to check what component the user click
+   * and do the corresponding operation.
    *
    * @param view The system stipulated view object.
    */
@@ -171,7 +177,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
   }
 
-  /** Check the valid of phone and try to verify code. */
+
+  /**
+   * Check the valid of phone and try to verify code.
+   */
   private void verifyCode() {
     final Character[] chars = pinCode.getCode();
     final StringBuilder stringBuilder = new StringBuilder();
@@ -182,18 +191,20 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     SMSSDK.submitVerificationCode("86", phoneNumber, authCode);
   }
 
-  /** This method is to check the valid of phone number and get verification code. */
+  /**
+   * This method is to check the valid of phone number and get verification code.
+   */
   private void onClickGetVerificationCode() {
     phoneNumber = etPhoneNumber.getText().toString();
-    final InputStringValidator.ValState phoneNumberState =
-        InputStringValidator.validatePhoneNumber(phoneNumber);
+    final InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
 
     if (phoneNumberState == InputStringValidator.ValState.Valid) {
       /* check if duplicate */
       boolean isValidPhone = false;
       switch (httpHandler.postPhoneState(phoneNumber)) {
         case DuplicatePhoneNumber:
-          Toast.makeText(this, "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
+          Toast.makeText(this,
+              "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
           break;
         case Valid:
           isValidPhone = true;
@@ -209,23 +220,24 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
       }
     } else {
       if (phoneNumberState == InputStringValidator.ValState.Empty) {
-        Toast.makeText(this, "手机号不能为空", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,
+            "手机号不能为空", Toast.LENGTH_LONG).show();
       } else {
-        Toast.makeText(this, "手机号不合法", Toast.LENGTH_LONG).show();
+        Toast.makeText(this,
+            "手机号不合法", Toast.LENGTH_LONG).show();
       }
     }
   }
 
   /**
-   * Verify the username.
+   * Verify the username
    *
    * @param username input username
    * @return true if username is valid
    */
   private boolean verifyUsername(final String username) {
     boolean result = false;
-    final InputStringValidator.ValState userNameState =
-        InputStringValidator.validateUsername(username);
+    final InputStringValidator.ValState userNameState = InputStringValidator.validateUsername(username);
     switch (userNameState) {
       case Valid:
         result = true;
@@ -249,14 +261,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * Verify the password.
+   * Verify the password
    *
    * @param password input password
    * @return true if password is valid
    */
   private boolean verifyPassword(final String password) {
-    final InputStringValidator.ValState passwordState =
-        InputStringValidator.validatePassword(password);
+    final InputStringValidator.ValState passwordState = InputStringValidator.validatePassword(password);
     boolean result = false;
     switch (passwordState) {
       case Valid:
@@ -280,7 +291,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     return result;
   }
 
-  /** This method is to submit all information and the register request. */
+  /**
+   * This method is to submit all information and the register request.
+   */
   private void submitRegister() {
     final String userName = etUserName.getText().toString();
     final String password = etPassword.getText().toString();
@@ -298,7 +311,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
   }
 
-  /** This method is to go to the login page. TODO: Avoid creating new page for login */
+  /**
+   * This method is to go to the login page.
+   * TODO: Avoid creating new page for login
+   */
   private void goToLoginPage() {
     final Context context = this;
     final Class destActivity = LoginActivity.class;
@@ -309,6 +325,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   @Override
   protected void onDestroy() {
     super.onDestroy();
-    SMSSDK.unregisterAllEventHandler(); // Destroy the callback interface
+    SMSSDK.unregisterAllEventHandler();  // Destroy the callback interface
   }
+
 }
