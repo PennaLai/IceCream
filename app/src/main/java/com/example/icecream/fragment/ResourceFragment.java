@@ -1,7 +1,7 @@
 package com.example.icecream.fragment;
 
 
-
+import android.app.Activity;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,12 +10,14 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.icecream.MainActivity;
 import com.example.icecream.R;
 import com.example.icecream.recycleveiw.RecycleAdapter;
+import com.example.icecream.search.SimpleToolbar;
 
 import java.util.Objects;
 
@@ -58,6 +60,15 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
 
     View view = inflater.inflate(R.layout.fragment_resource, container, false);
 
+    /*
+     * Set up tool bar for search.
+     */
+    SimpleToolbar toolbar = view.findViewById(R.id.toolbar);
+    ((MainActivity)getActivity()).setUpToolbar(toolbar);
+
+    /*
+     * Generate article list using reclycleView.
+     */
     mArticleList = view.findViewById(R.id.rv_source);
 
     try {

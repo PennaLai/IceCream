@@ -1,8 +1,6 @@
 package com.example.icecream;
 
 import android.app.Fragment;
-import android.arch.lifecycle.Observer;
-import android.arch.lifecycle.ViewModelProviders;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
@@ -17,7 +15,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.transition.Transition;
+import android.transition.TransitionManager;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 
 //import com.example.icecream.database.entity.User;
 import com.example.icecream.fragment.CenteredTextFragment;
@@ -28,6 +31,12 @@ import com.example.icecream.menu.DrawerItem;
 import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
 //import com.example.icecream.utils.ViewModel;
+import com.example.icecream.search.BoilerplateActivity;
+import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.searchscreen.SearchActivity;
+import com.example.icecream.transition.FadeInTransition;
+import com.example.icecream.transition.FadeOutTransition;
+import com.example.icecream.transition.SimpleTransitionListener;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
@@ -44,7 +53,7 @@ import java.util.TreeMap;
  * @version V1.0
  */
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener, ResourceFragment.MusicConnector{
+public class MainActivity extends BoilerplateActivity implements View.OnClickListener, DrawerAdapter.OnItemSelectedListener, ResourceFragment.MusicConnector{
   //TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
@@ -52,6 +61,9 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   private static final int POS_MESSAGES = 2;
   private static final int POS_CART = 3;
   private static final int POS_LOGOUT = 5;
+
+  private SimpleToolbar toolbar;
+  private int toolbarMargin;
 
   private String[] screenTitles;
   private Drawable[] screenIcons;
@@ -75,6 +87,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 //        // update the cached of user in the adapter
 //      }
 //    });
+
+//    toolbar = (SimpleToolbar) findViewById(R.id.toolbar);
 
     //定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
@@ -129,6 +143,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     adapter.setSelected(POS_DASHBOARD);
   }
 
+  public void setUpToolbar(SimpleToolbar tb){
+    toolbar = tb;
+    setSupportActionBar(toolbar);
+
+    toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
+    toolbar.setOnClickListener(new View.OnClickListener() {
+      @Override
+      public void onClick(View v) {
+        // Prepare the keyboard as soon as the user touches the Toolbar
+        // This will make the transition look faster
+        showKeyboard();
+//        transitionToSearch();
+      }
+    });
+  }
 
   @Override
   public void onItemSelected(int position) {
@@ -210,4 +239,73 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
   public void pausePlayer() {
 
   }
+//
+//
+//  private void transitionToSearch() {
+//    // create a transition that navigates to search when complete
+//    Transition transition = FadeOutTransition.withAction(navigateToSearchWhenDone());
+//
+//    // let the TransitionManager do the heavy work for us!
+//    // all we have to do is change the attributes of the toolbar and the TransitionManager animates the changes
+//    // in this case I am removing the bounds of the toolbar (to hide the blue padding on the screen) and
+//    // I am hiding the contents of the Toolbar (Navigation icon, Title and Option Items)
+//    TransitionManager.beginDelayedTransition(toolbar, transition);
+//    FrameLayout.LayoutParams frameLP = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+//    frameLP.setMargins(0, 0, 0, 0);
+//    toolbar.setLayoutParams(frameLP);
+//    toolbar.hideContent();
+//  }
+//
+//  private Transition.TransitionListener navigateToSearchWhenDone() {
+//    return new SimpleTransitionListener() {
+//      @Override
+//      public void onTransitionEnd(Transition transition) {
+//        Intent intent = new Intent(MainActivity.this, SearchActivity.class);
+//        startActivity(intent);
+//
+//        // we are handing the enter transitions ourselves
+//        // this line overrides that
+//        overridePendingTransition(0, 0);
+//
+//        // by this point of execution we have animated the 'expansion' of the Toolbar and hidden its contents.
+//        // We are half way there. Continue to the SearchActivity to finish the animation
+//      }
+//    };
+//  }
+
+//  @Override
+//  protected void onResume() {
+//    super.onResume();
+//
+//    // when you are back from the SearchActivity animate the 'shrinking' of the Toolbar and
+//    // fade its contents back in
+//    fadeToolbarIn();
+//
+//    // in case we are not coming here from the SearchActivity the Toolbar would have been already visible
+//    // so the above method has no effect
+//  }
+//
+//  private void fadeToolbarIn() {
+//    TransitionManager.beginDelayedTransition(toolbar, FadeInTransition.createTransition());
+//    FrameLayout.LayoutParams layoutParams = (FrameLayout.LayoutParams) toolbar.getLayoutParams();
+//    layoutParams.setMargins(toolbarMargin, toolbarMargin, toolbarMargin, toolbarMargin);
+//    toolbar.showContent();
+//    toolbar.setLayoutParams(layoutParams);
+//  }
+
+  @Override
+  public boolean onCreateOptionsMenu(Menu menu) {
+    getMenuInflater().inflate(R.menu.menu_main, menu);
+    return true;
+  }
+
+  @Override
+  public boolean onOptionsItemSelected(MenuItem item) {
+    if (item.getItemId() == R.id.main_action_share) {
+      shareDemo();
+      return true;
+    }
+    return super.onOptionsItemSelected(item);
+  }
+
 }
