@@ -8,9 +8,6 @@ import android.view.MenuItem;
 import android.view.ViewTreeObserver;
 import com.example.icecream.R;
 import com.example.icecream.search.BoilerplateActivity;
-import com.example.icecream.transition.FadeInTransition;
-import com.example.icecream.transition.FadeOutTransition;
-import com.example.icecream.transition.SimpleTransitionListener;
 
 /**
  * The search activity.
@@ -45,8 +42,6 @@ public class SearchActivity extends BoilerplateActivity {
             }
 
             private void showSearch() {
-              TransitionManager.beginDelayedTransition(
-                  searchbar, FadeInTransition.createTransition());
               searchbar.showContent();
             }
           });
@@ -60,32 +55,6 @@ public class SearchActivity extends BoilerplateActivity {
   @Override
   public void finish() {
     hideKeyboard();
-
-    exitTransitionWithAction(
-        new Runnable() {
-          @Override
-          public void run() {
-            SearchActivity.super.finish();
-
-            // override the system pending transition as we are handling ourselves
-            overridePendingTransition(0, 0);
-          }
-        });
-  }
-
-  private void exitTransitionWithAction(final Runnable endingAction) {
-
-    Transition transition =
-        FadeOutTransition.withAction(
-            new SimpleTransitionListener() {
-              @Override
-              public void onTransitionEnd(Transition transition) {
-                endingAction.run();
-              }
-            });
-
-    TransitionManager.beginDelayedTransition(searchbar, transition);
-    searchbar.hideContent();
   }
 
   @Override
