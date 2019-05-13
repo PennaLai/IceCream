@@ -38,28 +38,28 @@ public class InputStringValidatorTest {
   @Test
   public void checkPhoneNumberValid() {
     String phoneNumber = "15602432271";
-    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
     assertEquals(InputStringValidator.ValState.Valid, phoneNumberState);
   }
 
   @Test
   public void checkPhoneNumberInvalidCharacters() {
     String phoneNumber = "156024d2271";
-    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
     assertEquals(InputStringValidator.ValState.InvalidCharacters, phoneNumberState);
   }
 
   @Test
   public void checkPhoneNumberTooLong() {
     String phoneNumber = "1560241227111";
-    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
     assertEquals(InputStringValidator.ValState.InvalidCharacters, phoneNumberState);
   }
 
   @Test
   public void checkPhoneNumberEmpty() {
     String phoneNumber = "";
-    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
     assertEquals(InputStringValidator.ValState.Empty, phoneNumberState);
   }
 

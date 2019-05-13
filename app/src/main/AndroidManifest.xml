@@ -18,7 +18,7 @@
             android:exported="true"></service>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".LoginActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -33,9 +33,9 @@
         <activity
             android:name=".ForgetPasswordActivity"
             android:launchMode="standard"></activity>
-        <activity
-            android:name=".LoginActivity"
-            android:launchMode="singleTask"></activity>
+        <!--<activity-->
+            <!--android:name=".LoginActivity"-->
+            <!--android:launchMode="singleTask"></activity>-->
         <activity
             android:name=".PersonalDetailActivity"
             android:launchMode="singleTask"></activity>

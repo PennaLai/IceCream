@@ -1,11 +1,15 @@
 package com.example.icecream;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.example.icecream.utils.HttpHandler;
 
 /**
  * The personal detail activity.
@@ -47,6 +51,10 @@ public class PersonalDetailActivity extends AppCompatActivity implements View.On
    * This method is to go to login page to login the account.
    */
   public void goToLoginPage() {
+    SharedPreferences sharedPreferences = this.getSharedPreferences(HttpHandler.TOKEN_FILE_KEY, Context.MODE_PRIVATE);
+    String token = sharedPreferences.getString(HttpHandler.TOKEN_KEY, "");
+    System.out.println("Token: " + token);
+
     Intent intent = new Intent(PersonalDetailActivity.this, LoginActivity.class);
     startActivity(intent);
   }

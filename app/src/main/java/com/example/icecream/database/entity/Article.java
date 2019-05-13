@@ -35,6 +35,14 @@ public class Article {
 
   private Date publishTime;
 
+  /**
+   * Constructor for article.
+   *
+   * @param title       article title.
+   * @param link        article url.
+   * @param description article description.
+   * @param publishTime article publish time.
+   */
   public Article(@NonNull String title, String link, String description, Date publishTime) {
     this.title = title;
     this.link = link;

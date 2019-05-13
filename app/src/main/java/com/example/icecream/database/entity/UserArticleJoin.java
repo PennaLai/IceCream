@@ -1,8 +1,8 @@
 package com.example.icecream.database.entity;
 
-
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+
 import android.support.annotation.NonNull;
 
 /**

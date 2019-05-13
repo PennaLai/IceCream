@@ -23,6 +23,13 @@ public class RssFeed {
 
   private String category;
 
+  /**
+   * Constructor for RSS feed.
+   *
+   * @param url         RSS feed url.
+   * @param channelName the channel name.
+   * @param category    the category.
+   */
   public RssFeed(@NonNull String url, String channelName, String category) {
     this.url = url;
     this.channelName = channelName;
