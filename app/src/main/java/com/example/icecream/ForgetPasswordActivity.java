@@ -12,15 +12,15 @@ import android.widget.Button;
  * @version V1.0
  */
 
-public class ForgetPasswordActivity extends AppCompatActivity implements View.OnClickListener{
-  private Button btgoToLogin;
+public class ForgetPasswordActivity extends AppCompatActivity implements View.OnClickListener {
+
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_forget_password);
-    btgoToLogin = findViewById(R.id.bt_goToLogin);
-    btgoToLogin.setOnClickListener(this);
+    Button btGoToLogin = findViewById(R.id.bt_goToLogin);
+    btGoToLogin.setOnClickListener(this);
   }
 
   @Override
@@ -28,6 +28,8 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
     switch (v.getId()) {
       case R.id.bt_goToLogin:
         goToLoginPage();
+        break;
+      default:
         break;
     }
   }
