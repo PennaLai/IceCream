@@ -155,7 +155,7 @@ public class PlayFragment extends Fragment {
                                   boolean fromUser) {
       // Log the progress
       //set textView's text
-      volumeText.setText(progress);
+      volumeText.setText(String.valueOf(progress));
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {}
