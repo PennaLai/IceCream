@@ -196,7 +196,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    */
   private void onClickGetVerificationCode() {
     phoneNumber = etPhoneNumber.getText().toString();
-    final InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhoneNumber(phoneNumber);
+    final InputStringValidator.ValState phoneNumberState = InputStringValidator.validatePhone(phoneNumber);
 
     if (phoneNumberState == InputStringValidator.ValState.Valid) {
       /* check if duplicate */
