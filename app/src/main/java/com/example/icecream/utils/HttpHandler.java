@@ -110,6 +110,7 @@ public class HttpHandler {
       switch (responseJsonObject.getString("msgCode")) {
         case "0":
           responseState = ResponseState.NoSuchUser;
+          break;
         case "1":
           responseState = ResponseState.WrongPassword;
           break;

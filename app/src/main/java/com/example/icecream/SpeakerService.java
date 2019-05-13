@@ -11,7 +11,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import com.example.icecream.fragment.PlayFragment.OnPlayerUIListener;
+import com.example.icecream.fragment.PlayFragment.OnPlayerUiListener;
 import java.io.IOException;
 
 /**
@@ -33,7 +33,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   private SpeakerBinder speakerBinder = new SpeakerBinder();
 
   /** used to change the ui layer of player fragment. */
-  private OnPlayerUIListener onPlayerUIListener;
+  private OnPlayerUiListener onPlayerUIListener;
 
 
   /**
@@ -72,7 +72,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   @Override
   public void onPrepared(MediaPlayer mp) {
     mp.start();
-    onPlayerUIListener.UpdateNewSongUi(); // update the ui in play fragment
+    onPlayerUIListener.updateNewSongUi(); // update the ui in play fragment
   }
 
   /**
@@ -109,7 +109,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
    * register the ui listener.
    * @param onPlayerUIListener used to update the ui
    */
-  public void setOnPlayerUIListener(OnPlayerUIListener onPlayerUIListener) {
+  public void setOnPlayerUIListener(OnPlayerUiListener onPlayerUIListener) {
     this.onPlayerUIListener = onPlayerUIListener;
   }
 
