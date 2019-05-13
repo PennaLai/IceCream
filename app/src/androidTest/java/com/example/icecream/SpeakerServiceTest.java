@@ -18,13 +18,10 @@ public class SpeakerServiceTest {
 
 
   @Test
-  public void startMusic() {
+  public void startMusicTest() {
     Intent serviceIntent =
         new Intent(InstrumentationRegistry.getTargetContext(),
             SpeakerService.class);
-
-    // Data can be passed to the service via the Intent.
-//    serviceIntent.putExtra(SpeakerService.SEED_KEY, 42L);
 
     // Bind the service and grab a reference to the binder.
     IBinder binder = null;
