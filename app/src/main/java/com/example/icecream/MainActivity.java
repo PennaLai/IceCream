@@ -30,10 +30,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.TreeMap;
 
-// import com.example.icecream.database.entity.User;
-// import com.example.icecream.utils.ViewModel;
-
-// import android.support.v4.app.Fragment;
 
 /**
  * The main activity.
@@ -67,16 +63,6 @@ public class MainActivity extends BoilerplateActivity
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
-    // Get view model
-    //    mViewMode = ViewModelProviders.of(this).get(ViewModel.class);
-    //    // listen to live data onChange
-    //    mViewMode.getAllUsers().observe(this, new Observer<List<User>>() {
-    //      @Override
-    //      public void onChanged(@Nullable List<User> users) {
-    //        // update the cached of user in the adapter
-    //      }
-    //    });
 
     // 定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
@@ -135,21 +121,16 @@ public class MainActivity extends BoilerplateActivity
     adapter.setSelected(POS_DASHBOARD);
   }
 
+  /**
+   * This method is invoked from resource fragment to set up the customized Toolbar.
+   * @param tb : The instance of SimpleToolbar
+   */
   public void setUpToolbar(SimpleToolbar tb) {
     toolbar = tb;
     setSupportActionBar(toolbar);
 
     toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
-    toolbar.setOnClickListener(
-        new View.OnClickListener() {
-          @Override
-          public void onClick(View v) {
-            // Prepare the keyboard as soon as the user touches the Toolbar
-            // This will make the transition look faster
-            showKeyboard();
-            //        transitionToSearch();
-          }
-        });
+    toolbar.setOnClickListener(v -> showKeyboard());
   }
 
   @Override
@@ -162,10 +143,19 @@ public class MainActivity extends BoilerplateActivity
     showFragment(selectedScreen);
   }
 
+  /**
+   * This method is to switch fragment according to the selected draw item.
+   * @param fragment : The destined fragment.
+   */
   private void showFragment(Fragment fragment) {
     getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
   }
 
+  /**
+   * This method creates the draw items.
+   * @param position : create item by index to initialize.
+   * @return com.example.icecream.menu.DrawerItem
+   */
   private DrawerItem createItemFor(int position) {
     return new SimpleItem(screenIcons[position], screenTitles[position])
         .withIconTint(color(R.color.textColorSecondary))

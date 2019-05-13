@@ -9,8 +9,7 @@ import com.example.icecream.search.TransformingToolbar;
 /**
  * A Toolbar with an EditText used for searching
  *
- * <p>In a real life application you would hook up your TextWatcher to this method to track what the
- * user is searching for
+ * @author aaron
  */
 public class Searchbar extends TransformingToolbar {
 

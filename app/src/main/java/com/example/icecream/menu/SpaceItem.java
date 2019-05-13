@@ -4,9 +4,16 @@ import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
 
-/** Created by yarolegovich on 25.03.2017. */
+/**
+ * This class is used to padding.
+ *
+ * @author aaron
+ */
 public class SpaceItem extends DrawerItem<SpaceItem.ViewHolder> {
 
+  /*
+   * The padding size.
+   */
   private int spaceDp;
 
   public SpaceItem(int spaceDp) {
