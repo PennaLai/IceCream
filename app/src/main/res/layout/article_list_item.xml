@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="12dp"
+    android:padding="10dp"
+    android:elevation="2dp"
+    android:background="@drawable/myrect"
+    android:minHeight="168dp">
+
+    <TextView
+        android:id="@+id/tv_item_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:fontFamily="monospace"
+        android:textColor="@color/smssdk_black"
+        android:textSize="18sp"
+        android:textStyle="bold"
+        tools:text="Title" />
+
+    <TextView
+        android:id="@+id/tv_view_holder_instance"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|start"
+        android:fontFamily="monospace"
+        android:textColor="@color/smssdk_gray"
+        android:textSize="8sp"
+        tools:text="ViewHolder instance: 7"
+        tools:ignore="SmallSp" />
+
+    <TextView
+        android:id="@+id/tv_item_content"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="55dp"
+        android:text="@string/content"
+        android:textColor="@color/smssdk_lv_tv_color"
+        android:textSize="10sp"
+        tools:ignore="SmallSp" />
+
+</FrameLayout>
