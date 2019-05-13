@@ -31,8 +31,8 @@ public class HttpHandler {
   private final OkHttpClient okHttpClient;
 
   private static final String PROTOCOL = "http";
-  //  private static final String HOST = "39.108.73.166";
-  private static final String HOST = "10.0.2.2";
+    private static final String HOST = "39.108.73.166";
+//  private static final String HOST = "10.0.2.2";
   private static final String PORT = "8080";
   private static final String MAIN_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
