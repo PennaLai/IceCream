@@ -5,7 +5,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.view.inputmethod.InputMethodManager;
 
-/** Activity containing all boilerplate code not related to the purposes of this demo */
+/** Activity containing all boilerplate code not related to the purposes of this demo. */
 public class BoilerplateActivity extends AppCompatActivity {
 
   public void hideKeyboard() {
@@ -18,6 +18,9 @@ public class BoilerplateActivity extends AppCompatActivity {
     imm.toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, 0);
   }
 
+  /**
+   * share teh Demo.
+   */
   public void shareDemo() {
     // shameless self promotion :dance:
     ShareDemo shareDemo = new ShareDemo(this);
