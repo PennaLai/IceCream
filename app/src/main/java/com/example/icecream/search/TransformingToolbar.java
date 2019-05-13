@@ -6,30 +6,26 @@ import android.util.AttributeSet;
 
 /**
  * A Toolbar that knows how to hide and show its children.
- * <p>Overprotecting parent much?</p>
+ *
+ * <p>Overprotecting parent much?
  */
 public class TransformingToolbar extends Toolbar {
 
-    public TransformingToolbar(Context context, AttributeSet attrs) {
-        super(context, attrs);
-    }
+  public TransformingToolbar(Context context, AttributeSet attrs) {
+    super(context, attrs);
+  }
 
-    /**
-     * Sets the Visibility of all children to GONE
-     */
-    public void hideContent() {
-        for (int i = 0; i < getChildCount(); i++) {
-            getChildAt(i).setVisibility(GONE);
-        }
+  /** Sets the Visibility of all children to GONE */
+  public void hideContent() {
+    for (int i = 0; i < getChildCount(); i++) {
+      getChildAt(i).setVisibility(GONE);
     }
+  }
 
-    /**
-     * Sets the Visibility of all children to VISIBLE
-     */
-    public void showContent() {
-        for (int i = 0; i < getChildCount(); i++) {
-            getChildAt(i).setVisibility(VISIBLE);
-        }
+  /** Sets the Visibility of all children to VISIBLE */
+  public void showContent() {
+    for (int i = 0; i < getChildCount(); i++) {
+      getChildAt(i).setVisibility(VISIBLE);
     }
-
+  }
 }
