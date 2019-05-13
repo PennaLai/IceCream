@@ -2,12 +2,12 @@ package com.example.icecream.utils;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.app.AppCompatActivity;
-
-import com.example.icecream.database.entity.User;
 import android.util.Log;
 
+import com.example.icecream.database.entity.User;
+
 import java.io.IOException;
-import java.util.Map;
+import java.util.HashMap;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -31,8 +31,8 @@ public class HttpHandler {
   private final OkHttpClient okHttpClient;
 
   private static final String PROTOCOL = "http";
-    private static final String HOST = "39.108.73.166";
-//  private static final String HOST = "10.0.2.2";
+  private static final String HOST = "39.108.73.166";
+  //  private static final String HOST = "10.0.2.2";
   private static final String PORT = "8080";
   private static final String MAIN_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
@@ -65,7 +65,7 @@ public class HttpHandler {
 
   private ViewModel viewModel;
 
-  private Map<String, String> tokenMap;
+  private HashMap<String, String> tokenMap;
 
   /**
    * Constructor for http handler.
@@ -132,7 +132,7 @@ public class HttpHandler {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
     } catch (JSONException e) {
-      Log.e(TAG, "postLoginState: ", e );
+      Log.e(TAG, "postLoginState: ", e);
     }
     String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
     JSONObject responseJsonObject;
@@ -193,7 +193,7 @@ public class HttpHandler {
         viewModel.insertUser(user);
       }
     } catch (JSONException e) {
-      Log.e(TAG, "postRegisterState: ",e );
+      Log.e(TAG, "postRegisterState: ", e);
     }
     return responseState;
   }
@@ -239,6 +239,7 @@ public class HttpHandler {
    * @return The response state of token validation.
    */
   public ResponseState getRefreshState(User user) {
+    // TODO use shared preference or others to store token map
     String token = tokenMap.get(user.getPhoneNumber());
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
