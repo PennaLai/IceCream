@@ -6,12 +6,18 @@ import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment.SavedState;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -26,7 +32,10 @@ import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.search.SimpleToolbar;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -47,6 +56,7 @@ public class MainActivity extends BoilerplateActivity
   private static final int POS_MESSAGES = 2;
   private static final int POS_CART = 3;
   private static final int POS_LOGOUT = 5;
+  private static final String TAG = "MainActivity";
 
   private SimpleToolbar toolbar;
   private int toolbarMargin;
@@ -193,19 +203,6 @@ public class MainActivity extends BoilerplateActivity
     }
   }
 
-  @Override
-  public void sendNewMusic() {
-    // connect to player fragment
-  }
-
-  @Override
-  public void startPlayer() {}
-
-  @Override
-  public void stopPlayer() {}
-
-  @Override
-  public void pausePlayer() {}
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -221,4 +218,11 @@ public class MainActivity extends BoilerplateActivity
     }
     return super.onOptionsItemSelected(item);
   }
+
+  @Override
+  public void onArticleSelect() {
+    Log.i(TAG, "onArticleSelect: Go fuck your self");
+
+  }
+
 }
