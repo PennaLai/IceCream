@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.Message;
 import android.support.annotation.NonNull;
 import android.support.v4.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import com.example.icecream.R;
 import com.example.icecream.SpeakerService;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * This is the ui fragment to handler the player event.
@@ -29,11 +31,12 @@ import java.util.ArrayList;
  */
 public class PlayFragment extends Fragment {
 
+  private static final String TAG = PlayFragment.class.getName();
   /** background player service.*/
   private SpeakerService speakerService;
 
   /** all the music that waiting for play. */
-  private ArrayList<String> waitingMusicList = new ArrayList<>();
+  private List<String> waitingMusicList = new ArrayList<>();
 
   /** to control the progress update thread exit. */
   boolean needUpdate;
@@ -152,7 +155,7 @@ public class PlayFragment extends Fragment {
                                   boolean fromUser) {
       // Log the progress
       //set textView's text
-      volumeText.setText(progress);
+      volumeText.setText(String.valueOf(progress));
     }
 
     public void onStartTrackingTouch(SeekBar seekBar) {}
@@ -202,7 +205,7 @@ public class PlayFragment extends Fragment {
         }
         Thread.sleep(1000);
       } catch (InterruptedException e) {
-        e.printStackTrace();
+        Log.e(TAG, "run: ", e);
       }
     }
 

@@ -1,15 +1,23 @@
 package com.example.icecream.utils;
 
-import org.json.JSONException;
-import org.json.JSONObject;
+import android.arch.lifecycle.ViewModelProviders;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+
+import com.example.icecream.database.entity.User;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A util class to handle the http request and response.<br/>
@@ -20,32 +28,65 @@ import okhttp3.Response;
  */
 public class HttpHandler {
 
+  private static final String TAG = HttpHandler.class.getName();
   private final OkHttpClient okHttpClient;
+
   private static final String PROTOCOL = "http";
   private static final String HOST = "39.108.73.166";
+  //  private static final String HOST = "10.0.2.2";
   private static final String PORT = "8080";
   private static final String MAIN_URL = PROTOCOL + "://" + HOST + ":" + PORT + "/";
 
   /**
-   * User login and register urls
+   * User login and register urls.
    */
   private static final String LOGIN_URL = MAIN_URL + "signin";
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
 
   /**
-   * User feeds and articles urls
+   * User feeds and articles urls.
    */
   private static final String RSS_FEEDS_URL = MAIN_URL + "list/feeds";
   private static final String ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
   private static final String SUBSCRIBE_URL = MAIN_URL + "/addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "/deleteChannel";
 
+  private static final String MESSAGE_CODE = "msgCode";
+
+
+  /**
+   * The token file name.
+   */
+  public static final String TOKEN_FILE_KEY = "com.icecream.token";
+  /**
+   * The token key name.
+   */
+  public static final String TOKEN_KEY = "tokenKey";
+
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
-  public HttpHandler(final OkHttpClient okHttpClient) {
+  private ViewModel viewModel;
+
+  private Map<String, String> tokenMap;
+
+  /**
+   * Constructor for http handler.
+   *
+   * @param okHttpClient http client
+   */
+  public HttpHandler(final OkHttpClient okHttpClient, AppCompatActivity activity) {
     this.okHttpClient = okHttpClient;
+    viewModel = ViewModelProviders.of(activity).get(ViewModel.class);
+    viewModel.getUserSearchResult().observe(activity, user -> {
+      if (user != null) {
+        // update token
+        user.setAuthToken(tokenMap.get(user.getPhoneNumber()));
+      }
+      viewModel.updateUser(user);
+    });
+    tokenMap = new HashMap<>();
   }
 
   /**
@@ -90,24 +131,19 @@ public class HttpHandler {
    * @author Kemo
    */
   public ResponseState postLoginState(final String phoneNumber, final String password) {
-    String url = LOGIN_URL + String.format(
-        "?phone=%s&password=%s",
-        phoneNumber,
-        password
-    );
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postLoginState: ", e);
     }
-    String responseString = postHttpResponseString(url, jsonObject.toString());
+    String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "0":
           responseState = ResponseState.NoSuchUser;
           break;
@@ -116,15 +152,16 @@ public class HttpHandler {
           break;
         case "2":
           responseState = ResponseState.Valid;
-          // TODO add auth token here
+          // add auth token here
           String token = responseJsonObject.getString("token");
-
+          tokenMap.put(phoneNumber, token);
+          viewModel.findUserByPhone(phoneNumber);
           break;
         default:
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postLoginState: ", e);
     }
     return responseState;
   }
@@ -140,30 +177,27 @@ public class HttpHandler {
    */
   public ResponseState postRegisterState(
       final String phoneNumber, final String username, final String password) {
-    String url = REGISTER_URL + String.format(
-        "?phone=%s&username=%s&password=%s",
-        phoneNumber,
-        username,
-        password
-    );
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
       jsonObject.put("username", username);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postRegisterState: ", e);
     }
-    String responseString = postHttpResponseString(url, jsonObject.toString());
+    String responseString = postHttpResponseString(REGISTER_URL, jsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      if (responseJsonObject.getString("msgCode").equals("0")) {
+      if (responseJsonObject.getString(MESSAGE_CODE).equals("0")) {
         responseState = ResponseState.Valid;
+        // add user to database
+        User user = new User(phoneNumber, username, password);
+        viewModel.insertUser(user);
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postRegisterState: ", e);
     }
     return responseState;
   }
@@ -176,19 +210,18 @@ public class HttpHandler {
    * @return The validation result state.
    */
   public ResponseState postPhoneState(final String phoneNumber) {
-    String url = BEFORE_REGISTER + "?phone=" + phoneNumber;
     JSONObject requestJsonObject = new JSONObject();
     try {
       requestJsonObject.put("phoneNumber", phoneNumber);
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postPhoneState: ", e);
     }
-    String responseString = postHttpResponseString(url, requestJsonObject.toString());
+    String responseString = postHttpResponseString(BEFORE_REGISTER, requestJsonObject.toString());
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "1":
           responseState = ResponseState.DuplicatePhoneNumber;
           break;
@@ -199,7 +232,7 @@ public class HttpHandler {
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postPhoneState: ", e);
     }
     return responseState;
   }
@@ -209,16 +242,16 @@ public class HttpHandler {
    *
    * @return The response state of token validation.
    */
-  public ResponseState getRefreshState() {
-    // TODO get token here
-    String token = "";
+  public ResponseState getRefreshState(User user) {
+    // TODO use shared preference or others to store token map
+    String token = tokenMap.get(user.getPhoneNumber());
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      switch (responseJsonObject.getString("msgCode")) {
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "0":
           // token is invalid.
           responseState = ResponseState.InvalidToken;
@@ -230,13 +263,13 @@ public class HttpHandler {
         case "2":
           // token valid and store data to local database.
           responseState = ResponseState.Valid;
-
+          // TODO
           break;
         default:
           break;
       }
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e(TAG, "getRefreshState: ", e);
     }
     return responseState;
   }
@@ -259,10 +292,9 @@ public class HttpHandler {
       if (response.isSuccessful()) {
         assert response.body() != null;
         result = response.body().string();
-        System.out.println(result);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "getHttpResponseString: ", e);
     }
     return result;
   }
@@ -275,7 +307,6 @@ public class HttpHandler {
    * @return The response from the server.
    */
   private String postHttpResponseString(final String url, final String json) {
-    OkHttpClient httpClient = new OkHttpClient();
     RequestBody body = RequestBody.create(JSON, json);
     Request request = new Request.Builder()
         .url(url)
@@ -283,14 +314,13 @@ public class HttpHandler {
         .build();
     String result = null;
     try {
-      Response response = httpClient.newCall(request).execute();
+      Response response = okHttpClient.newCall(request).execute();
       if (response.isSuccessful()) {
         assert response.body() != null;
         result = response.body().string();
-        System.out.println(result);
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "postHttpResponseString: ", e);
     }
     return result;
   }

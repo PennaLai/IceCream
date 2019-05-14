@@ -112,7 +112,7 @@ public final class InputStringValidator {
    * @param input The input phone number String.
    * @return The defined validation state.
    */
-  public static ValState validatePhoneNumber(final String input) {
+  public static ValState validatePhone(final String input) {
     return validate(input, phoneNumberPattern, PHONE_MAX_LEN, PHONE_MIN_LEN);
   }
 

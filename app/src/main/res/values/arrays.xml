@@ -2,21 +2,21 @@
 <resources>
 
     <string-array name="ld_activityScreenTitles">
-        <item>Dashboard</item>
-        <item>My Account</item>
-        <item>Messages</item>
-        <item>Cart</item>
+        <item>个人主页</item>
+        <item>我的关注</item>
+        <item>我的收藏</item>
+        <item>设置</item>
         <item />
-        <item>Log Out</item>
+        <item>注销</item>
     </string-array>
 
     <array name="ld_activityScreenIcons">
-        <item>@drawable/ic_home_outline_grey600_24dp</item>
-        <item>@drawable/ic_account_outline_grey600_24dp</item>
-        <item>@drawable/ic_email_outline_grey600_24dp</item>
-        <item>@drawable/ic_cart_outline_grey600_24dp</item>
+        <item>@drawable/icons8_home</item>
+        <item>@drawable/icons8_todo_list</item>
+        <item>@drawable/icons8_star</item>
+        <item>@drawable/icons8_settings</item>
         <item>0</item>
-        <item>@drawable/ic_logout_grey600_24dp</item>
+        <item>@drawable/icons8_export</item>
     </array>
 
 </resources>

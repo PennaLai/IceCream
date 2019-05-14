@@ -3,6 +3,7 @@ package com.example.icecream.utils;
 import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
+import android.arch.lifecycle.MutableLiveData;
 
 import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.Article;
@@ -20,7 +21,7 @@ import java.util.List;
  */
 public class ViewModel extends AndroidViewModel {
 
-  private Repository mRepository;
+  private Repository repository;
 
   private LiveData<List<User>> allUsers;
 
@@ -28,12 +29,20 @@ public class ViewModel extends AndroidViewModel {
 
   private LiveData<List<Article>> allArticles;
 
+  private MutableLiveData<User> userSearchResult;
+
+  /**
+   * View model constructor.
+   *
+   * @param application the register application.
+   */
   public ViewModel(Application application) {
     super(application);
-    mRepository = new Repository(application);
-    allUsers = mRepository.getAllUsers();
-    allRssFeeds = mRepository.getAllRssFeeds();
-    allArticles = mRepository.getAllArticles();
+    repository = new Repository(application);
+    allUsers = repository.getAllUsers();
+    allRssFeeds = repository.getAllRssFeeds();
+    allArticles = repository.getAllArticles();
+    userSearchResult = repository.getUserSearchResult();
   }
 
   /**
@@ -69,7 +78,7 @@ public class ViewModel extends AndroidViewModel {
    * @param phone the input phone number.
    */
   public void findUserByPhone(String phone) {
-    mRepository.findUserByPhone(phone);
+    repository.findUserByPhone(phone);
   }
 
   /**
@@ -78,7 +87,7 @@ public class ViewModel extends AndroidViewModel {
    * @param user user of interest.
    */
   public void findRssFeedsByUser(User user) {
-    mRepository.findRssFeedsByUser(user);
+    repository.findRssFeedsByUser(user);
   }
 
   /**
@@ -87,7 +96,7 @@ public class ViewModel extends AndroidViewModel {
    * @param user user of interest.
    */
   public void findArticlesByUser(User user) {
-    mRepository.findArticlesByUser(user);
+    repository.findArticlesByUser(user);
   }
 
   /**
@@ -96,7 +105,7 @@ public class ViewModel extends AndroidViewModel {
    * @return the RSS feed list of the user.
    */
   public LiveData<List<RssFeed>> getRssFeedsOfUser() {
-    return mRepository.getPersonalRssFeeds();
+    return repository.getPersonalRssFeeds();
   }
 
   /**
@@ -105,7 +114,7 @@ public class ViewModel extends AndroidViewModel {
    * @return the article list of the user.
    */
   public LiveData<List<Article>> getArticlesOfUser() {
-    return mRepository.getPersonalArticles();
+    return repository.getPersonalArticles();
   }
 
   /**
@@ -114,7 +123,28 @@ public class ViewModel extends AndroidViewModel {
    * @param user input user(s).
    */
   public void insertUser(User... user) {
-    mRepository.insertUser(user);
+    repository.insertUser(user);
+  }
+
+  /**
+   * Update the user(s).
+   *
+   * @param user input user(s).
+   */
+  public void updateUser(User... user) {
+    repository.updateUser(user);
+  }
+
+  /**
+   * Get the search result of the user.
+   *
+   * @return result user.
+   */
+  public MutableLiveData<User> getUserSearchResult() {
+    if (userSearchResult == null) {
+      userSearchResult = new MutableLiveData<>();
+    }
+    return userSearchResult;
   }
 
 

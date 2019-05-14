@@ -2,12 +2,11 @@ package com.example.icecream.database.entity;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
 import java.util.Date;
-
-import static android.arch.persistence.room.ForeignKey.CASCADE;
 
 /**
  * The article table.
@@ -18,7 +17,8 @@ import static android.arch.persistence.room.ForeignKey.CASCADE;
     entity = RssFeed.class,
     parentColumns = "id",
     childColumns = "feedId",
-    onDelete = CASCADE))
+    onDelete = ForeignKey.CASCADE),
+    indices = {@Index("feedId"), @Index("title")})
 public class Article {
 
   @PrimaryKey(autoGenerate = true)
@@ -35,6 +35,14 @@ public class Article {
 
   private Date publishTime;
 
+  /**
+   * Constructor for article.
+   *
+   * @param title       article title.
+   * @param link        article url.
+   * @param description article description.
+   * @param publishTime article publish time.
+   */
   public Article(@NonNull String title, String link, String description, Date publishTime) {
     this.title = title;
     this.link = link;

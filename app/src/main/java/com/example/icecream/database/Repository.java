@@ -43,11 +43,11 @@ public class Repository {
     userSearchResult.setValue(user);
   }
 
-  private void FeedsAsyncFinished(List<RssFeed> feeds) {
+  private void feedsAsyncFinished(List<RssFeed> feeds) {
     feedSearchResults.setValue(feeds);
   }
 
-  private void ArticlesAsyncFinished(List<Article> articles) {
+  private void articlesAsyncFinished(List<Article> articles) {
     articleSearchResults.setValue(articles);
   }
 
@@ -350,7 +350,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<RssFeed> result) {
-      delegate.FeedsAsyncFinished(result);
+      delegate.feedsAsyncFinished(result);
     }
   }
 
@@ -414,7 +414,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<Article> result) {
-      delegate.ArticlesAsyncFinished(result);
+      delegate.articlesAsyncFinished(result);
     }
   }
 

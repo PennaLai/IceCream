@@ -10,9 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 import com.example.icecream.R;
 
-// import android.support.v4.app.Fragment;
-
-/** Created by yarolegovich on 25.03.2017. */
+/**
+ * This is the test fragment for testing fragment switch.
+ * @author Aaron
+ */
 public class CenteredTextFragment extends Fragment {
 
   private static final String EXTRA_TEXT = "text";

@@ -1,7 +1,5 @@
 package com.example.icecream;
 
-import static android.content.ContentValues.TAG;
-
 import android.app.Service;
 import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
@@ -25,6 +23,8 @@ import java.io.IOException;
  * @author Penna.
  */
 public class SpeakerService extends Service implements OnPreparedListener, OnCompletionListener {
+
+  private static final String TAG = SpeakerService.class.getName();
 
   /** speak player to play resource. */
   private MediaPlayer speakerPlayer;
@@ -163,7 +163,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
       speakerPlayer.setDataSource(fd);
       speakerPlayer.prepareAsync();
       } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "startNewSong: ", e);
     }
   }
 
@@ -183,8 +183,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   public Double getProgress() {
     int position = speakerPlayer.getCurrentPosition();
     int time = getDuration();
-    double progress = (double) position/(double) time;
-    return progress;
+    return (double) position/(double) time;
   }
 
 

@@ -18,9 +18,7 @@ public class User {
   @NonNull
   private String username;
 
-  @NonNull
   private String password;
-
 
   private String authToken;
 
@@ -31,7 +29,7 @@ public class User {
    * @param username    The input username.
    * @param password    The input password.
    */
-  public User(@NonNull String phoneNumber, @NonNull String username, @NonNull String password) {
+  public User(@NonNull String phoneNumber, @NonNull String username, String password) {
     this.phoneNumber = phoneNumber;
     this.username = username;
     this.password = password;
@@ -63,12 +61,11 @@ public class User {
     this.username = username;
   }
 
-  @NonNull
   public String getPassword() {
     return password;
   }
 
-  public void setPassword(@NonNull String password) {
+  public void setPassword(String password) {
     this.password = password;
   }
 

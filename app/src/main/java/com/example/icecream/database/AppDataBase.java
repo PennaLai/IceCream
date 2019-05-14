@@ -28,7 +28,7 @@ import com.example.icecream.utils.Converters;
 @TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
   // singleton
-  private static volatile AppDataBase INSTANCE;
+  private static volatile AppDataBase instance;
 
   public abstract UserDao userDao();
 
@@ -48,16 +48,16 @@ public abstract class AppDataBase extends RoomDatabase {
    * @author Kemo
    */
   static AppDataBase getDatabase(final Context context) {
-    if (INSTANCE == null) {
+    if (instance == null) {
       synchronized (AppDataBase.class) {
-        if (INSTANCE == null) {
+        if (instance == null) {
           // create local database
-          INSTANCE = Room.databaseBuilder(context.getApplicationContext(),
+          instance = Room.databaseBuilder(context.getApplicationContext(),
               AppDataBase.class, "app_database").build();
         }
       }
     }
-    return INSTANCE;
+    return instance;
   }
 
 }

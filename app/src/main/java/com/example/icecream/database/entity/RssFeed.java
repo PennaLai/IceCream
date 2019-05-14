@@ -1,6 +1,7 @@
 package com.example.icecream.database.entity;
 
 import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
@@ -10,7 +11,7 @@ import android.support.annotation.NonNull;
  *
  * @author Kemo
  */
-@Entity
+@Entity(indices = {@Index("channelName")})
 public class RssFeed {
 
   @PrimaryKey(autoGenerate = true)
@@ -23,6 +24,13 @@ public class RssFeed {
 
   private String category;
 
+  /**
+   * Constructor for RSS feed.
+   *
+   * @param url         RSS feed url.
+   * @param channelName the channel name.
+   * @param category    the category.
+   */
   public RssFeed(@NonNull String url, String channelName, String category) {
     this.url = url;
     this.channelName = channelName;
