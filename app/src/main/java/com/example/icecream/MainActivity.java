@@ -1,6 +1,7 @@
 package com.example.icecream;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -73,6 +74,7 @@ public class MainActivity extends BoilerplateActivity
   private Drawable[] screenIcons;
 
   private SlidingRootNav slidingRootNav;
+  private DrawerAdapter adapter;
 
   private NotificationManager musicBarManage;
   private Notification notify;
@@ -123,7 +125,7 @@ public class MainActivity extends BoilerplateActivity
     screenIcons = loadScreenIcons();
     screenTitles = loadScreenTitles();
 
-    DrawerAdapter adapter =
+    adapter =
         new DrawerAdapter(
             Arrays.asList(
                 createItemFor(POS_DASHBOARD).setChecked(true),
@@ -222,11 +224,22 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
-      finish();
+      login();
+      adapter.setSelected(POS_DASHBOARD);
+//      finish();
     }
     slidingRootNav.closeMenu();
-    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
-    showFragment(selectedScreen);
+//    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
+//    showFragment(selectedScreen);
+
+    Log.i("Draw", ""+position);
+  }
+
+  private void login(){
+    final Context context = this;
+    final Class destActivity = LoginActivity.class;
+    final Intent registerIntent = new Intent(context, destActivity);
+    startActivity(registerIntent);
   }
 
   /**
