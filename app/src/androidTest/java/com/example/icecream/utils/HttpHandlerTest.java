@@ -69,6 +69,7 @@ public class HttpHandlerTest {
     assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 
+
   /**
    * check the phone has been registered.
    */
@@ -87,8 +88,8 @@ public class HttpHandlerTest {
   public void getRefreshStateTest() {
     OkHttpClient client = new OkHttpClient();
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    User user = new User("18929357397", "kemo", "123456");
-    HttpHandler.ResponseState responseState = httpHandler.getRefreshState(user);
+    httpHandler.postLoginState("18929357397", "123456");
+    HttpHandler.ResponseState responseState = httpHandler.getRefreshState();
     assertEquals(HttpHandler.ResponseState.InvalidToken, responseState);
   }
 }

@@ -1,5 +1,6 @@
 package com.example.icecream.utils;
 
+import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -9,6 +10,7 @@ import com.example.icecream.database.entity.User;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -54,20 +56,12 @@ public class HttpHandler {
 
   private static final String MESSAGE_CODE = "msgCode";
 
-
-  /**
-   * The token file name.
-   */
-  public static final String TOKEN_FILE_KEY = "com.icecream.token";
-  /**
-   * The token key name.
-   */
-  public static final String TOKEN_KEY = "tokenKey";
-
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
   private ViewModel viewModel;
+
+  private MutableLiveData<User> userSearchResult;
 
   private Map<String, String> tokenMap;
 
@@ -79,7 +73,8 @@ public class HttpHandler {
   public HttpHandler(final OkHttpClient okHttpClient, AppCompatActivity activity) {
     this.okHttpClient = okHttpClient;
     viewModel = ViewModelProviders.of(activity).get(ViewModel.class);
-    viewModel.getUserSearchResult().observe(activity, user -> {
+    userSearchResult = viewModel.getUserSearchResult();
+    userSearchResult.observe(activity, user -> {
       if (user != null) {
         // update token
         user.setAuthToken(tokenMap.get(user.getPhoneNumber()));
@@ -154,6 +149,7 @@ public class HttpHandler {
           responseState = ResponseState.Valid;
           // add auth token here
           String token = responseJsonObject.getString("token");
+
           tokenMap.put(phoneNumber, token);
           viewModel.findUserByPhone(phoneNumber);
           break;
@@ -242,9 +238,8 @@ public class HttpHandler {
    *
    * @return The response state of token validation.
    */
-  public ResponseState getRefreshState(User user) {
-    // TODO use shared preference or others to store token map
-    String token = tokenMap.get(user.getPhoneNumber());
+  public ResponseState getRefreshState() {
+    String token = Objects.requireNonNull(userSearchResult.getValue()).getAuthToken();
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
