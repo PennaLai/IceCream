@@ -141,9 +141,15 @@ public class MainActivity extends BoilerplateActivity
     draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
+    initNotification();
   }
 
+  /**
+   * initialize the notification bar.
+   */
   private void initNotification() {
+    musicBarManage = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+    remoteViews = new RemoteViews(getPackageName(),R.layout.music_notify);
     NotificationCompat.Builder builder = new Builder(this);
 
     Intent intent = new Intent(MainActivity.this, MainActivity.class);
@@ -157,7 +163,7 @@ public class MainActivity extends BoilerplateActivity
         PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
-//    // 设置上一曲
+    // 设置上一曲
 //    Intent prv = new Intent();
 //    prv.setAction(Constants.ACTION_PRV);
 //    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
@@ -191,17 +197,16 @@ public class MainActivity extends BoilerplateActivity
 //    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
 //    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-
-//    builder.setSmallIcon(R.drawable.notification_bar_icon); // 设置顶部图标
 //
-//    Notification notify = builder.build();
-//    notify.contentView = remoteViews; // 设置下拉图标
-//    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
-//    notify.flags = Notification.FLAG_ONGOING_EVENT;
-//    notify.icon = R.drawable.notification_bar_icon;
-//
-//    musicBarManage.notify(100, notify);
+    builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
 
+    Notification notify = builder.build();
+    notify.contentView = remoteViews; // 设置下拉图标
+    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
+    notify.flags = Notification.FLAG_ONGOING_EVENT;
+    notify.icon = R.drawable.logo;
+
+    musicBarManage.notify(100, notify);
 
   }
 
