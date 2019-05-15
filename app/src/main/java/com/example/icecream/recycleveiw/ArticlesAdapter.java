@@ -9,10 +9,13 @@ import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.icecream.R;
+import com.example.icecream.database.entity.Article;
+import com.example.icecream.recycleveiw.ArticlesAdapter.ArticlesViewHolder;
+import java.util.List;
 
-public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberViewHolder> {
+public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
-  private static final String TAG = RecycleAdapter.class.getSimpleName();
+  private static final String TAG = ArticlesAdapter.class.getSimpleName();
 
   /*
    * An on-click handler that we've defined to make it easy for an Activity to interface with
@@ -23,6 +26,9 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
   private static int viewHolderCount;
 
   private int mNumberItems;
+
+  /** Cache copy of article. */
+  private List<Article> mArticle;
 
   /** The interface that receives onClick messages. */
   public interface ListItemClickListener {
@@ -36,7 +42,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
    * @param numberOfItems Number of items to display in list
    * @param listener Listener for list item clicks
    */
-  public RecycleAdapter(int numberOfItems, ListItemClickListener listener) {
+  public ArticlesAdapter(int numberOfItems, ListItemClickListener listener) {
     mNumberItems = numberOfItems;
     mOnClickListener = listener;
     viewHolderCount = 0;
@@ -50,17 +56,17 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
    * @param viewType If your RecyclerView has more than one type of item (which ours doesn't) you
    *     can use this viewType integer to provide a different layout. See {@link
    *     android.support.v7.widget.RecyclerView.Adapter#getItemViewType(int)} for more details.
-   * @return A new NumberViewHolder that holds the View for each list item
+   * @return A new ArticlesViewHolder that holds the View for each list item
    */
   @Override
-  public NumberViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public ArticlesViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
     Context context = viewGroup.getContext();
     int layoutIdForListItem = R.layout.article_list_item;
     LayoutInflater inflater = LayoutInflater.from(context);
     boolean shouldAttachToParentImmediately = false;
 
     View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
-    NumberViewHolder viewHolder = new NumberViewHolder(view);
+    ArticlesViewHolder viewHolder = new ArticlesViewHolder(view);
 
     viewHolder.viewHolderIndex.setText("ViewHolder index: " + viewHolderCount);
 
@@ -68,6 +74,26 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
     Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: " + viewHolderCount);
     return viewHolder;
   }
+
+  /**
+   * set the database article cache and notify the data set change.
+   * @param articles database articles
+   */
+  void setmArticle(List<Article> articles) {
+    mArticle = articles;
+    notifyDataSetChanged();
+  }
+
+  /**
+   * return current articles numbers.
+   * @return articles count
+   */
+  public int getArticlesCount() {
+    if (mArticle == null)
+      return 0;
+    else return mArticle.size();
+  }
+
 
   /**
    * OnBindViewHolder is called by the RecyclerView to display the data at the specified position.
@@ -80,9 +106,15 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
    * @param position The position of the item within the adapter's data set.
    */
   @Override
-  public void onBindViewHolder(NumberViewHolder holder, int position) {
-    Log.d(TAG, "#" + position);
-    holder.bind(position);
+  public void onBindViewHolder(ArticlesViewHolder holder, int position) {
+    if (mArticle != null) {
+      Article current = mArticle.get(position);
+      if (current != null) {
+        // TODO: 这里的author没有， data没有转换成string
+        holder.bindContent(current.getTitle(), "author", current.getDescription(), "Data");
+      }
+    }
+    holder.bindContent("标题", "作者", "内容", "日期");
   }
 
   /**
@@ -96,12 +128,26 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
     return mNumberItems;
   }
 
-  /** Cache of the children views for a list item. */
-  class NumberViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-    // Will display the position in the list, ie 0 through getItemCount() - 1
-    TextView listItemNumberView;
-    // Will display which ViewHolder is displaying this data
+  /**
+   * Cache of the children views for a list item.
+   *
+   */
+  class ArticlesViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
+
+    /** article title. */
+    TextView title;
+
+    /** articles author name. */
+    TextView author;
+
+    /** the articles content. */
+    TextView content;
+
+    /** articles public time. */
+    TextView publicTime;
+
+    /** delete later. */
     TextView viewHolderIndex;
 
     /**
@@ -110,24 +156,33 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
      * below.
      *
      * @param itemView The View that you inflated in {@link
-     *     RecycleAdapter#onCreateViewHolder(ViewGroup, int)}
+     *     ArticlesAdapter#onCreateViewHolder(ViewGroup, int)}
      */
-    public NumberViewHolder(View itemView) {
+    public ArticlesViewHolder(View itemView) {
       super(itemView);
 
-      listItemNumberView = (TextView) itemView.findViewById(R.id.tv_item_title);
-      viewHolderIndex = (TextView) itemView.findViewById(R.id.tv_view_holder_instance);
+      author =  itemView.findViewById(R.id.tv_author);
+      publicTime = itemView.findViewById(R.id.tv_publish_time);
+      title =  itemView.findViewById(R.id.tv_item_title);
+      content = itemView.findViewById(R.id.tv_item_content);
+      viewHolderIndex = itemView.findViewById(R.id.tv_view_holder_instance);
+
       itemView.setOnClickListener(this);
     }
 
+
     /**
-     * A method we wrote for convenience. This method will take an integer as input and use that
-     * integer to display the appropriate text within a list item.
-     *
-     * @param listIndex Position of the item in the list
+     * This method is to bind the content to the ui item view.
+     * @param title article title
+     * @param author article author
+     * @param content article content
+     * @param publicTime article public time
      */
-    void bind(int listIndex) {
-      listItemNumberView.setText(String.valueOf(listIndex));
+    void bindContent(String title, String author, String content, String publicTime) {
+      this.title.setText(title);
+      this.author.setText(author);
+      this.content.setText(content);
+      this.publicTime.setText(publicTime);
     }
 
     /**
@@ -137,7 +192,7 @@ public class RecycleAdapter extends RecyclerView.Adapter<RecycleAdapter.NumberVi
      */
     @Override
     public void onClick(View v) {
-      int clickedPosition = getAdapterPosition();
+      int clickedPosition = getAdapterPosition(); // the item position(indicate the item index)
       mOnClickListener.onListItemClick(clickedPosition);
     }
   }

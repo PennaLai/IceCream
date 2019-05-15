@@ -13,7 +13,7 @@
         android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
         android:usesCleartextTraffic="true">
         <service
-            android:name=".SpeakerService"
+            android:name=".service.SpeakerService"
             android:enabled="true"
             android:exported="true"></service>
 

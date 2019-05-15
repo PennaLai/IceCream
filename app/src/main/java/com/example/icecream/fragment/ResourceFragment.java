@@ -10,13 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.Button;
 import android.widget.Toast;
 
 import com.example.icecream.MainActivity;
 import com.example.icecream.R;
-import com.example.icecream.recycleveiw.RecycleAdapter;
+import com.example.icecream.recycleveiw.ArticlesAdapter;
 import com.example.icecream.search.SimpleToolbar;
 
 import java.util.Objects;
@@ -26,11 +24,11 @@ import java.util.Objects;
  * This is the resource(main) fragment to display the articles.
  * @author Aaron
  */
-public class ResourceFragment extends Fragment implements RecycleAdapter.ListItemClickListener {
+public class ResourceFragment extends Fragment implements ArticlesAdapter.ListItemClickListener {
 
   private static final int NUM_LIST_ITEMS = 100;
 
-  private RecycleAdapter mAdapter;
+  private ArticlesAdapter mAdapter;
   private RecyclerView mArticleList;
   private Context mainAppContext;
 
@@ -45,7 +43,7 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
   }
 
   /** use to connect to play fragment through main activity*/
-  MusicConnector musicConnector;
+  private MusicConnector musicConnectorCallback;
 
   /**
    * this interface is use to connect the play fragment, the main activity should
@@ -53,13 +51,11 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
    * @author Penna
    */
   public interface MusicConnector {
-    void sendNewMusic();
 
-    void startPlayer();
-
-    void stopPlayer();
-
-    void pausePlayer();
+    /**
+     * if the article is select, Resource fragment -> Main activity -> Player fragment.
+     */
+    void onArticleSelect();
   }
 
   @Override
@@ -89,16 +85,22 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
 
     mArticleList.setHasFixedSize(true);
 
-    mAdapter = new RecycleAdapter(NUM_LIST_ITEMS, this);
+    mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
 
     return view;
   }
 
-  // COMPLETED (10) Override ListItemClickListener's onListItemClick method
+  @Override
+  public void onAttach(Context context) {
+    super.onAttach(context);
+    musicConnectorCallback = (MainActivity) context;
+  }
+
+
   /**
    * This is where we receive our callback from
-   * {@link RecycleAdapter.ListItemClickListener}
+   * {@link ArticlesAdapter.ListItemClickListener}
    *
    * This callback is invoked when you click on an item in the list.
    *
@@ -130,6 +132,9 @@ public class ResourceFragment extends Fragment implements RecycleAdapter.ListIte
     mToast = Toast.makeText(mainAppContext, toastMessage, Toast.LENGTH_LONG);
 
     mToast.show();
+    // tell the main activity to change the screen to the player fragment
+    musicConnectorCallback.onArticleSelect();
+
   }
 
 }

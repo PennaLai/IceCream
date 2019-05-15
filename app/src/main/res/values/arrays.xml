@@ -7,7 +7,7 @@
         <item>我的收藏</item>
         <item>设置</item>
         <item />
-        <item>注销</item>
+        <item>登录</item>
     </string-array>
 
     <array name="ld_activityScreenIcons">
@@ -16,7 +16,7 @@
         <item>@drawable/icons8_star</item>
         <item>@drawable/icons8_settings</item>
         <item>0</item>
-        <item>@drawable/icons8_export</item>
+        <item>@drawable/icons8_enter</item>
     </array>
 
 </resources>
