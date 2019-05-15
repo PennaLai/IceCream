@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -23,6 +24,7 @@ import com.example.icecream.R;
 import com.example.icecream.service.SpeakerService;
 import java.util.ArrayList;
 import java.util.List;
+import me.zhengken.lyricview.LyricView;
 
 /**
  * This is the ui fragment to handler the player event.
@@ -86,14 +88,15 @@ public class PlayFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_play, container, false);
-    volumeText = view.findViewById(R.id.tv_volume);
-    Button btPlay = view.findViewById(R.id.bt_play);
-    Button btNext = view.findViewById(R.id.bt_next);
-    sbProgress = view.findViewById(R.id.seekBar_volume);
+
+    volumeText = view.findViewById(R.id.music_title);
+    ImageView btPlay = view.findViewById(R.id.btn_play_pause);
+    ImageView btNext = view.findViewById(R.id.btn_next);
+    sbProgress = view.findViewById(R.id.music_seek_bar);
     btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> playNextMusic());
     sbProgress.setOnSeekBarChangeListener(new VolumeListener());
-    // bind speaker service
+//     bind speaker service
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(

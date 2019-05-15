@@ -75,6 +75,7 @@ public class MainActivity extends BoilerplateActivity
 
   private SlidingRootNav slidingRootNav;
   private DrawerAdapter adapter;
+  private ViewPager viewPager;
 
   private NotificationManager musicBarManage;
   private Notification notify;
@@ -94,7 +95,7 @@ public class MainActivity extends BoilerplateActivity
     data.put(1, PlayFragment.newInstance());
 
     // 找到ViewPager
-    ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+    viewPager = (ViewPager) findViewById(R.id.view_pager);
 
     // 为ViewPager配置Adapter
     viewPager.setAdapter(
@@ -144,69 +145,69 @@ public class MainActivity extends BoilerplateActivity
 
     adapter.setSelected(POS_DASHBOARD);
   }
-
-  private void initNotification() {
-    NotificationCompat.Builder builder = new Builder(this);
-
-    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-    // 点击跳转到主界面
-    PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
-
-    // 4个参数context, requestCode, intent, flags
-    PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
-
-//    // 设置上一曲
-//    Intent prv = new Intent();
-//    prv.setAction(Constants.ACTION_PRV);
-//    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
+//
+//  private void initNotification() {
+//    NotificationCompat.Builder builder = new Builder(this);
+//
+//    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+//    // 点击跳转到主界面
+//    PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+//    remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
 //
-//    // 设置播放
-//    if (Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PAUSE);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//    if (!Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PLAY);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//
-//    // 下一曲
-//    Intent next = new Intent();
-//    next.setAction(Constants.ACTION_NEXT);
-//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
+//    // 4个参数context, requestCode, intent, flags
+//    PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 //
-//    // 设置收藏
-//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-
-//    builder.setSmallIcon(R.drawable.notification_bar_icon); // 设置顶部图标
+////    // 设置上一曲
+////    Intent prv = new Intent();
+////    prv.setAction(Constants.ACTION_PRV);
+////    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
+////        PendingIntent.FLAG_UPDATE_CURRENT);
+////    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+////
+////    // 设置播放
+////    if (Myapp.isPlay) {
+////      Intent playorpause = new Intent();
+////      playorpause.setAction(Constants.ACTION_PAUSE);
+////      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
+////          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+////      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+////    }
+////    if (!Myapp.isPlay) {
+////      Intent playorpause = new Intent();
+////      playorpause.setAction(Constants.ACTION_PLAY);
+////      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
+////          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+////      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+////    }
+////
+////    // 下一曲
+////    Intent next = new Intent();
+////    next.setAction(Constants.ACTION_NEXT);
+////    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
+////        PendingIntent.FLAG_UPDATE_CURRENT);
+////    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+////
+////    // 设置收藏
+////    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
+////        PendingIntent.FLAG_UPDATE_CURRENT);
+////    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
 //
-//    Notification notify = builder.build();
-//    notify.contentView = remoteViews; // 设置下拉图标
-//    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
-//    notify.flags = Notification.FLAG_ONGOING_EVENT;
-//    notify.icon = R.drawable.notification_bar_icon;
+////    builder.setSmallIcon(R.drawable.notification_bar_icon); // 设置顶部图标
+////
+////    Notification notify = builder.build();
+////    notify.contentView = remoteViews; // 设置下拉图标
+////    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
+////    notify.flags = Notification.FLAG_ONGOING_EVENT;
+////    notify.icon = R.drawable.notification_bar_icon;
+////
+////    musicBarManage.notify(100, notify);
 //
-//    musicBarManage.notify(100, notify);
-
-
-  }
-
+//
+//  }
+//
 
 
   /**
@@ -311,7 +312,7 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
-
+    viewPager.setCurrentItem(1, true);
   }
 
 }
