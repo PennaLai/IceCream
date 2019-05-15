@@ -52,6 +52,8 @@ import java.util.TreeMap;
 /**
  * The main activity.
  *
+ * Reference: https://blog.csdn.net/u013926110/article/details/46945199
+ *
  * @version V1.0
  */
 public class MainActivity extends BoilerplateActivity
