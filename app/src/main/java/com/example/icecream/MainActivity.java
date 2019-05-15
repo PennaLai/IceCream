@@ -167,12 +167,41 @@ public class MainActivity extends BoilerplateActivity
         PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
-   
+//    // 设置上一曲
 //    Intent prv = new Intent();
 //    prv.setAction(Constants.ACTION_PRV);
 //    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
 //    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+//
+//    // 设置播放
+//    if (Myapp.isPlay) {
+//      Intent playorpause = new Intent();
+//      playorpause.setAction(Constants.ACTION_PAUSE);
+//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
+//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+//    }
+//    if (!Myapp.isPlay) {
+//      Intent playorpause = new Intent();
+//      playorpause.setAction(Constants.ACTION_PLAY);
+//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
+//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+//    }
+//
+//    // 下一曲
+//    Intent next = new Intent();
+//    next.setAction(Constants.ACTION_NEXT);
+//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
+//        PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+//
+//    // 设置收藏
+//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
+//        PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
+//
 
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
 
@@ -224,7 +253,7 @@ public class MainActivity extends BoilerplateActivity
     Log.i("Draw", ""+position);
   }
 
-  private void login(){
+  private void login() {
     final Context context = this;
     final Class destActivity = LoginActivity.class;
     final Intent registerIntent = new Intent(context, destActivity);
