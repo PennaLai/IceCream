@@ -1,6 +1,8 @@
 package com.example.icecream;
 
 import android.app.Fragment;
+import android.content.Context;
+import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -12,6 +14,7 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -55,6 +58,7 @@ public class MainActivity extends BoilerplateActivity
   private Drawable[] screenIcons;
 
   private SlidingRootNav slidingRootNav;
+  private DrawerAdapter adapter;
 
   /** connection between UI and Repository */
   //  private ViewModel mViewMode;
@@ -101,7 +105,7 @@ public class MainActivity extends BoilerplateActivity
     screenIcons = loadScreenIcons();
     screenTitles = loadScreenTitles();
 
-    DrawerAdapter adapter =
+    adapter =
         new DrawerAdapter(
             Arrays.asList(
                 createItemFor(POS_DASHBOARD).setChecked(true),
@@ -136,11 +140,22 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
-      finish();
+      login();
+      adapter.setSelected(POS_DASHBOARD);
+//      finish();
     }
     slidingRootNav.closeMenu();
-    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
-    showFragment(selectedScreen);
+//    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
+//    showFragment(selectedScreen);
+
+    Log.i("Draw", ""+position);
+  }
+
+  private void login(){
+    final Context context = this;
+    final Class destActivity = LoginActivity.class;
+    final Intent registerIntent = new Intent(context, destActivity);
+    startActivity(registerIntent);
   }
 
   /**
