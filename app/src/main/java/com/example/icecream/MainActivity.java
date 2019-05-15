@@ -206,8 +206,17 @@ public class MainActivity extends BoilerplateActivity
     notify.flags = Notification.FLAG_ONGOING_EVENT;
     notify.icon = R.drawable.logo;
 
-    musicBarManage.notify(100, notify);
+    musicBarManage.notify(100, notify); // id 代表通知的id，可以在后续通过id关闭
 
+  }
+
+  /**
+   * To destroy the music bar notification.
+   */
+  private void notificationDestory() {
+    if (remoteViews != null) {
+      musicBarManage.cancel(100);
+    }
   }
 
 
