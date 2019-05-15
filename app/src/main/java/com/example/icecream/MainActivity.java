@@ -2,13 +2,23 @@ package com.example.icecream;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment.SavedState;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.app.FragmentTransaction;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +28,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.RemoteViews;
+import android.widget.RemoteViews.RemoteView;
 import com.example.icecream.fragment.CenteredTextFragment;
 import com.example.icecream.fragment.PlayFragment;
 import com.example.icecream.fragment.ResourceFragment;
@@ -29,7 +41,10 @@ import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.search.SimpleToolbar;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -50,6 +65,7 @@ public class MainActivity extends BoilerplateActivity
   private static final int POS_MESSAGES = 2;
   private static final int POS_CART = 3;
   private static final int POS_LOGOUT = 5;
+  private static final String TAG = "MainActivity";
 
   private SimpleToolbar toolbar;
   private int toolbarMargin;
@@ -60,8 +76,12 @@ public class MainActivity extends BoilerplateActivity
   private SlidingRootNav slidingRootNav;
   private DrawerAdapter adapter;
 
-  /** connection between UI and Repository */
-  //  private ViewModel mViewMode;
+  private NotificationManager musicBarManage;
+  private Notification notify;
+  private RemoteViews remoteViews;
+
+  /** connection between UI and Repository. */
+//    private ViewModel mViewMode;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
@@ -124,6 +144,70 @@ public class MainActivity extends BoilerplateActivity
 
     adapter.setSelected(POS_DASHBOARD);
   }
+
+  private void initNotification() {
+    NotificationCompat.Builder builder = new Builder(this);
+
+    Intent intent = new Intent(MainActivity.this, MainActivity.class);
+    // 点击跳转到主界面
+    PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent,
+        PendingIntent.FLAG_UPDATE_CURRENT);
+    remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
+
+    // 4个参数context, requestCode, intent, flags
+    PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent,
+        PendingIntent.FLAG_UPDATE_CURRENT);
+    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
+
+//    // 设置上一曲
+//    Intent prv = new Intent();
+//    prv.setAction(Constants.ACTION_PRV);
+//    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
+//        PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+//
+//    // 设置播放
+//    if (Myapp.isPlay) {
+//      Intent playorpause = new Intent();
+//      playorpause.setAction(Constants.ACTION_PAUSE);
+//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
+//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+//    }
+//    if (!Myapp.isPlay) {
+//      Intent playorpause = new Intent();
+//      playorpause.setAction(Constants.ACTION_PLAY);
+//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
+//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+//    }
+//
+//    // 下一曲
+//    Intent next = new Intent();
+//    next.setAction(Constants.ACTION_NEXT);
+//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
+//        PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+//
+//    // 设置收藏
+//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
+//        PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
+
+//    builder.setSmallIcon(R.drawable.notification_bar_icon); // 设置顶部图标
+//
+//    Notification notify = builder.build();
+//    notify.contentView = remoteViews; // 设置下拉图标
+//    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
+//    notify.flags = Notification.FLAG_ONGOING_EVENT;
+//    notify.icon = R.drawable.notification_bar_icon;
+//
+//    musicBarManage.notify(100, notify);
+
+
+  }
+
+
 
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
@@ -208,19 +292,6 @@ public class MainActivity extends BoilerplateActivity
     }
   }
 
-  @Override
-  public void sendNewMusic() {
-    // connect to player fragment
-  }
-
-  @Override
-  public void startPlayer() {}
-
-  @Override
-  public void stopPlayer() {}
-
-  @Override
-  public void pausePlayer() {}
 
   @Override
   public boolean onCreateOptionsMenu(Menu menu) {
@@ -236,4 +307,11 @@ public class MainActivity extends BoilerplateActivity
     }
     return super.onOptionsItemSelected(item);
   }
+
+  @Override
+  public void onArticleSelect() {
+    Log.i(TAG, "onArticleSelect: Go fuck your self");
+
+  }
+
 }

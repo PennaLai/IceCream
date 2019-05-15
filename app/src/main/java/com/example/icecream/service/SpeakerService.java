@@ -1,4 +1,4 @@
-package com.example.icecream;
+package com.example.icecream.service;
 
 import android.app.Service;
 import android.content.Intent;

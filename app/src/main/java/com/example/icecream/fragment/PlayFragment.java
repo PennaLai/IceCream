@@ -20,7 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 import com.example.icecream.R;
-import com.example.icecream.SpeakerService;
+import com.example.icecream.service.SpeakerService;
 import java.util.ArrayList;
 import java.util.List;
 

@@ -1,11 +1,10 @@
 package com.example.icecream;
 
-import static org.junit.Assert.*;
-
 import android.content.Intent;
 import android.os.IBinder;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.rule.ServiceTestRule;
+import com.example.icecream.service.SpeakerService;
 import java.util.concurrent.TimeoutException;
 import org.junit.Rule;
 import org.junit.Test;
