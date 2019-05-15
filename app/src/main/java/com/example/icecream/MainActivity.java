@@ -1,6 +1,7 @@
 package com.example.icecream;
 
 import android.app.Fragment;
+import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -73,6 +74,8 @@ public class MainActivity extends BoilerplateActivity
   private Drawable[] screenIcons;
 
   private SlidingRootNav slidingRootNav;
+  private DrawerAdapter adapter;
+  private ViewPager viewPager;
 
   private NotificationManager musicBarManage;
   private Notification notify;
@@ -92,7 +95,7 @@ public class MainActivity extends BoilerplateActivity
     data.put(1, PlayFragment.newInstance());
 
     // 找到ViewPager
-    ViewPager viewPager = (ViewPager) findViewById(R.id.view_pager);
+    viewPager = (ViewPager) findViewById(R.id.view_pager);
 
     // 为ViewPager配置Adapter
     viewPager.setAdapter(
@@ -123,7 +126,7 @@ public class MainActivity extends BoilerplateActivity
     screenIcons = loadScreenIcons();
     screenTitles = loadScreenTitles();
 
-    DrawerAdapter adapter =
+    adapter =
         new DrawerAdapter(
             Arrays.asList(
                 createItemFor(POS_DASHBOARD).setChecked(true),
@@ -144,6 +147,7 @@ public class MainActivity extends BoilerplateActivity
     initNotification();
   }
 
+
   /**
    * initialize the notification bar.
    */
@@ -163,41 +167,13 @@ public class MainActivity extends BoilerplateActivity
         PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
-    // 设置上一曲
+   
 //    Intent prv = new Intent();
 //    prv.setAction(Constants.ACTION_PRV);
 //    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
 //    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
-//
-//    // 设置播放
-//    if (Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PAUSE);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//    if (!Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PLAY);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//
-//    // 下一曲
-//    Intent next = new Intent();
-//    next.setAction(Constants.ACTION_NEXT);
-//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
-//
-//    // 设置收藏
-//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-//
+
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
 
     Notification notify = builder.build();
@@ -221,6 +197,7 @@ public class MainActivity extends BoilerplateActivity
 
 
 
+
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
    * @param tb : The instance of SimpleToolbar
@@ -236,11 +213,22 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
-      finish();
+      login();
+      adapter.setSelected(POS_DASHBOARD);
+//      finish();
     }
     slidingRootNav.closeMenu();
-    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
-    showFragment(selectedScreen);
+//    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
+//    showFragment(selectedScreen);
+
+    Log.i("Draw", ""+position);
+  }
+
+  private void login(){
+    final Context context = this;
+    final Class destActivity = LoginActivity.class;
+    final Intent registerIntent = new Intent(context, destActivity);
+    startActivity(registerIntent);
   }
 
   /**
@@ -312,7 +300,7 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
-
+    viewPager.setCurrentItem(1, true);
   }
 
 }
