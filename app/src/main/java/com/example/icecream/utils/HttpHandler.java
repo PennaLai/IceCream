@@ -69,8 +69,8 @@ public class HttpHandler {
    */
   private Repository repository;
 
-  private List<RssFeed> rssFeeds;
-  private List<Article> articles;
+  private List<RssFeed> rssFeeds = new ArrayList<>();
+  private List<Article> articles = new ArrayList<>();
 
   /**
    * Constructor for http handler.
@@ -318,6 +318,7 @@ public class HttpHandler {
     String token = user.getAuthToken();
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
+    Log.i(TAG, responseString);
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -334,11 +335,11 @@ public class HttpHandler {
         case "2":
           // token is valid and stores data to local database.
           responseState = ResponseState.Valid;
-          Log.i(TAG, "Successfully get RSS feeds");
+          Log.i(TAG, "Successfully get RSS feeds\n");
           String data = responseJsonObject.getString(MESSAGE_DATA);
           if (data != null) {
             JSONArray jsonArray = new JSONArray(data);
-            rssFeeds = new ArrayList<>();
+            rssFeeds.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
               JSONObject jsonobject = jsonArray.getJSONObject(i);
               RssFeed rssFeed = new RssFeed(
@@ -379,6 +380,7 @@ public class HttpHandler {
     String token = user.getAuthToken();
     String url = ARTICLES_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
+    Log.i(TAG, responseString);
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -395,11 +397,11 @@ public class HttpHandler {
         case "2":
           // token is valid and stores data to local database.
           responseState = ResponseState.Valid;
-          Log.i(TAG, "Successfully get RSS feeds");
+          Log.i(TAG, "Successfully get articles");
           String data = responseJsonObject.getString(MESSAGE_DATA);
           if (data != null) {
             JSONArray jsonArray = new JSONArray(data);
-            rssFeeds = new ArrayList<>();
+            articles.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
               JSONObject jsonobject = jsonArray.getJSONObject(i);
               Article article = new Article(

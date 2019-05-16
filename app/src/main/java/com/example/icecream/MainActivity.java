@@ -157,8 +157,8 @@ public class MainActivity extends BoilerplateActivity
     // http
     httpHandler = new HttpHandler(new OkHttpClient(), this);
 
-    // TODO 加载订阅文章方式如下
-    // new UpdateRssFeedsAsyncTask(this).execute(phone);
+    // view model
+    viewModel = new AppViewModel(getApplication());
   }
 
 
@@ -345,7 +345,6 @@ public class MainActivity extends BoilerplateActivity
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
     viewPager.setCurrentItem(1, true);
-    new UpdateRssFeedsAsyncTask(this).execute(phone);
   }
 
 
@@ -376,15 +375,16 @@ public class MainActivity extends BoilerplateActivity
       switch (responseState) {
         case Valid:
           // get those feeds successfully
+          Log.i(TAG, "get rss feeds");
           activity.viewModel.setPersonalRssFeeds(activity.httpHandler.getRssFeeds());
           break;
         case InvalidToken:
           // TODO back to login
-          activity.login();
+//          activity.login();
           break;
         case NoSuchUser:
           // TODO back to login
-          activity.login();
+//          activity.login();
           break;
         default:
           break;
@@ -419,15 +419,16 @@ public class MainActivity extends BoilerplateActivity
       switch (responseState) {
         case Valid:
           // get those articles successfully
+          Log.i(TAG, "get articles");
           activity.viewModel.setPersonalArticles(activity.httpHandler.getArticles());
           break;
         case InvalidToken:
           // TODO back to login
-          activity.login();
+//          activity.login();
           break;
         case NoSuchUser:
           // TODO back to login
-          activity.login();
+//          activity.login();
           break;
         default:
           break;
