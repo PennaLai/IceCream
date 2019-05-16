@@ -2,11 +2,11 @@ package com.example.icecream;
 
 import android.content.Context;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.view.View;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -14,7 +14,8 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
 
-import mehdi.sakout.fancybuttons.FancyButton;
+import java.lang.ref.WeakReference;
+
 import okhttp3.OkHttpClient;
 
 
@@ -36,11 +37,6 @@ public class LoginActivity extends AppCompatActivity {
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
-
-    // thread problem for request
-    final StrictMode.ThreadPolicy policy =
-        new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    StrictMode.setThreadPolicy(policy);
 
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
@@ -68,21 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     final String phoneNumber = phoneEditText.toString();
     final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
-      switch (httpHandler.postLoginState(phoneNumber, password)) {
-        case NoSuchUser:
-          showToastMessage("用户账号不存在");
-          break;
-        case WrongPassword:
-          showToastMessage("密码错误");
-          break;
-        case Valid:
-          showToastMessage("登录成功");
-          goToMainPage();
-          break;
-        default:
-          showToastMessage("登录失败，请重试");
-          break;
-      }
+      new LoginAsyncTask(this).execute(new ParamsPhonePassword(phoneNumber, password));
     }
   }
 
@@ -170,11 +152,11 @@ public class LoginActivity extends AppCompatActivity {
   /**
    * Jump to the MainPage.
    */
-  public void goToMainPage() {
+  public void goToMainPage(String phone) {
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
     Intent intent = new Intent(context, destinationActivity);
-    intent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
+    intent.putExtra(Intent.EXTRA_TEXT, phone);
     startActivity(intent);
   }
 
@@ -187,7 +169,10 @@ public class LoginActivity extends AppCompatActivity {
     Context context = LoginActivity.this;
     Class destinationActivity = RegisterActivity.class;
     Intent startRegisterActivityIntent = new Intent(context, destinationActivity);
-    startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, phoneEdit.getText().toString());
+    Editable phone = phoneEdit.getText();
+    if (phone != null) {
+      startRegisterActivityIntent.putExtra(Intent.EXTRA_TEXT, phone.toString());
+    }
     startActivity(startRegisterActivityIntent);
   }
 
@@ -213,5 +198,61 @@ public class LoginActivity extends AppCompatActivity {
     startActivity(startRegisterActivityIntent);
   }
 
+  private class ParamsPhonePassword {
+    String phone;
+    String password;
+
+    ParamsPhonePassword(String phone, String password) {
+      this.phone = phone;
+      this.password = password;
+    }
+  }
+
+
+  private static class LoginAsyncTask extends AsyncTask<ParamsPhonePassword, Void, HttpHandler.ResponseState> {
+
+    private String phoneNumber;
+    private String password;
+    private WeakReference<LoginActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    LoginAsyncTask(LoginActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(ParamsPhonePassword... params) {
+      LoginActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      phoneNumber = params[0].phone;
+      password = params[0].password;
+      return activity.httpHandler.postLoginState(phoneNumber, password);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      LoginActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case NoSuchUser:
+          activity.showToastMessage("用户账号不存在");
+          break;
+        case WrongPassword:
+          activity.showToastMessage("密码错误");
+          break;
+        case Valid:
+          activity.showToastMessage("登录成功");
+          activity.goToMainPage(phoneNumber);
+          break;
+        default:
+          activity.showToastMessage("登录失败，请重试");
+          break;
+      }
+    }
+  }
 
 }

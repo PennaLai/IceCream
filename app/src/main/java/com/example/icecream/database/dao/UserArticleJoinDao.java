@@ -16,7 +16,7 @@ public interface UserArticleJoinDao {
   @Insert
   void insert(UserArticleJoin userRssFeedJoin);
 
-  @Query("SELECT * FROM Article INNER JOIN UserArticleJoin ON "
+  @Query("SELECT Article.* FROM Article INNER JOIN UserArticleJoin ON "
       + "Article.id = UserArticleJoin.articleId WHERE "
       + "UserArticleJoin.userId = :userId")
   LiveData<List<Article>> getArticlesByUserId(final Long userId);

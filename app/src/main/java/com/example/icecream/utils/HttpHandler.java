@@ -1,16 +1,13 @@
 package com.example.icecream.utils;
 
-import android.arch.lifecycle.MutableLiveData;
-import android.arch.lifecycle.ViewModelProviders;
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.User;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -45,6 +42,7 @@ public class HttpHandler {
   private static final String LOGIN_URL = MAIN_URL + "signin";
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
+  private static final String USER_INFO_URL = MAIN_URL + "userinfo";
 
   /**
    * User feeds and articles urls.
@@ -54,34 +52,23 @@ public class HttpHandler {
   private static final String SUBSCRIBE_URL = MAIN_URL + "/addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "/deleteChannel";
 
+  private static final String MESSAGE = "message";
   private static final String MESSAGE_CODE = "msgCode";
+  private static final String MESSAGE_DATA = "data";
 
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
-  private ViewModel viewModel;
-
-  private MutableLiveData<User> userSearchResult;
-
-  private Map<String, String> tokenMap;
+  private Repository repository;
 
   /**
    * Constructor for http handler.
    *
    * @param okHttpClient http client
    */
-  public HttpHandler(final OkHttpClient okHttpClient, AppCompatActivity activity) {
+  public HttpHandler(final OkHttpClient okHttpClient, Activity activity) {
     this.okHttpClient = okHttpClient;
-    viewModel = ViewModelProviders.of(activity).get(ViewModel.class);
-    userSearchResult = viewModel.getUserSearchResult();
-    userSearchResult.observe(activity, user -> {
-      if (user != null) {
-        // update token
-        user.setAuthToken(tokenMap.get(user.getPhoneNumber()));
-      }
-      viewModel.updateUser(user);
-    });
-    tokenMap = new HashMap<>();
+    repository = new Repository(activity.getApplication());
   }
 
   /**
@@ -125,7 +112,8 @@ public class HttpHandler {
    * @return The validation result state.
    * @author Kemo
    */
-  public ResponseState postLoginState(final String phoneNumber, final String password) {
+  public ResponseState postLoginState(@NonNull final String phoneNumber,
+                                      @NonNull final String password) {
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
@@ -147,11 +135,16 @@ public class HttpHandler {
           break;
         case "2":
           responseState = ResponseState.Valid;
-          // add auth token here
-          String token = responseJsonObject.getString("token");
-
-          tokenMap.put(phoneNumber, token);
-          viewModel.findUserByPhone(phoneNumber);
+          // check if it is in local database
+          User user = repository.getUserByPhoneSync(phoneNumber);
+          if (user == null) {
+            String username = getUpdateUsername(phoneNumber);
+            repository.insertUserSync(new User(phoneNumber, username, password));
+          } else {
+            // add auth token here
+            String token = responseJsonObject.getString("token");
+            repository.updateTokenByPhoneSync(phoneNumber, token);
+          }
           break;
         default:
           break;
@@ -171,8 +164,9 @@ public class HttpHandler {
    * @param password    The password string that used for register.
    * @return The validation result state.
    */
-  public ResponseState postRegisterState(
-      final String phoneNumber, final String username, final String password) {
+  public ResponseState postRegisterState(@NonNull final String phoneNumber,
+                                         @NonNull final String username,
+                                         @NonNull final String password) {
     JSONObject jsonObject = new JSONObject();
     try {
       jsonObject.put("phoneNumber", phoneNumber);
@@ -190,7 +184,7 @@ public class HttpHandler {
         responseState = ResponseState.Valid;
         // add user to database
         User user = new User(phoneNumber, username, password);
-        viewModel.insertUser(user);
+        repository.insertUser(user);
       }
     } catch (JSONException e) {
       Log.e(TAG, "postRegisterState: ", e);
@@ -205,7 +199,7 @@ public class HttpHandler {
    * @param phoneNumber The phone number string that used for register.
    * @return The validation result state.
    */
-  public ResponseState postPhoneState(final String phoneNumber) {
+  public ResponseState postPhoneState(@NonNull final String phoneNumber) {
     JSONObject requestJsonObject = new JSONObject();
     try {
       requestJsonObject.put("phoneNumber", phoneNumber);
@@ -237,9 +231,12 @@ public class HttpHandler {
    * Send get request to refresh personal RSS feeds for local database.
    *
    * @return The response state of token validation.
+   * If InvalidToken, needs to re-login.
+   * If NoSuchUser, needs to re-register.
    */
-  public ResponseState getRefreshState() {
-    String token = Objects.requireNonNull(userSearchResult.getValue()).getAuthToken();
+  public ResponseState getUpdateRSSFeedsState(@NonNull final String phoneNumber) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
@@ -248,25 +245,45 @@ public class HttpHandler {
       responseJsonObject = new JSONObject(responseString);
       switch (responseJsonObject.getString(MESSAGE_CODE)) {
         case "0":
-          // token is invalid.
+          // token is invalid. Needs to re-login.
           responseState = ResponseState.InvalidToken;
           break;
         case "1":
-          // user account may have been deleted.
+          // user account may have been deleted. Needs to re-register.
           responseState = ResponseState.NoSuchUser;
           break;
         case "2":
-          // token valid and store data to local database.
+          // token is valid and stores data to local database.
           responseState = ResponseState.Valid;
+          Log.i(TAG, "Successfully get Rss feeds");
+          String data = responseJsonObject.getString(MESSAGE_DATA);
+          Log.e(TAG, data);
           // TODO
           break;
         default:
           break;
       }
     } catch (JSONException e) {
-      Log.e(TAG, "getRefreshState: ", e);
+      Log.e(TAG, "getUpdateRSSFeedsState: ", e);
     }
     return responseState;
+  }
+
+  private String getUpdateUsername(@NonNull String phoneNumber) {
+    String url = USER_INFO_URL + "?phone=" + phoneNumber;
+    String responseString = getHttpResponseString(url);
+    JSONObject responseJsonObject;
+    String response = "";
+    try {
+      responseJsonObject = new JSONObject(responseString);
+      if (responseJsonObject.getString(MESSAGE_CODE).equals("2")) {
+        // user found.
+        response = responseJsonObject.getString(MESSAGE);
+      }
+    } catch (JSONException e) {
+      Log.e(TAG, "getUpdateUsername: ", e);
+    }
+    return response;
   }
 
 
