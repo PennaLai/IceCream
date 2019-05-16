@@ -5,9 +5,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.example.icecream.database.Repository;
+import com.example.icecream.database.entity.Article;
+import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -15,6 +19,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -59,7 +64,13 @@ public class HttpHandler {
   private static final MediaType JSON
       = MediaType.parse("application/json; charset=utf-8");
 
+  /**
+   * We mainly use synchronous method of repository in http handler.
+   */
   private Repository repository;
+
+  private List<RssFeed> rssFeeds;
+  private List<Article> articles;
 
   /**
    * Constructor for http handler.
@@ -101,6 +112,74 @@ public class HttpHandler {
      * user account is matched in database.
      */
     Valid
+  }
+
+  private String getUpdateUsername(@NonNull String phoneNumber) {
+    String url = USER_INFO_URL + "?phone=" + phoneNumber;
+    String responseString = getHttpResponseString(url);
+    JSONObject responseJsonObject;
+    String response = "";
+    try {
+      responseJsonObject = new JSONObject(responseString);
+      if (responseJsonObject.getString(MESSAGE_CODE).equals("2")) {
+        // user found.
+        response = responseJsonObject.getString(MESSAGE);
+      }
+    } catch (JSONException e) {
+      Log.e(TAG, "getUpdateUsername: ", e);
+    }
+    return response;
+  }
+
+
+  /**
+   * Get request and get the content of a get http response.
+   *
+   * @param url The request url.
+   * @return The http response from server.
+   */
+  private String getHttpResponseString(final String url) {
+    Request request = new Request.Builder()
+        .url(url)
+        .header("Content-Type", "application/json")
+        .build();
+    String result = null;
+    try {
+      Response response = okHttpClient.newCall(request).execute();
+      if (response.isSuccessful()) {
+        assert response.body() != null;
+        result = response.body().string();
+      }
+    } catch (IOException e) {
+      Log.e(TAG, "getHttpResponseString: ", e);
+    }
+    return result;
+  }
+
+  /**
+   * Post request and get the content of a post http response.
+   *
+   * @param url  The post request url.
+   * @param json The post data content.
+   * @return The response from the server.
+   */
+  private String postHttpResponseString(final String url, final String json) {
+    RequestBody body = RequestBody.create(JSON, json);
+    Request request = new Request.Builder()
+        .url(url)
+        .post(body)
+        .build();
+    String result = null;
+    try {
+      Response response = okHttpClient.newCall(request).execute();
+      if (response.isSuccessful()) {
+        assert response.body() != null;
+        result = response.body().string();
+      }
+    } catch (IOException e) {
+      Log.e(TAG, "postHttpResponseString: ", e);
+    }
+    return result;
   }
 
   /**
@@ -232,7 +311,7 @@ public class HttpHandler {
    *
    * @return The response state of token validation.
    * If InvalidToken, needs to re-login.
-   * If NoSuchUser, needs to re-register.
+   * If NoSuchUser, needs to re-login.
    */
   public ResponseState getUpdateRSSFeedsState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
@@ -249,16 +328,26 @@ public class HttpHandler {
           responseState = ResponseState.InvalidToken;
           break;
         case "1":
-          // user account may have been deleted. Needs to re-register.
+          // user account may have been deleted. Needs to re-login.
           responseState = ResponseState.NoSuchUser;
           break;
         case "2":
           // token is valid and stores data to local database.
           responseState = ResponseState.Valid;
-          Log.i(TAG, "Successfully get Rss feeds");
+          Log.i(TAG, "Successfully get RSS feeds");
           String data = responseJsonObject.getString(MESSAGE_DATA);
-          Log.e(TAG, data);
-          // TODO
+          if (data != null) {
+            JSONArray jsonArray = new JSONArray(data);
+            rssFeeds = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+              JSONObject jsonobject = jsonArray.getJSONObject(i);
+              RssFeed rssFeed = new RssFeed(
+                  jsonobject.getString("url"),
+                  jsonobject.getString("channelName"),
+                  jsonobject.getString("category"));
+              rssFeeds.add(rssFeed);
+            }
+          }
           break;
         default:
           break;
@@ -269,71 +358,77 @@ public class HttpHandler {
     return responseState;
   }
 
-  private String getUpdateUsername(@NonNull String phoneNumber) {
-    String url = USER_INFO_URL + "?phone=" + phoneNumber;
+  /**
+   * Get the result RSS feeds.
+   *
+   * @return RSS feeds of the user.
+   */
+  public List<RssFeed> getRssFeeds() {
+    return rssFeeds;
+  }
+
+  /**
+   * Send get request to refresh personal articles for local database.
+   *
+   * @return The response state of token validation.
+   * If InvalidToken, needs to re-login.
+   * If NoSuchUser, needs to re-login.
+   */
+  public ResponseState getUpdateArticlesState(@NonNull final String phoneNumber) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = ARTICLES_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     JSONObject responseJsonObject;
-    String response = "";
+    ResponseState responseState = null;
     try {
       responseJsonObject = new JSONObject(responseString);
-      if (responseJsonObject.getString(MESSAGE_CODE).equals("2")) {
-        // user found.
-        response = responseJsonObject.getString(MESSAGE);
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
+        case "0":
+          // token is invalid. Needs to re-login.
+          responseState = ResponseState.InvalidToken;
+          break;
+        case "1":
+          // user account may have been deleted. Needs to re-login.
+          responseState = ResponseState.NoSuchUser;
+          break;
+        case "2":
+          // token is valid and stores data to local database.
+          responseState = ResponseState.Valid;
+          Log.i(TAG, "Successfully get RSS feeds");
+          String data = responseJsonObject.getString(MESSAGE_DATA);
+          if (data != null) {
+            JSONArray jsonArray = new JSONArray(data);
+            rssFeeds = new ArrayList<>();
+            for (int i = 0; i < jsonArray.length(); i++) {
+              JSONObject jsonobject = jsonArray.getJSONObject(i);
+              Article article = new Article(
+                  jsonobject.getLong("id"),
+                  jsonobject.getLong("rssFeedId"),
+                  jsonobject.getString("title"),
+                  jsonobject.getString("link"),
+                  jsonobject.getString("description"),
+                  jsonobject.getString("publishTime")
+              );
+              articles.add(article);
+            }
+          }
+          break;
+        default:
+          break;
       }
     } catch (JSONException e) {
-      Log.e(TAG, "getUpdateUsername: ", e);
+      Log.e(TAG, "getUpdateRSSFeedsState: ", e);
     }
-    return response;
-  }
-
-
-  /**
-   * Get request and get the content of a get http response.
-   *
-   * @param url The request url.
-   * @return The http response from server.
-   */
-  private String getHttpResponseString(final String url) {
-    Request request = new Request.Builder()
-        .url(url)
-        .header("Content-Type", "application/json")
-        .build();
-    String result = null;
-    try {
-      Response response = okHttpClient.newCall(request).execute();
-      if (response.isSuccessful()) {
-        assert response.body() != null;
-        result = response.body().string();
-      }
-    } catch (IOException e) {
-      Log.e(TAG, "getHttpResponseString: ", e);
-    }
-    return result;
+    return responseState;
   }
 
   /**
-   * Post request and get the content of a post http response.
+   * Get the result articles.
    *
-   * @param url  The post request url.
-   * @param json The post data content.
-   * @return The response from the server.
+   * @return 30 newest articles subscribed by the user.
    */
-  private String postHttpResponseString(final String url, final String json) {
-    RequestBody body = RequestBody.create(JSON, json);
-    Request request = new Request.Builder()
-        .url(url)
-        .post(body)
-        .build();
-    String result = null;
-    try {
-      Response response = okHttpClient.newCall(request).execute();
-      if (response.isSuccessful()) {
-        assert response.body() != null;
-        result = response.body().string();
-      }
-    } catch (IOException e) {
-      Log.e(TAG, "postHttpResponseString: ", e);
-    }
-    return result;
+  public List<Article> getArticles() {
+    return articles;
   }
 }

@@ -12,12 +12,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment.SavedState;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
@@ -30,9 +25,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.RemoteViews.RemoteView;
 
-import com.example.icecream.fragment.CenteredTextFragment;
 import com.example.icecream.fragment.PlayFragment;
 import com.example.icecream.fragment.ResourceFragment;
 import com.example.icecream.menu.DrawerAdapter;
@@ -41,15 +34,13 @@ import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
 import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -58,7 +49,7 @@ import okhttp3.OkHttpClient;
 
 /**
  * The main activity.
- *
+ * <p>
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
  *
  * @version V1.0
@@ -92,11 +83,12 @@ public class MainActivity extends BoilerplateActivity
 
   private String phone;
   private HttpHandler httpHandler;
+  private AppViewModel viewModel;
 
   /**
    * connection between UI and Repository.
    */
-//    private ViewModel mViewMode;
+//    private AppViewModel mViewMode;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -353,6 +345,7 @@ public class MainActivity extends BoilerplateActivity
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
     viewPager.setCurrentItem(1, true);
+    new UpdateRssFeedsAsyncTask(this).execute(phone);
   }
 
 
@@ -381,16 +374,17 @@ public class MainActivity extends BoilerplateActivity
         return;
       }
       switch (responseState) {
-        // TODO 处理服务器发来的数据
         case Valid:
           // get those feeds successfully
-
+          activity.viewModel.setPersonalRssFeeds(activity.httpHandler.getRssFeeds());
           break;
         case InvalidToken:
-          // back to login
+          // TODO back to login
+          activity.login();
           break;
         case NoSuchUser:
-          // go to sign up
+          // TODO back to login
+          activity.login();
           break;
         default:
           break;
@@ -398,4 +392,46 @@ public class MainActivity extends BoilerplateActivity
     }
   }
 
+  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    UpdateArticlesAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getUpdateArticlesState(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          // get those articles successfully
+          activity.viewModel.setPersonalArticles(activity.httpHandler.getArticles());
+          break;
+        case InvalidToken:
+          // TODO back to login
+          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
 }

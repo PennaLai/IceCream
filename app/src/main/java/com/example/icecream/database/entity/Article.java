@@ -6,8 +6,6 @@ import android.arch.persistence.room.Index;
 import android.arch.persistence.room.PrimaryKey;
 import android.support.annotation.NonNull;
 
-import java.util.Date;
-
 /**
  * The article table.
  *
@@ -21,9 +19,10 @@ import java.util.Date;
     indices = {@Index("feedId"), @Index("title")})
 public class Article {
 
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey()
   private Long id;
 
+  @NonNull
   private Long feedId;
 
   @NonNull
@@ -33,7 +32,7 @@ public class Article {
 
   private String description;
 
-  private Date publishTime;
+  private String publishTime;
 
   /**
    * Constructor for article.
@@ -43,7 +42,10 @@ public class Article {
    * @param description article description.
    * @param publishTime article publish time.
    */
-  public Article(@NonNull String title, String link, String description, Date publishTime) {
+  public Article(@NonNull Long id, @NonNull Long feedId, @NonNull String title,
+                 String link, String description, String publishTime) {
+    this.id = id;
+    this.feedId = feedId;
     this.title = title;
     this.link = link;
     this.description = description;
@@ -58,11 +60,12 @@ public class Article {
     this.id = id;
   }
 
+  @NonNull
   public Long getFeedId() {
     return feedId;
   }
 
-  public void setFeedId(Long feedId) {
+  public void setFeedId(@NonNull Long feedId) {
     this.feedId = feedId;
   }
 
@@ -91,11 +94,11 @@ public class Article {
     this.description = description;
   }
 
-  public Date getPublishTime() {
+  public String getPublishTime() {
     return publishTime;
   }
 
-  public void setPublishTime(Date publishTime) {
+  public void setPublishTime(String publishTime) {
     this.publishTime = publishTime;
   }
 

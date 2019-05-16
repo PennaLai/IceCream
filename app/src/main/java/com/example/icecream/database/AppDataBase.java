@@ -3,7 +3,6 @@ package com.example.icecream.database;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.Room;
 import android.arch.persistence.room.RoomDatabase;
-import android.arch.persistence.room.TypeConverters;
 import android.content.Context;
 
 import com.example.icecream.database.dao.ArticleDao;
@@ -16,7 +15,6 @@ import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 import com.example.icecream.database.entity.UserArticleJoin;
 import com.example.icecream.database.entity.UserRssFeedJoin;
-import com.example.icecream.utils.Converters;
 
 /**
  * The local database class.
@@ -27,7 +25,6 @@ import com.example.icecream.utils.Converters;
     UserRssFeedJoin.class, UserArticleJoin.class},
     version = 1,
     exportSchema = false)
-@TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
   // singleton
   private static volatile AppDataBase instance;
