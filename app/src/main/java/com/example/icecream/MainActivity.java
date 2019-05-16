@@ -8,6 +8,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
@@ -30,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.RemoteViews.RemoteView;
+
 import com.example.icecream.fragment.CenteredTextFragment;
 import com.example.icecream.fragment.PlayFragment;
 import com.example.icecream.fragment.ResourceFragment;
@@ -39,14 +41,19 @@ import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
 import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.utils.HttpHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import okhttp3.OkHttpClient;
 
 
 /**
@@ -58,8 +65,8 @@ import java.util.TreeMap;
  */
 public class MainActivity extends BoilerplateActivity
     implements View.OnClickListener,
-        DrawerAdapter.OnItemSelectedListener,
-        ResourceFragment.MusicConnector {
+    DrawerAdapter.OnItemSelectedListener,
+    ResourceFragment.MusicConnector {
   // TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
@@ -83,13 +90,20 @@ public class MainActivity extends BoilerplateActivity
   private Notification notify;
   private RemoteViews remoteViews;
 
-  /** connection between UI and Repository. */
-//    private ViewModel mViewMode;
+  private String phone;
+  private HttpHandler httpHandler;
 
+  /**
+   * connection between UI and Repository.
+   */
+//    private ViewModel mViewMode;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    // get phone from login
+    phone = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
     // 定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
@@ -147,6 +161,12 @@ public class MainActivity extends BoilerplateActivity
 
     adapter.setSelected(POS_DASHBOARD);
     initNotification();
+
+    // http
+    httpHandler = new HttpHandler(new OkHttpClient(), this);
+
+    // TODO 加载订阅文章方式如下
+    // new UpdateRssFeedsAsyncTask(this).execute(phone);
   }
 
 
@@ -155,7 +175,7 @@ public class MainActivity extends BoilerplateActivity
    */
   private void initNotification() {
     musicBarManage = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    remoteViews = new RemoteViews(getPackageName(),R.layout.music_notify);
+    remoteViews = new RemoteViews(getPackageName(), R.layout.music_notify);
     NotificationCompat.Builder builder = new Builder(this);
 
     Intent intent = new Intent(MainActivity.this, MainActivity.class);
@@ -227,10 +247,9 @@ public class MainActivity extends BoilerplateActivity
   }
 
 
-
-
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
+   *
    * @param tb : The instance of SimpleToolbar
    */
   public void setUpToolbar(SimpleToolbar tb) {
@@ -252,7 +271,7 @@ public class MainActivity extends BoilerplateActivity
 //    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
 //    showFragment(selectedScreen);
 
-    Log.i("Draw", ""+position);
+    Log.i("Draw", "" + position);
   }
 
   private void login() {
@@ -264,6 +283,7 @@ public class MainActivity extends BoilerplateActivity
 
   /**
    * This method is to switch fragment according to the selected draw item.
+   *
    * @param fragment : The destined fragment.
    */
   private void showFragment(Fragment fragment) {
@@ -272,6 +292,7 @@ public class MainActivity extends BoilerplateActivity
 
   /**
    * This method creates the draw items.
+   *
    * @param position : create item by index to initialize.
    * @return com.example.icecream.menu.DrawerItem
    */
@@ -308,7 +329,7 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
-        // do nothing
+      // do nothing
     }
   }
 
@@ -332,6 +353,49 @@ public class MainActivity extends BoilerplateActivity
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
     viewPager.setCurrentItem(1, true);
+  }
+
+
+  private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    UpdateRssFeedsAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getUpdateRSSFeedsState(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        // TODO 处理服务器发来的数据
+        case Valid:
+          // get those feeds successfully
+
+          break;
+        case InvalidToken:
+          // back to login
+          break;
+        case NoSuchUser:
+          // go to sign up
+          break;
+        default:
+          break;
+      }
+    }
   }
 
 }

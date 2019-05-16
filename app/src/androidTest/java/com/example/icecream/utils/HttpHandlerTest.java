@@ -4,7 +4,6 @@ import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
 import com.example.icecream.LoginActivity;
-import com.example.icecream.database.entity.User;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -14,6 +13,7 @@ import org.junit.runner.RunWith;
 import okhttp3.OkHttpClient;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(AndroidJUnit4.class)
 public class HttpHandlerTest {
@@ -69,6 +69,7 @@ public class HttpHandlerTest {
     assertEquals(HttpHandler.ResponseState.Valid, responseState);
   }
 
+
   /**
    * check the phone has been registered.
    */
@@ -78,17 +79,5 @@ public class HttpHandlerTest {
     HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
     HttpHandler.ResponseState responseState = httpHandler.postPhoneState("18929357397");
     assertEquals(HttpHandler.ResponseState.DuplicatePhoneNumber, responseState);
-  }
-
-  /**
-   * check the refresh is invalid.
-   */
-  @Test
-  public void getRefreshStateTest() {
-    OkHttpClient client = new OkHttpClient();
-    HttpHandler httpHandler = new HttpHandler(client, mActivityRule.getActivity());
-    User user = new User("18929357397", "kemo", "123456");
-    HttpHandler.ResponseState responseState = httpHandler.getRefreshState(user);
-    assertEquals(HttpHandler.ResponseState.InvalidToken, responseState);
   }
 }

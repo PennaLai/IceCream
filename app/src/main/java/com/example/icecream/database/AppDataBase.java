@@ -24,7 +24,9 @@ import com.example.icecream.utils.Converters;
  * @author Kemo
  */
 @Database(entities = {User.class, RssFeed.class, Article.class,
-    UserRssFeedJoin.class, UserArticleJoin.class}, version = 1)
+    UserRssFeedJoin.class, UserArticleJoin.class},
+    version = 1,
+    exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDataBase extends RoomDatabase {
   // singleton

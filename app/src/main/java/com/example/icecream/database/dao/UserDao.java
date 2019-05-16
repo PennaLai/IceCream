@@ -40,5 +40,5 @@ public interface UserDao {
   User getUserByPhone(String phone);
 
   @Query("SELECT * FROM User WHERE username = :username")
-  List<User> getUserByUsername(String username);
+  User getUserByUsername(String username);
 }
