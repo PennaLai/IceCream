@@ -1,14 +1,19 @@
 package com.example.icecream;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.annotation.NonNull;
@@ -43,6 +48,7 @@ import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -53,14 +59,14 @@ import java.util.TreeMap;
  * The main activity.
  *
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
- *
+ * @author Penna
  * @version V1.0
  */
 public class MainActivity extends BoilerplateActivity
     implements View.OnClickListener,
         DrawerAdapter.OnItemSelectedListener,
         ResourceFragment.MusicConnector {
-  // TODO: bind the speaker service here but not playfragment.
+  // TODO: bind the speaker service here but not play fragment.
 
   private static final int POS_DASHBOARD = 0;
   private static final int POS_ACCOUNT = 1;
@@ -82,6 +88,11 @@ public class MainActivity extends BoilerplateActivity
   private NotificationManager musicBarManage;
   private Notification notify;
   private RemoteViews remoteViews;
+
+  BroadcastReceiver broadcastReceiver;
+
+  private static final String ACTION_PRE = "ACTION_PRE";
+  private static final String ACTION_NEXT = "ACTION_NEXT";
 
   /** connection between UI and Repository. */
 //    private ViewModel mViewMode;
@@ -146,16 +157,26 @@ public class MainActivity extends BoilerplateActivity
     draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
+
+    // register notification and its receiver
     initNotification();
+
   }
 
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
+    notificationDestory();
+  }
 
   /**
    * initialize the notification bar.
    */
   private void initNotification() {
+
     musicBarManage = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getPackageName(),R.layout.music_notify);
+
     NotificationCompat.Builder builder = new Builder(this);
 
     Intent intent = new Intent(MainActivity.this, MainActivity.class);
@@ -169,21 +190,27 @@ public class MainActivity extends BoilerplateActivity
         PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
-//    // 设置上一曲
-//    Intent prv = new Intent();
-//    prv.setAction(Constants.ACTION_PRV);
-//    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
-//
+    // 设置上一曲
+    Intent prv = new Intent();
+    prv.setAction(ACTION_PRE);
+    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
+        0);
+    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
+
+    // 下一曲
+    Intent next = new Intent();
+    next.setAction(ACTION_NEXT);
+    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
+        0);
+    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
+
 //    // 设置播放
-//    if (Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PAUSE);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
+//    Intent playorpause = new Intent();
+//    playorpause.setAction("PLAY");
+//    PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
+//        playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
+
 //    if (!Myapp.isPlay) {
 //      Intent playorpause = new Intent();
 //      playorpause.setAction(Constants.ACTION_PLAY);
@@ -191,14 +218,7 @@ public class MainActivity extends BoilerplateActivity
 //          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
 //      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
 //    }
-//
-//    // 下一曲
-//    Intent next = new Intent();
-//    next.setAction(Constants.ACTION_NEXT);
-//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
-//
+
 //    // 设置收藏
 //    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
 //        PendingIntent.FLAG_UPDATE_CURRENT);
@@ -213,8 +233,31 @@ public class MainActivity extends BoilerplateActivity
     notify.flags = Notification.FLAG_ONGOING_EVENT;
     notify.icon = R.drawable.logo;
 
-    musicBarManage.notify(100, notify); // id 代表通知的id，可以在后续通过id关闭
+    musicBarManage.notify(1, notify); // id 代表通知的id，可以在后续通过id关闭
 
+    broadcastReceiver = new NotificationClickReceiver();
+    // register receiver
+    IntentFilter filter = new IntentFilter("com.example.ACTION_PLAY");
+    // set the custom action
+    filter.addAction(ACTION_PRE);
+    filter.addAction(ACTION_NEXT);
+    // register the receiver
+    registerReceiver(broadcastReceiver, filter);
+
+  }
+
+  public class NotificationClickReceiver extends BroadcastReceiver {
+
+    @Override
+    public void onReceive(Context context, Intent intent) {
+      String action = intent.getAction();
+      if (action.equalsIgnoreCase(ACTION_PRE)) {
+        Log.i(TAG, "onReceive: PRE!");
+      } else if (action.equalsIgnoreCase(ACTION_NEXT)) {
+        Log.i(TAG, "onReceive: NEXT!");
+      }
+
+    }
   }
 
   /**
@@ -222,12 +265,23 @@ public class MainActivity extends BoilerplateActivity
    */
   private void notificationDestory() {
     if (remoteViews != null) {
-      musicBarManage.cancel(100);
+      musicBarManage.cancel(1);
     }
   }
 
-
-
+//  private static class NotificationHandler extends Handler {
+//    private final WeakReference<MainActivity> mainActivityWeakReference;
+//
+//    public NotificationHandler(
+//        WeakReference<MainActivity> mainActivityWeakReference) {
+//      this.mainActivityWeakReference = mainActivityWeakReference;
+//    }
+//
+//    @Override
+//    public void handleMessage(Message msg) {
+//      super.handleMessage(msg);
+//    }
+//  }
 
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.

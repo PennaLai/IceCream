@@ -22,9 +22,10 @@ import android.widget.TextView;
 
 import com.example.icecream.R;
 import com.example.icecream.service.SpeakerService;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-import me.zhengken.lyricview.LyricView;
+//import me.zhengken.lyricview.LyricView;
 
 /**
  * This is the ui fragment to handler the player event.
@@ -60,6 +61,9 @@ public class PlayFragment extends Fragment {
     return new PlayFragment();
   }
 
+  /** use to update the ui while playing music. */
+  private final MusicHandler uiUpdateHandle = new MusicHandler(this);
+
   /**
    * used for callback to update the UI.
    */
@@ -67,22 +71,35 @@ public class PlayFragment extends Fragment {
     void updateNewSongUi();
   }
 
-  Handler uiUpdateHandle =
-      new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-          switch (msg.what) {
-            case 0:
-              double progress = msg.getData().getDouble("progress");
-              int max = sbProgress.getMax();
-              int position = (int) (max * progress);
-              sbProgress.setProgress(position);
-              break;
-            default:
-              break;
-          }
+  /**
+   * Handler to update the ui while playing music.
+   * @author Penna
+   */
+  private static class MusicHandler extends Handler {
+    private final WeakReference<PlayFragment> playFragmentWeakReference;
+
+    public MusicHandler(PlayFragment fragment) {
+      playFragmentWeakReference = new WeakReference<>(fragment);
+    }
+
+    @Override
+    public void handleMessage(Message msg) {
+      super.handleMessage(msg);
+      PlayFragment playFragment = playFragmentWeakReference.get();
+      if (playFragment != null) {
+        switch (msg.what) {
+          case 0:
+            double progress = msg.getData().getDouble("progress");
+            int max = playFragment.sbProgress.getMax();
+            int position = (int) (max * progress);
+            playFragment.sbProgress.setProgress(position);
+            break;
+          default:
+            break;
         }
-      };
+      }
+    }
+  }
 
   @Override
   public View onCreateView(

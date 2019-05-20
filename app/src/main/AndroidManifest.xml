@@ -37,9 +37,12 @@
         <activity
             android:name=".LoginActivity"
             android:launchMode="singleTask"></activity>
-        <activity
-            android:name=".PersonalDetailActivity"
-            android:launchMode="singleTask"></activity>
+
+        <receiver
+          android:name=".MainActivity$NotificationClickReceiver"
+          android:enabled="true"
+          android:exported="true">
+        </receiver>
     </application>
 
 </manifest>
