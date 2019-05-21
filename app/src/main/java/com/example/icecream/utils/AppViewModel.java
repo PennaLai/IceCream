@@ -28,8 +28,6 @@ public class AppViewModel extends AndroidViewModel {
 
   private LiveData<List<RssFeed>> allRssFeeds;
 
-  private LiveData<List<Article>> allArticles;
-
   private MutableLiveData<User> userSearchResult;
 
   private MutableLiveData<List<RssFeed>> personalRssFeeds;
@@ -47,7 +45,6 @@ public class AppViewModel extends AndroidViewModel {
 
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
-    allArticles = repository.getAllArticles();
     userSearchResult = repository.getUserSearchResult();
     personalRssFeeds = repository.getPersonalRssFeeds();
     personalArticles = repository.getPersonalArticles();
@@ -69,15 +66,6 @@ public class AppViewModel extends AndroidViewModel {
    */
   public LiveData<List<RssFeed>> getAllRssFeeds() {
     return allRssFeeds;
-  }
-
-  /**
-   * Get all the articles that currently have been stored.
-   *
-   * @return List of articles.
-   */
-  public LiveData<List<Article>> getAllArticles() {
-    return allArticles;
   }
 
   /**
@@ -171,7 +159,7 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
-   * Setter for personal RSS feeds
+   * Setter for personal RSS feeds.
    *
    * @param feeds feeds
    */
@@ -188,4 +176,27 @@ public class AppViewModel extends AndroidViewModel {
     repository.setPersonalArticles(articles);
   }
 
+  /**
+   * Subscribe.
+   *
+   * @param phone phone.
+   * @param url   url.
+   */
+  public void subscribe(String phone, String url) {
+    User user = repository.getUserByPhoneSync(phone);
+    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
+    repository.insertUserRssFeed(user, rssFeed);
+  }
+
+  /**
+   * Unsubscribe.
+   *
+   * @param phone phone.
+   * @param url   url.
+   */
+  public void unsubscribe(String phone, String url) {
+    User user = repository.getUserByPhoneSync(phone);
+    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
+    repository.deleteUserRssFeed(user, rssFeed);
+  }
 }

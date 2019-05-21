@@ -14,6 +14,7 @@ import com.example.icecream.database.dao.UserRssFeedJoinDao;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
+import com.example.icecream.database.entity.UserRssFeedJoin;
 
 import java.util.List;
 
@@ -178,7 +179,7 @@ public class Repository {
    * @param article the input article.
    */
   public void insertArticle(Article... article) {
-    articleDao.insert(article);
+    new ArticleInsertAsyncTask(articleDao).execute(article);
   }
 
   /**
@@ -187,7 +188,7 @@ public class Repository {
    * @param article the input article.
    */
   public void updateArticle(Article... article) {
-    articleDao.update(article);
+    new ArticleUpdateAsyncTask(articleDao).execute(article);
   }
 
   /**
@@ -196,7 +197,27 @@ public class Repository {
    * @param article the input article.
    */
   public void deleteArticle(Article... article) {
+    new ArticleDeleteAsyncTask(articleDao).execute(article);
+  }
 
+  /**
+   * Insert user rss feed join.
+   *
+   * @param user    input user.
+   * @param rssFeed input rss feed.
+   */
+  public void insertUserRssFeed(User user, RssFeed rssFeed) {
+    new InsertUserRssFeedAsyncTask(userRssFeedJoinDao).execute(new ParamUserRssFeed(user, rssFeed));
+  }
+
+  /**
+   * Delete user rss feed join.
+   *
+   * @param user    input user.
+   * @param rssFeed input rss feed.
+   */
+  public void deleteUserRssFeed(User user, RssFeed rssFeed) {
+    new DeleteUserRssFeedAsyncTask(userRssFeedJoinDao).execute(new ParamUserRssFeed(user, rssFeed));
   }
 
   /**
@@ -218,7 +239,7 @@ public class Repository {
   public void findRssFeedsByUser(User user) {
     PersonalFeedAsyncTask task = new PersonalFeedAsyncTask(userRssFeedJoinDao);
     task.delegate = this;
-    task.execute(user.getId());
+    task.execute(user);
   }
 
   /**
@@ -229,7 +250,7 @@ public class Repository {
   public void findArticlesByUser(User user) {
     PersonalArticleAsyncTask task = new PersonalArticleAsyncTask(userArticleJoinDao);
     task.delegate = this;
-    task.execute(user.getId());
+    task.execute(user);
   }
 
   /**
@@ -317,6 +338,16 @@ public class Repository {
    */
   public List<RssFeed> getRssFeedsByNameSync(String name) {
     return rssFeedDao.getRssFeedByName(name);
+  }
+
+  /**
+   * Synchronously get RSS feeds by url.
+   *
+   * @param url input url.
+   * @return target feed.
+   */
+  public RssFeed getRssFeedByUrlSync(String url) {
+    return rssFeedDao.getRssFeedByUrl(url);
   }
 
 
@@ -511,7 +542,7 @@ public class Repository {
     }
   }
 
-  private static class PersonalFeedAsyncTask extends AsyncTask<Long, Void, List<RssFeed>> {
+  private static class PersonalFeedAsyncTask extends AsyncTask<User, Void, List<RssFeed>> {
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private Repository delegate = null;
 
@@ -520,9 +551,8 @@ public class Repository {
     }
 
     @Override
-    protected List<RssFeed> doInBackground(final Long... params) {
-      userRssFeedJoinDao.getRssFeedsByUserId(params[0]);
-      return null;
+    protected List<RssFeed> doInBackground(final User... params) {
+      return userRssFeedJoinDao.getRssFeedsByUserId(params[0].getId());
     }
 
 
@@ -533,7 +563,7 @@ public class Repository {
   }
 
 
-  private static class PersonalArticleAsyncTask extends AsyncTask<Long, Void, List<Article>> {
+  private static class PersonalArticleAsyncTask extends AsyncTask<User, Void, List<Article>> {
     private UserArticleJoinDao userArticleJoinDao;
     private Repository delegate = null;
 
@@ -542,9 +572,8 @@ public class Repository {
     }
 
     @Override
-    protected List<Article> doInBackground(final Long... params) {
-      userArticleJoinDao.getArticlesByUserId(params[0]);
-      return null;
+    protected List<Article> doInBackground(final User... params) {
+      return userArticleJoinDao.getArticlesByUserId(params[0].getId());
     }
 
 
@@ -554,4 +583,41 @@ public class Repository {
     }
   }
 
+  private class ParamUserRssFeed {
+    User user;
+    RssFeed rssFeed;
+
+    public ParamUserRssFeed(User user, RssFeed rssFeed) {
+      this.user = user;
+      this.rssFeed = rssFeed;
+    }
+  }
+
+  private static class InsertUserRssFeedAsyncTask extends AsyncTask<ParamUserRssFeed, Void, Void> {
+    private UserRssFeedJoinDao userRssFeedJoinDao;
+
+    InsertUserRssFeedAsyncTask(UserRssFeedJoinDao dao) {
+      userRssFeedJoinDao = dao;
+    }
+
+    @Override
+    protected Void doInBackground(final ParamUserRssFeed... params) {
+      userRssFeedJoinDao.insert(new UserRssFeedJoin(params[0].user.getId(), params[0].rssFeed.getId()));
+      return null;
+    }
+  }
+
+  private static class DeleteUserRssFeedAsyncTask extends AsyncTask<ParamUserRssFeed, Void, Void> {
+    private UserRssFeedJoinDao userRssFeedJoinDao;
+
+    DeleteUserRssFeedAsyncTask(UserRssFeedJoinDao dao) {
+      userRssFeedJoinDao = dao;
+    }
+
+    @Override
+    protected Void doInBackground(final ParamUserRssFeed... params) {
+      userRssFeedJoinDao.insert(new UserRssFeedJoin(params[0].user.getId(), params[0].rssFeed.getId()));
+      return null;
+    }
+  }
 }
