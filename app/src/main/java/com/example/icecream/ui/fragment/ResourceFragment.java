@@ -112,10 +112,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
 
     //TODO: get the articles size and set it into NUM_LIST_ITEMS
-
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
-
     // http
     httpHandler = new HttpHandler(new OkHttpClient(), getActivity().getApplication());
 

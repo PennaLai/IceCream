@@ -89,8 +89,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    *
    * @param articles database articles
    */
-
   public void setArticles(List<Article> articles) {
+    mNumberItems = articles.size();
     mArticles = articles;
     notifyDataSetChanged();
   }
