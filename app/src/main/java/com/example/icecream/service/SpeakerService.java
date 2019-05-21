@@ -125,6 +125,8 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
 
 
   public boolean isPlaying() {
+    if (speakerPlayer == null)
+      return false;
     return speakerPlayer.isPlaying();
   }
 

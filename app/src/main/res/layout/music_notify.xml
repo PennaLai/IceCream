@@ -72,7 +72,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@drawable/logo" />
+        android:src="@drawable/icons8_rewind_24px" />
 
 
       <ImageView
@@ -80,6 +80,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
+        android:src="@drawable/icons8_play_24px"
         />
 
       <ImageView
@@ -87,7 +88,7 @@
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:src="@drawable/logo" />
+        android:src="@drawable/icons8_fast_forward_24px" />
 
       <ImageView
         android:id="@+id/widget_fav"
