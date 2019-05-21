@@ -29,4 +29,8 @@
   <dimen name="text_size_13sp">13sp</dimen>
   <dimen name="text_size_16sp">16sp</dimen>
   <dimen name="text_size_20sp">20sp</dimen>
+
+  <!--from book reader-->
+  <dimen name="nb.divider.line">1px</dimen>
+  <!--<dimen name="nb.read_setting.divider">20dp</dimen>-->
 </resources>

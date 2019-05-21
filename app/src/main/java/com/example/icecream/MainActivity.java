@@ -77,7 +77,7 @@ public class MainActivity extends BoilerplateActivity
   private static final int POS_LOGOUT = 5;
   private static final String TAG = "MainActivity";
 
-  private SimpleToolbar toolbar;
+  private Toolbar toolbar;
   private int toolbarMargin;
 
   private String[] screenTitles;
@@ -130,8 +130,8 @@ public class MainActivity extends BoilerplateActivity
           }
         });
 
-    Toolbar toolbar = findViewById(R.id.toolbar);
-    setSupportActionBar(toolbar);
+//    Toolbar toolbar = findViewById(R.id.toolbar);
+//    setSupportActionBar(toolbar);
 
     slidingRootNav =
         new SlidingRootNavBuilder(this)
@@ -183,12 +183,18 @@ public class MainActivity extends BoilerplateActivity
    *
    * @param tb : The instance of SimpleToolbar
    */
-  public void setUpToolbar(SimpleToolbar tb) {
-    toolbar = tb;
-    setSupportActionBar(toolbar);
 
-    toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
-    toolbar.setOnClickListener(v -> showKeyboard());
+  public void setUpToolbar(Toolbar tb) {
+//    toolbar = tb;
+//    setSupportActionBar(toolbar);
+//
+//    toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
+//    toolbar.setOnClickListener(v -> showKeyboard());
+//    super.setUpToolbar(toolbar);
+    toolbar = tb;
+//    toolbar.setLogo(R.mipmap.logo);
+//    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+////    getSupportActionBar().setTitle("");
   }
 
   @Override
@@ -286,6 +292,10 @@ public class MainActivity extends BoilerplateActivity
     viewPager.setCurrentItem(1, true);
   }
 
+  @Override
+  public void onBackPressed(){
+    super.onBackPressed();
+  }
 
   private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
 
