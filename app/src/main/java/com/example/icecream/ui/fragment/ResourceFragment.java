@@ -117,7 +117,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
     // view model
     viewModel = new AppViewModel(getActivity().getApplication());
-    viewModel.getAllArticles().observe(this, articles -> mAdapter.setmArticle(articles));
+    viewModel.getAllArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
     return view;
   }
@@ -179,6 +179,11 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     if (getActivity() != null) {
       getActivity().onBackPressed();
     }
+  }
+
+
+  private void getRssFeeds(String phoneNumber) {
+    new UpdateRssFeedsAsyncTask(this).execute(phoneNumber);
   }
 
 
@@ -345,7 +350,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null){
+      if (fragment == null) {
         return;
       }
       switch (responseState) {

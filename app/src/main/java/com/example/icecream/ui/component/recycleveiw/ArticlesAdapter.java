@@ -1,6 +1,7 @@
 package com.example.icecream.ui.component.recycleveiw;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -8,9 +9,11 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter.ArticlesViewHolder;
+
 import java.util.List;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
@@ -27,10 +30,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
   private int mNumberItems;
 
-  /** Cache copy of article. */
-  private List<Article> mArticle;
+  /**
+   * Cache copy of article.
+   */
+  private List<Article> mArticles;
 
-  /** The interface that receives onClick messages. */
+  private List<String> mFeedNames;
+
+  /**
+   * The interface that receives onClick messages.
+   */
   public interface ListItemClickListener {
     void onListItemClick(int clickedItemIndex);
   }
@@ -40,7 +49,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * for the ListItemClickListener.
    *
    * @param numberOfItems Number of items to display in list
-   * @param listener Listener for list item clicks
+   * @param listener      Listener for list item clicks
    */
   public ArticlesAdapter(int numberOfItems, ListItemClickListener listener) {
     mNumberItems = numberOfItems;
@@ -53,19 +62,19 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * laid out. Enough ViewHolders will be created to fill the screen and allow for scrolling.
    *
    * @param viewGroup The ViewGroup that these ViewHolders are contained within.
-   * @param viewType If your RecyclerView has more than one type of item (which ours doesn't) you
-   *     can use this viewType integer to provide a different layout. See {@link
-   *     android.support.v7.widget.RecyclerView.Adapter#getItemViewType(int)} for more details.
+   * @param viewType  If your RecyclerView has more than one type of item (which ours doesn't) you
+   *                  can use this viewType integer to provide a different layout. See {@link
+   *                  android.support.v7.widget.RecyclerView.Adapter#getItemViewType(int)} for more details.
    * @return A new ArticlesViewHolder that holds the View for each list item
    */
+  @NonNull
   @Override
-  public ArticlesViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+  public ArticlesViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
     Context context = viewGroup.getContext();
     int layoutIdForListItem = R.layout.article_list_item;
     LayoutInflater inflater = LayoutInflater.from(context);
-    boolean shouldAttachToParentImmediately = false;
 
-    View view = inflater.inflate(layoutIdForListItem, viewGroup, shouldAttachToParentImmediately);
+    View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
     ArticlesViewHolder viewHolder = new ArticlesViewHolder(view);
 
     viewHolder.viewHolderIndex.setText("ViewHolder index: " + viewHolderCount);
@@ -77,21 +86,23 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
   /**
    * set the database article cache and notify the data set change.
+   *
    * @param articles database articles
    */
-  public void setmArticle(List<Article> articles) {
-    mArticle = articles;
+  public void setArticles(List<Article> articles) {
+    mArticles = articles;
     notifyDataSetChanged();
   }
 
   /**
    * return current articles numbers.
+   *
    * @return articles count
    */
   public int getArticlesCount() {
-    if (mArticle == null)
+    if (mArticles == null)
       return 0;
-    else return mArticle.size();
+    else return mArticles.size();
   }
 
 
@@ -101,17 +112,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * list for this particular position, using the "position" argument that is conveniently passed
    * into us.
    *
-   * @param holder The ViewHolder which should be updated to represent the contents of the item at
-   *     the given position in the data set.
+   * @param holder   The ViewHolder which should be updated to represent the contents of the item at
+   *                 the given position in the data set.
    * @param position The position of the item within the adapter's data set.
    */
   @Override
-  public void onBindViewHolder(ArticlesViewHolder holder, int position) {
-    if (mArticle != null && position < mArticle.size()) {
-      Article current = mArticle.get(position);
+  public void onBindViewHolder(@NonNull ArticlesViewHolder holder, int position) {
+    if (mArticles != null && position < mArticles.size()) {
+      Article current = mArticles.get(position);
       if (current != null) {
-        // TODO: 这里的author没有， data没有转换成string
-        holder.bindContent(current.getTitle(), current.getDescription(),
+        holder.bindContent(current.getTitle(), mFeedNames.get(position),
             current.getDescription(), current.getPublishTime());
       }
     } else {
@@ -133,23 +143,32 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
   /**
    * Cache of the children views for a list item.
-   *
    */
   class ArticlesViewHolder extends RecyclerView.ViewHolder implements OnClickListener {
 
-    /** article title. */
+    /**
+     * article title.
+     */
     TextView title;
 
-    /** articles author name. */
+    /**
+     * articles author name.
+     */
     TextView author;
 
-    /** the articles content. */
+    /**
+     * the articles content.
+     */
     TextView content;
 
-    /** articles public time. */
+    /**
+     * articles public time.
+     */
     TextView publicTime;
 
-    /** delete later. */
+    /**
+     * delete later.
+     */
     TextView viewHolderIndex;
 
     /**
@@ -158,14 +177,14 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      * below.
      *
      * @param itemView The View that you inflated in {@link
-     *     ArticlesAdapter#onCreateViewHolder(ViewGroup, int)}
+     *                 ArticlesAdapter#onCreateViewHolder(ViewGroup, int)}
      */
     public ArticlesViewHolder(View itemView) {
       super(itemView);
 
-      author =  itemView.findViewById(R.id.tv_author);
+      author = itemView.findViewById(R.id.tv_author);
       publicTime = itemView.findViewById(R.id.tv_publish_time);
-      title =  itemView.findViewById(R.id.tv_item_title);
+      title = itemView.findViewById(R.id.tv_item_title);
       content = itemView.findViewById(R.id.tv_item_content);
       viewHolderIndex = itemView.findViewById(R.id.tv_view_holder_instance);
 
@@ -175,16 +194,17 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
     /**
      * This method is to bind the content to the ui item view.
-     * @param title article title
-     * @param author article author
-     * @param content article content
-     * @param publicTime article public time
+     *
+     * @param title       article title
+     * @param author      article author
+     * @param content     article content
+     * @param publishTime article publish time
      */
-    void bindContent(String title, String author, String content, String publicTime) {
+    void bindContent(String title, String author, String content, String publishTime) {
       this.title.setText(title);
       this.author.setText(author);
       this.content.setText(content);
-      this.publicTime.setText(publicTime);
+      this.publicTime.setText(publishTime);
     }
 
     /**

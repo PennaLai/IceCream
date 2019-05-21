@@ -32,4 +32,7 @@ public interface RssFeedDao {
 
   @Query("SELECT * FROM RssFeed WHERE url =:url")
   RssFeed getRssFeedByUrl(String url);
+
+  @Query("SELECT * FROM RssFeed WHERE id =:id")
+  RssFeed getRssFeedById(Long id);
 }
