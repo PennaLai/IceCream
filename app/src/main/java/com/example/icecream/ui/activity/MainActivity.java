@@ -1,6 +1,7 @@
 package com.example.icecream.ui.activity;
 
 import android.app.Fragment;
+import android.arch.lifecycle.Observer;
 import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -13,6 +14,7 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
+import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
@@ -26,6 +28,7 @@ import android.view.View;
 import android.widget.RemoteViews;
 
 import com.example.icecream.R;
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.fragment.PlayFragment;
 import com.example.icecream.ui.fragment.ResourceFragment;
 import com.example.icecream.ui.component.menu.DrawerAdapter;
@@ -40,6 +43,7 @@ import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -77,18 +81,10 @@ public class MainActivity extends AppCompatActivity
   private ViewPager viewPager;
 
 
-  private NotificationManager musicBarManage;
-  private Notification notify;
-  private RemoteViews remoteViews;
-
   private String phone;
-  private HttpHandler httpHandler;
-  private AppViewModel viewModel;
 
-  /**
-   * connection between UI and Repository.
-   */
-//    private AppViewModel mViewMode;
+
+
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
@@ -153,11 +149,7 @@ public class MainActivity extends AppCompatActivity
 
     adapter.setSelected(POS_DASHBOARD);
 
-    // http
-    httpHandler = new HttpHandler(new OkHttpClient(), this);
 
-    // view model
-    viewModel = new AppViewModel(getApplication());
   }
 
 
@@ -277,178 +269,6 @@ public class MainActivity extends AppCompatActivity
     super.onBackPressed();
   }
 
-  private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
 
-    private WeakReference<MainActivity> activityReference;
-
-    // only retain a weak reference to the activity
-    UpdateRssFeedsAsyncTask(MainActivity context) {
-      activityReference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return null;
-      }
-      return activity.httpHandler.getUpdateRSSFeedsState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those feeds successfully
-          Log.i(TAG, "get rss feeds");
-          activity.viewModel.setPersonalRssFeeds(activity.httpHandler.getRssFeeds());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<MainActivity> activityReference;
-
-    // only retain a weak reference to the activity
-    UpdateArticlesAsyncTask(MainActivity context) {
-      activityReference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return null;
-      }
-      return activity.httpHandler.getUpdateArticlesState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those articles successfully
-          Log.i(TAG, "get articles");
-          activity.viewModel.setPersonalArticles(activity.httpHandler.getArticles());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<MainActivity> activityReference;
-
-    // only retain a weak reference to the activity
-    SubscribeAsyncTask(MainActivity context) {
-      activityReference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return null;
-      }
-      return activity.httpHandler.getSubscribeFeedState(params[0], params[1]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          Log.i(TAG, "subscribe succeed");
-          // TODO
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<MainActivity> activityReference;
-
-    // only retain a weak reference to the activity
-    UnsubscribeAsyncTask(MainActivity context) {
-      activityReference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return null;
-      }
-      return activity.httpHandler.getUnsubscribeFeedState(params[0], params[1]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      MainActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          Log.i(TAG, "unsubscribe succeed");
-          // TODO
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
 
 }

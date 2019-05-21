@@ -79,7 +79,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * set the database article cache and notify the data set change.
    * @param articles database articles
    */
-  void setmArticle(List<Article> articles) {
+  public void setmArticle(List<Article> articles) {
     mArticle = articles;
     notifyDataSetChanged();
   }
@@ -107,14 +107,16 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    */
   @Override
   public void onBindViewHolder(ArticlesViewHolder holder, int position) {
-    if (mArticle != null) {
+    if (mArticle != null && position < mArticle.size()) {
       Article current = mArticle.get(position);
       if (current != null) {
         // TODO: 这里的author没有， data没有转换成string
-        holder.bindContent(current.getTitle(), "author", current.getDescription(), "Data");
+        holder.bindContent(current.getTitle(), current.getDescription(),
+            current.getDescription(), current.getPublishTime());
       }
+    } else {
+      holder.bindContent("标题", "作者", "内容", "日期");
     }
-    holder.bindContent("标题", "作者", "内容", "日期");
   }
 
   /**
