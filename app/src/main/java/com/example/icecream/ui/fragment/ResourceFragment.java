@@ -194,9 +194,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return null;
       }
       return fragment.httpHandler.getUpdateRSSFeedsState(params[0]);
@@ -205,9 +203,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return;
       }
       switch (responseState) {
@@ -242,9 +238,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return null;
       }
       return fragment.httpHandler.getUpdateArticlesState(params[0]);
@@ -253,9 +247,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return;
       }
       switch (responseState) {
@@ -306,9 +298,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return;
       }
       switch (responseState) {
@@ -344,9 +334,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null) {
         return null;
       }
       phone = params[0];
@@ -357,9 +345,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
+      if (fragment == null){
         return;
       }
       switch (responseState) {
