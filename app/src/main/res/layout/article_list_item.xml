@@ -18,15 +18,16 @@
         app:civ_border_width="0dp" />
 
     <TextView
-        android:id="@+id/tv_item_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="30dp"
-        android:fontFamily="monospace"
-        android:textColor="@color/smssdk_black"
-        android:textSize="24sp"
-        android:textStyle="bold"
-        tools:text="Title" />
+      android:id="@+id/tv_item_title"
+      android:textStyle="bold"
+      android:layout_width="wrap_content"
+      android:layout_height="30dp"
+      android:layout_marginTop="30dp"
+      android:fontFamily="monospace"
+      android:text="@string/title"
+      android:textColor="@color/smssdk_black"
+      android:textSize="24sp"
+      tools:text="Title"/>
 
     <TextView
         android:id="@+id/tv_view_holder_instance"
@@ -40,15 +41,16 @@
         tools:text="ViewHolder instance: 7" />
 
     <TextView
-        android:id="@+id/tv_item_content"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="65dp"
-        android:maxHeight="68dp"
-        android:text="@string/content"
-        android:textColor="@color/smssdk_lv_tv_color"
-        android:textSize="14sp"
-        tools:ignore="SmallSp" />
+      android:id="@+id/tv_item_content"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="65dp"
+      android:lineSpacingExtra="@dimen/bottom_ellipsis_height"
+      android:maxHeight="68dp"
+      android:text="@string/content"
+      android:textColor="@color/smssdk_lv_tv_color"
+      android:textSize="15sp"
+      tools:ignore="SmallSp"/>
 
     <TextView
         android:id="@+id/tv_author"
