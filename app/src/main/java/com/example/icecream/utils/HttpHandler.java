@@ -114,6 +114,10 @@ public class HttpHandler {
      */
     SubscribeFail,
     /**
+     * Cannot unsubscribe, maybe haven't subscribed or the url is wrong.
+     */
+    UnsubscribeFail,
+    /**
      * user account is matched in database.
      */
     Valid
@@ -479,9 +483,54 @@ public class HttpHandler {
           break;
       }
     } catch (JSONException e) {
-      Log.e(TAG, "getUpdateRSSFeedsState: ", e);
+      Log.e(TAG, "getSubscribeFeedState: ", e);
     }
     return responseState;
   }
 
+
+  /**
+   * Send get request to unsubscribe RSS feed.
+   *
+   * @return The response state of token validation.
+   * If InvalidToken, needs to re-login.
+   * If NoSuchUser, needs to re-login.
+   */
+  public ResponseState getUnsubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = UNSUBSCRIBE_URL + "?token=" + token + "&url" + rssFeedUrl;
+    String responseString = getHttpResponseString(url);
+    Log.i(TAG, responseString);
+    JSONObject responseJsonObject;
+    ResponseState responseState = null;
+    try {
+      responseJsonObject = new JSONObject(responseString);
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
+        case "0":
+          // token is invalid. Needs to re-login.
+          responseState = ResponseState.InvalidToken;
+          break;
+        case "1":
+          // user account may have been deleted. Needs to re-login.
+          responseState = ResponseState.NoSuchUser;
+          break;
+        case "2":
+          // cannot unsubscribe
+          responseState = ResponseState.UnsubscribeFail;
+          break;
+        case "3":
+          // token is valid and refresh local database.
+          responseState = ResponseState.Valid;
+          Log.i(TAG, "Successfully unsubscribe");
+          // TODO
+          break;
+        default:
+          break;
+      }
+    } catch (JSONException e) {
+      Log.e(TAG, "getUnsubscribeFeedState: ", e);
+    }
+    return responseState;
+  }
 }
