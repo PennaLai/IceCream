@@ -106,7 +106,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
       npe.printStackTrace();
     }
 
-    mArticleList.setHasFixedSize(true);
+    //TODO: get the articles size and set it into NUM_LIST_ITEMS
 
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);

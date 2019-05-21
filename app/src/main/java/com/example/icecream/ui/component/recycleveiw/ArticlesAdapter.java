@@ -80,6 +80,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * @param articles database articles
    */
   public void setmArticle(List<Article> articles) {
+    mNumberItems = articles.size(); // Change the adapter size
     mArticle = articles;
     notifyDataSetChanged();
   }
@@ -110,12 +111,12 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     if (mArticle != null && position < mArticle.size()) {
       Article current = mArticle.get(position);
       if (current != null) {
-        // TODO: 这里的author没有， data没有转换成string
         holder.bindContent(current.getTitle(), current.getDescription(),
             current.getDescription(), current.getPublishTime());
       }
     } else {
-      holder.bindContent("标题", "作者", "内容", "日期");
+      return;
+      //holder.bindContent("标题", "作者", "内容", "日期");
     }
   }
 
