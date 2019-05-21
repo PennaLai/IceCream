@@ -20,7 +20,12 @@
         <activity
             android:name=".MainActivity"
             android:launchMode="singleInstance">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.VIEW" />
 
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
 
         <activity
@@ -31,19 +36,16 @@
             android:launchMode="standard"></activity>
         <activity
             android:name=".LoginActivity"
-            android:launchMode="singleTask">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-        <activity android:name=".SearchActivity"
-          android:launchMode="singleTop"/>
-        <activity
-            android:name=".PersonalDetailActivity"
             android:launchMode="singleTask"></activity>
+        <activity android:name=".SearchActivity"
+            android:launchMode="singleTop"/>
+
+        <receiver
+          android:name=".MainActivity$NotificationClickReceiver"
+          android:enabled="true"
+          android:exported="true">
+        </receiver>
+
     </application>
 
 </manifest>

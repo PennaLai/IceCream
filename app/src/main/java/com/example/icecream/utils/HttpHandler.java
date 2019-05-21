@@ -109,6 +109,11 @@ public class HttpHandler {
      */
     InvalidToken,
     /**
+     * Cannot subscribe, maybe have already subscribed or the url is wrong.
+     * Needs to refresh user information.
+     */
+    SubscribeFail,
+    /**
      * user account is matched in database.
      */
     Valid
@@ -433,4 +438,50 @@ public class HttpHandler {
   public List<Article> getArticles() {
     return articles;
   }
+
+  /**
+   * Send get request to subscribe RSS feed.
+   *
+   * @return The response state of token validation.
+   * If InvalidToken, needs to re-login.
+   * If NoSuchUser, needs to re-login.
+   */
+  public ResponseState getSubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = SUBSCRIBE_URL + "?token=" + token + "&url" + rssFeedUrl;
+    String responseString = getHttpResponseString(url);
+    Log.i(TAG, responseString);
+    JSONObject responseJsonObject;
+    ResponseState responseState = null;
+    try {
+      responseJsonObject = new JSONObject(responseString);
+      switch (responseJsonObject.getString(MESSAGE_CODE)) {
+        case "0":
+          // token is invalid. Needs to re-login.
+          responseState = ResponseState.InvalidToken;
+          break;
+        case "1":
+          // user account may have been deleted. Needs to re-login.
+          responseState = ResponseState.NoSuchUser;
+          break;
+        case "2":
+          // cannot subscribe
+          responseState = ResponseState.SubscribeFail;
+          break;
+        case "3":
+          // token is valid and refresh local database.
+          responseState = ResponseState.Valid;
+          Log.i(TAG, "Successfully subscribe");
+          // TODO
+          break;
+        default:
+          break;
+      }
+    } catch (JSONException e) {
+      Log.e(TAG, "getUpdateRSSFeedsState: ", e);
+    }
+    return responseState;
+  }
+
 }

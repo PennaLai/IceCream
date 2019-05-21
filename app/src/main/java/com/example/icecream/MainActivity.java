@@ -1,15 +1,22 @@
 package com.example.icecream;
 
 import android.app.Fragment;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+
 import android.os.AsyncTask;
+
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.v4.app.FragmentStatePagerAdapter;
@@ -39,6 +46,9 @@ import com.example.icecream.utils.HttpHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 
+import java.io.FileDescriptor;
+import java.io.PrintWriter;
+
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.Map;
@@ -51,7 +61,7 @@ import okhttp3.OkHttpClient;
  * The main activity.
  * <p>
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
- *
+ * @author Penna
  * @version V1.0
  */
 public class MainActivity extends BoilerplateActivity
@@ -76,6 +86,7 @@ public class MainActivity extends BoilerplateActivity
   private SlidingRootNav slidingRootNav;
   private DrawerAdapter adapter;
   private ViewPager viewPager;
+
 
   private NotificationManager musicBarManage;
   private Notification notify;
@@ -152,7 +163,6 @@ public class MainActivity extends BoilerplateActivity
     draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
-    initNotification();
 
     // http
     httpHandler = new HttpHandler(new OkHttpClient(), this);
@@ -162,80 +172,9 @@ public class MainActivity extends BoilerplateActivity
   }
 
 
-  /**
-   * initialize the notification bar.
-   */
-  private void initNotification() {
-    musicBarManage = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-    remoteViews = new RemoteViews(getPackageName(), R.layout.music_notify);
-    NotificationCompat.Builder builder = new Builder(this);
-
-    Intent intent = new Intent(MainActivity.this, MainActivity.class);
-    // 点击跳转到主界面
-    PendingIntent intent_go = PendingIntent.getActivity(this, 5, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
-
-    // 4个参数context, requestCode, intent, flags
-    PendingIntent intent_close = PendingIntent.getActivity(this, 0, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
-
-//    // 设置上一曲
-//    Intent prv = new Intent();
-//    prv.setAction(Constants.ACTION_PRV);
-//    PendingIntent intent_prev = PendingIntent.getBroadcast(this, 1, prv,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
-//
-//    // 设置播放
-//    if (Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PAUSE);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 2,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//    if (!Myapp.isPlay) {
-//      Intent playorpause = new Intent();
-//      playorpause.setAction(Constants.ACTION_PLAY);
-//      PendingIntent intent_play = PendingIntent.getBroadcast(this, 6,
-//          playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
-//      remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
-//    }
-//
-//    // 下一曲
-//    Intent next = new Intent();
-//    next.setAction(Constants.ACTION_NEXT);
-//    PendingIntent intent_next = PendingIntent.getBroadcast(this, 3, next,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
-//
-//    // 设置收藏
-//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-//
-
-    builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
-
-    Notification notify = builder.build();
-    notify.contentView = remoteViews; // 设置下拉图标
-    notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
-    notify.flags = Notification.FLAG_ONGOING_EVENT;
-    notify.icon = R.drawable.logo;
-
-    musicBarManage.notify(100, notify); // id 代表通知的id，可以在后续通过id关闭
-
-  }
-
-  /**
-   * To destroy the music bar notification.
-   */
-  private void notificationDestory() {
-    if (remoteViews != null) {
-      musicBarManage.cancel(100);
-    }
+  @Override
+  protected void onDestroy() {
+    super.onDestroy();
   }
 
 
