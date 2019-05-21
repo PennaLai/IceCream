@@ -374,7 +374,7 @@ public class HttpHandler {
    *
    * @return RSS feeds of the user.
    */
-  public List<RssFeed> getRssFeeds() {
+  public List<RssFeed> getPersonalRssFeeds() {
     return rssFeeds;
   }
 
@@ -440,7 +440,7 @@ public class HttpHandler {
    *
    * @return 30 newest articles subscribed by the user.
    */
-  public List<Article> getArticles() {
+  public List<Article> getPersonalArticles() {
     return articles;
   }
 

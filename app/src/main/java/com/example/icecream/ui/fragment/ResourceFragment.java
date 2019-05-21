@@ -1,6 +1,7 @@
 package com.example.icecream.ui.fragment;
 
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -80,8 +81,9 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   }
 
   @Override
-  public View onCreateView(
-      LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+  public View onCreateView(LayoutInflater inflater,
+                           ViewGroup container,
+                           Bundle savedInstanceState) {
 
     View view = inflater.inflate(R.layout.fragment_resource, container, false);
 
@@ -89,13 +91,15 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
      * Set up tool bar for search.
      */
     Toolbar toolbar = view.findViewById(R.id.toolbar);
-    ((MainActivity) getActivity()).setUpToolbar(toolbar);
+    if (getActivity() != null) {
+      ((MainActivity) getActivity()).setUpToolbar(toolbar);
+    }
     ImageView imageView = view.findViewById(R.id.action_search);
     imageView.setOnClickListener(v -> goToSearch());
 
 
     /*
-     * Generate article list using reclycleView.
+     * Generate article list using recycleView.
      */
     mArticleList = view.findViewById(R.id.rv_source);
 
@@ -116,9 +120,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     httpHandler = new HttpHandler(new OkHttpClient(), getActivity().getApplication());
 
     // view model
-    viewModel = new AppViewModel(getActivity().getApplication());
-    viewModel.getAllArticles().observe(this, articles -> mAdapter.setArticles(articles));
+    viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
+    // observe articles from subscribed feeds
+    viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
     return view;
   }
 
@@ -215,7 +220,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
         case Valid:
           // get those feeds successfully
           Log.i(TAG, "get rss feeds");
-          fragment.viewModel.setPersonalRssFeeds(fragment.httpHandler.getRssFeeds());
+          fragment.viewModel.setPersonalRssFeeds(fragment.httpHandler.getPersonalRssFeeds());
           break;
         case InvalidToken:
           // TODO back to login
@@ -259,7 +264,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
         case Valid:
           // get those articles successfully
           Log.i("dd", "get articles");
-          fragment.viewModel.setPersonalArticles(fragment.httpHandler.getArticles());
+          fragment.viewModel.setPersonalArticles(fragment.httpHandler.getPersonalArticles());
           break;
         case InvalidToken:
           // TODO back to login
