@@ -113,7 +113,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mArticleList.setAdapter(mAdapter);
 
     // http
-    httpHandler = new HttpHandler(new OkHttpClient(), getActivity());
+    httpHandler = new HttpHandler(new OkHttpClient(), getActivity().getApplication());
 
     // view model
     viewModel = new AppViewModel(getActivity().getApplication());

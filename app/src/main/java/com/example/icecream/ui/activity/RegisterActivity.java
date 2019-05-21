@@ -93,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     btNextStep.setOnClickListener(this);
 
     final OkHttpClient client = new OkHttpClient();
-    httpHandler = new HttpHandler(client, this);
+    httpHandler = new HttpHandler(client, this.getApplication());
 
     initSmsSdk();
   }

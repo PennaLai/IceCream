@@ -1,6 +1,7 @@
 package com.example.icecream.utils;
 
 import android.app.Activity;
+import android.app.Application;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -77,9 +78,9 @@ public class HttpHandler {
    *
    * @param okHttpClient http client
    */
-  public HttpHandler(final OkHttpClient okHttpClient, Activity activity) {
+  public HttpHandler(final OkHttpClient okHttpClient, Application application) {
     this.okHttpClient = okHttpClient;
-    repository = new Repository(activity.getApplication());
+    repository = new Repository(application);
   }
 
   /**
