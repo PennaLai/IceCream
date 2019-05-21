@@ -364,4 +364,91 @@ public class MainActivity extends AppCompatActivity
       }
     }
   }
+
+  private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    SubscribeAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getSubscribeFeedState(params[0], params[1]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          Log.i(TAG, "subscribe succeed");
+          // TODO
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    UnsubscribeAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getUnsubscribeFeedState(params[0], params[1]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          Log.i(TAG, "unsubscribe succeed");
+          // TODO
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
 }
