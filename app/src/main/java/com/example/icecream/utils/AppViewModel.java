@@ -171,7 +171,7 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
-   * Setter for personal RSS feeds
+   * Setter for personal RSS feeds.
    *
    * @param feeds feeds
    */
@@ -188,4 +188,27 @@ public class AppViewModel extends AndroidViewModel {
     repository.setPersonalArticles(articles);
   }
 
+  /**
+   * Subscribe.
+   *
+   * @param phone phone.
+   * @param url   url.
+   */
+  public void subscribe(String phone, String url) {
+    User user = repository.getUserByPhoneSync(phone);
+    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
+    repository.insertUserRssFeed(user, rssFeed);
+  }
+
+  /**
+   * Unsubscribe.
+   *
+   * @param phone phone.
+   * @param url   url.
+   */
+  public void unsubscribe(String phone, String url) {
+    User user = repository.getUserByPhoneSync(phone);
+    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
+    repository.deleteUserRssFeed(user, rssFeed);
+  }
 }

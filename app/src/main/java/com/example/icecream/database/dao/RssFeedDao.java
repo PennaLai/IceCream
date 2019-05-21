@@ -30,4 +30,6 @@ public interface RssFeedDao {
   @Query("SELECT * FROM RssFeed WHERE channelName =:name")
   List<RssFeed> getRssFeedByName(String name);
 
+  @Query("SELECT * FROM RssFeed WHERE url =:url")
+  RssFeed getRssFeedByUrl(String url);
 }
