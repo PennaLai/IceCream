@@ -18,7 +18,7 @@
             android:exported="true"></service>
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ui.activity.MainActivity"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,19 +29,19 @@
         </activity>
 
         <activity
-            android:name=".RegisterActivity"
+            android:name=".ui.activity.RegisterActivity"
             android:launchMode="singleTop"></activity>
         <activity
-            android:name=".ForgetPasswordActivity"
+            android:name=".ui.activity.ForgetPasswordActivity"
             android:launchMode="standard"></activity>
         <activity
-            android:name=".LoginActivity"
+            android:name=".ui.activity.LoginActivity"
             android:launchMode="singleTask"></activity>
-        <activity android:name=".SearchActivity"
+        <activity android:name=".ui.activity.SearchActivity"
             android:launchMode="singleTop"/>
 
         <receiver
-          android:name=".MainActivity$NotificationClickReceiver"
+          android:name=".ui.activity.MainActivity$NotificationClickReceiver"
           android:enabled="true"
           android:exported="true">
         </receiver>

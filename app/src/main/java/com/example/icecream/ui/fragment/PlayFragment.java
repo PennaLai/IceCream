@@ -1,4 +1,4 @@
-package com.example.icecream.fragment;
+package com.example.icecream.ui.fragment;
 
 import static android.content.Context.NOTIFICATION_SERVICE;
 
@@ -30,9 +30,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 
 
-import butterknife.BindView;
-
-import com.example.icecream.MainActivity;
+import com.example.icecream.ui.activity.MainActivity;
 
 import com.example.icecream.R;
 import com.example.icecream.service.SpeakerService;

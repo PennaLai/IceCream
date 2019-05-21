@@ -1,4 +1,4 @@
-package com.example.icecream.menu;
+package com.example.icecream.ui.component.menu;
 
 import android.graphics.drawable.Drawable;
 import android.view.LayoutInflater;
@@ -73,7 +73,7 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
   /**
    * Set the selected type icon for a SimpleItem instance
    * @param selectedItemIconTint : the selected icon id.
-   * @return com.example.icecream.menu.SimpleItem the instance.
+   * @return com.example.icecream.ui.component.menu.SimpleItem the instance.
    */
   public SimpleItem withSelectedIconTint(int selectedItemIconTint) {
     this.selectedItemIconTint = selectedItemIconTint;
@@ -83,7 +83,7 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
   /**
    * Set the selected type text for a SimpleItem instance
    * @param selectedItemTextTint : the selected text id.
-   * @return com.example.icecream.menu.SimpleItem the instance.
+   * @return com.example.icecream.ui.component.menu.SimpleItem the instance.
    */
   public SimpleItem withSelectedTextTint(int selectedItemTextTint) {
     this.selectedItemTextTint = selectedItemTextTint;
@@ -94,7 +94,7 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
   /**
    * Set the normal type icon for a SimpleItem instance
    * @param normalItemIconTint : the normal icon id.
-   * @return com.example.icecream.menu.SimpleItem the instance.
+   * @return com.example.icecream.ui.component.menu.SimpleItem the instance.
    */
   public SimpleItem withIconTint(int normalItemIconTint) {
     this.normalItemIconTint = normalItemIconTint;
@@ -104,7 +104,7 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
   /**
    * Set the normal text for a SimpleItem instance
    * @param normalItemTextTint : the normal text id.
-   * @return com.example.icecream.menu.SimpleItem the instance.
+   * @return com.example.icecream.ui.component.menu.SimpleItem the instance.
    */
   public SimpleItem withTextTint(int normalItemTextTint) {
     this.normalItemTextTint = normalItemTextTint;

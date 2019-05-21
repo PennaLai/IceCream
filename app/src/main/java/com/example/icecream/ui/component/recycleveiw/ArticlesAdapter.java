@@ -1,4 +1,4 @@
-package com.example.icecream.recycleveiw;
+package com.example.icecream.ui.component.recycleveiw;
 
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
-import com.example.icecream.recycleveiw.ArticlesAdapter.ArticlesViewHolder;
+import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter.ArticlesViewHolder;
 import java.util.List;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {

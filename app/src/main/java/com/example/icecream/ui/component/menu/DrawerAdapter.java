@@ -1,4 +1,4 @@
-package com.example.icecream.menu;
+package com.example.icecream.ui.component.menu;
 
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;

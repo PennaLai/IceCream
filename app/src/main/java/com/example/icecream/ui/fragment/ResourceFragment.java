@@ -1,7 +1,6 @@
-package com.example.icecream.fragment;
+package com.example.icecream.ui.fragment;
 
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,12 +14,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.Toast;
 
-import butterknife.BindView;
-import com.example.icecream.MainActivity;
+import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.R;
-import com.example.icecream.SearchActivity;
-import com.example.icecream.recycleveiw.ArticlesAdapter;
-import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.ui.activity.SearchActivity;
+import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 
 import java.util.Objects;
 
@@ -42,7 +39,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
   /**
    * Create a instance of ResourceFragment.
-   * @return com.example.icecream.fragment.ResourceFragment
+   * @return com.example.icecream.ui.fragment.ResourceFragment
    */
   public static ResourceFragment newInstance() {
     return new ResourceFragment();
