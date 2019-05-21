@@ -1,4 +1,4 @@
-package com.example.icecream.menu;
+package com.example.icecream.ui.component.menu;
 
 import android.view.ViewGroup;
 

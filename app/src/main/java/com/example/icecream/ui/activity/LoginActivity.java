@@ -1,4 +1,4 @@
-package com.example.icecream;
+package com.example.icecream.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,6 +9,7 @@ import android.text.Editable;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.icecream.R;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import com.example.icecream.utils.HttpHandler;

@@ -1,53 +1,42 @@
-package com.example.icecream;
+package com.example.icecream.ui.activity;
 
 import android.app.Fragment;
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
-import android.net.ConnectivityManager;
 
 import android.os.AsyncTask;
 
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.example.icecream.fragment.PlayFragment;
-import com.example.icecream.fragment.ResourceFragment;
-import com.example.icecream.menu.DrawerAdapter;
-import com.example.icecream.menu.DrawerItem;
-import com.example.icecream.menu.SimpleItem;
-import com.example.icecream.menu.SpaceItem;
-import com.example.icecream.search.BoilerplateActivity;
-import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.R;
+import com.example.icecream.ui.fragment.PlayFragment;
+import com.example.icecream.ui.fragment.ResourceFragment;
+import com.example.icecream.ui.component.menu.DrawerAdapter;
+import com.example.icecream.ui.component.menu.DrawerItem;
+import com.example.icecream.ui.component.menu.SimpleItem;
+import com.example.icecream.ui.component.menu.SpaceItem;
+//import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
-
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
 
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
@@ -64,7 +53,7 @@ import okhttp3.OkHttpClient;
  * @author Penna
  * @version V1.0
  */
-public class MainActivity extends BoilerplateActivity
+public class MainActivity extends AppCompatActivity
     implements View.OnClickListener,
     DrawerAdapter.OnItemSelectedListener,
     ResourceFragment.MusicConnector {
@@ -231,7 +220,7 @@ public class MainActivity extends BoilerplateActivity
    * This method creates the draw items.
    *
    * @param position : create item by index to initialize.
-   * @return com.example.icecream.menu.DrawerItem
+   * @return com.example.icecream.ui.component.menu.DrawerItem
    */
   private DrawerItem createItemFor(int position) {
     return new SimpleItem(screenIcons[position], screenTitles[position])
@@ -275,15 +264,6 @@ public class MainActivity extends BoilerplateActivity
   public boolean onCreateOptionsMenu(Menu menu) {
     getMenuInflater().inflate(R.menu.menu_main, menu);
     return true;
-  }
-
-  @Override
-  public boolean onOptionsItemSelected(MenuItem item) {
-    if (item.getItemId() == R.id.main_action_share) {
-      shareDemo();
-      return true;
-    }
-    return super.onOptionsItemSelected(item);
   }
 
   @Override

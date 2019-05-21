@@ -1,4 +1,4 @@
-package com.example.icecream.fragment;
+package com.example.icecream.ui.fragment;
 
 import android.app.Fragment;
 import android.os.Bundle;

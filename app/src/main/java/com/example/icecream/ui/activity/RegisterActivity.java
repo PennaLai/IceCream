@@ -1,4 +1,4 @@
-package com.example.icecream;
+package com.example.icecream.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
@@ -9,7 +9,6 @@ import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
-import android.os.StrictMode;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
 
+import com.example.icecream.R;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
 import com.github.glomadrian.codeinputlib.CodeInput;

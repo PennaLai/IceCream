@@ -7,7 +7,7 @@
     android:id="@+id/head"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".ui.activity.LoginActivity">
 
     <com.rengwuxian.materialedittext.MaterialEditText
       android:id="@+id/phone"

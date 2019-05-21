@@ -3,7 +3,7 @@ package com.example.icecream.utils;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.example.icecream.LoginActivity;
+import com.example.icecream.ui.activity.LoginActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
