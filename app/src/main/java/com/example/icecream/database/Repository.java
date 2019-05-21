@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 
 import com.example.icecream.database.dao.ArticleDao;
 import com.example.icecream.database.dao.RssFeedDao;
@@ -39,23 +40,23 @@ public class Repository {
   private MutableLiveData<List<RssFeed>> personalRssFeeds = new MutableLiveData<>();
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();
 
-  private void userAsyncFinished(User user) {
+  private void setUser(User user) {
     userSearchResult.setValue(user);
   }
 
-  private void feedsAsyncFinished(List<RssFeed> feeds) {
+  private void setRssFeeds(List<RssFeed> feeds) {
     feedSearchResults.setValue(feeds);
   }
 
-  private void articlesAsyncFinished(List<Article> articles) {
+  private void setArticles(List<Article> articles) {
     articleSearchResults.setValue(articles);
   }
 
-  private void personalFeedsAsyncFinished(List<RssFeed> feeds) {
+  public void setPersonalRssFeeds(List<RssFeed> feeds) {
     personalRssFeeds.setValue(feeds);
   }
 
-  private void personalArticlesAsyncFinished(List<Article> articles) {
+  public void setPersonalArticles(List<Article> articles) {
     personalArticles.setValue(articles);
   }
 
@@ -105,6 +106,14 @@ public class Repository {
     return allArticles;
   }
 
+  /**
+   * Synchronously insert user(s).
+   *
+   * @param users input users.
+   */
+  public void insertUserSync(User... users) {
+    userDao.insert(users);
+  }
 
   /**
    * Insert user(s) to database.
@@ -112,8 +121,7 @@ public class Repository {
    * @param user the input user.
    */
   public void insertUser(User... user) {
-    UserInsertAsyncTask task = new UserInsertAsyncTask(userDao);
-    task.execute(user);
+    new UserInsertAsyncTask(userDao).execute(user);
   }
 
   /**
@@ -122,8 +130,7 @@ public class Repository {
    * @param user the input user.
    */
   public void updateUser(User... user) {
-    UserUpdateAsyncTask task = new UserUpdateAsyncTask(userDao);
-    task.execute(user);
+    new UserUpdateAsyncTask(userDao).execute(user);
   }
 
   /**
@@ -132,8 +139,7 @@ public class Repository {
    * @param user the input user.
    */
   public void deleteUser(User... user) {
-    UserDeleteAsyncTask task = new UserDeleteAsyncTask(userDao);
-    task.execute(user);
+    new UserDeleteAsyncTask(userDao).execute(user);
   }
 
   /**
@@ -271,6 +277,49 @@ public class Repository {
     return personalArticles;
   }
 
+  /**
+   * Synchronously update user token.
+   *
+   * @param phone user's phone.
+   * @param token user's token.
+   */
+  public void updateTokenByPhoneSync(@NonNull String phone, @NonNull String token) {
+    User user = userDao.getUserByPhone(phone);
+    user.setAuthToken(token);
+    userDao.update(user);
+  }
+
+  /**
+   * Synchronously get user by phone.
+   *
+   * @param phone input phone.
+   * @return target user.
+   */
+  public User getUserByPhoneSync(String phone) {
+    return userDao.getUserByPhone(phone);
+  }
+
+  /**
+   * Synchronously get articles by title.
+   *
+   * @param title input title.
+   * @return target articles.
+   */
+  public List<Article> getArticlesByTitleSync(String title) {
+    return articleDao.getArticlesByTitle(title);
+  }
+
+  /**
+   * Synchronously get RSS feeds by name.
+   *
+   * @param name input name.
+   * @return target feeds.
+   */
+  public List<RssFeed> getRssFeedsByNameSync(String name) {
+    return rssFeedDao.getRssFeedByName(name);
+  }
+
+
   private static class UserQueryAsyncTask extends AsyncTask<String, Void, User> {
     private UserDao userDao;
     private Repository delegate = null;
@@ -286,7 +335,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(User result) {
-      delegate.userAsyncFinished(result);
+      delegate.setUser(result);
     }
   }
 
@@ -350,7 +399,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<RssFeed> result) {
-      delegate.feedsAsyncFinished(result);
+      delegate.setRssFeeds(result);
     }
   }
 
@@ -414,7 +463,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<Article> result) {
-      delegate.articlesAsyncFinished(result);
+      delegate.setArticles(result);
     }
   }
 
@@ -479,7 +528,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<RssFeed> result) {
-      delegate.personalFeedsAsyncFinished(result);
+      delegate.setPersonalRssFeeds(result);
     }
   }
 
@@ -501,7 +550,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<Article> result) {
-      delegate.personalArticlesAsyncFinished(result);
+      delegate.setPersonalArticles(result);
     }
   }
 

@@ -11,17 +11,15 @@ import android.content.IntentFilter;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.net.ConnectivityManager;
+
+import android.os.AsyncTask;
+
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.support.annotation.ColorInt;
 import android.support.annotation.ColorRes;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment.SavedState;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.NotificationCompat.Builder;
 import android.support.v4.content.ContextCompat;
@@ -34,8 +32,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RemoteViews;
-import android.widget.RemoteViews.RemoteView;
-import com.example.icecream.fragment.CenteredTextFragment;
+
 import com.example.icecream.fragment.PlayFragment;
 import com.example.icecream.fragment.ResourceFragment;
 import com.example.icecream.menu.DrawerAdapter;
@@ -44,29 +41,34 @@ import com.example.icecream.menu.SimpleItem;
 import com.example.icecream.menu.SpaceItem;
 import com.example.icecream.search.BoilerplateActivity;
 import com.example.icecream.search.SimpleToolbar;
+import com.example.icecream.utils.AppViewModel;
+import com.example.icecream.utils.HttpHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
+
 import java.io.FileDescriptor;
 import java.io.PrintWriter;
+
 import java.lang.ref.WeakReference;
 import java.util.Arrays;
-import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+
+import okhttp3.OkHttpClient;
 
 
 /**
  * The main activity.
- *
+ * <p>
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
  * @author Penna
  * @version V1.0
  */
 public class MainActivity extends BoilerplateActivity
     implements View.OnClickListener,
-        DrawerAdapter.OnItemSelectedListener,
-        ResourceFragment.MusicConnector {
-  // TODO: bind the speaker service here but not play fragment.
+    DrawerAdapter.OnItemSelectedListener,
+    ResourceFragment.MusicConnector {
+  // TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
   private static final int POS_ACCOUNT = 1;
@@ -85,13 +87,26 @@ public class MainActivity extends BoilerplateActivity
   private DrawerAdapter adapter;
   private ViewPager viewPager;
 
-  /** connection between UI and Repository. */
-//    private ViewModel mViewMode;
 
+  private NotificationManager musicBarManage;
+  private Notification notify;
+  private RemoteViews remoteViews;
+
+  private String phone;
+  private HttpHandler httpHandler;
+  private AppViewModel viewModel;
+
+  /**
+   * connection between UI and Repository.
+   */
+//    private AppViewModel mViewMode;
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    // get phone from login
+    phone = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
     // 定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
@@ -149,7 +164,13 @@ public class MainActivity extends BoilerplateActivity
 
     adapter.setSelected(POS_DASHBOARD);
 
+    // http
+    httpHandler = new HttpHandler(new OkHttpClient(), this);
+
+    // view model
+    viewModel = new AppViewModel(getApplication());
   }
+
 
   @Override
   protected void onDestroy() {
@@ -159,6 +180,7 @@ public class MainActivity extends BoilerplateActivity
 
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
+   *
    * @param tb : The instance of SimpleToolbar
    */
   public void setUpToolbar(SimpleToolbar tb) {
@@ -180,7 +202,7 @@ public class MainActivity extends BoilerplateActivity
 //    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
 //    showFragment(selectedScreen);
 
-    Log.i("Draw", ""+position);
+    Log.i("Draw", "" + position);
   }
 
   private void login() {
@@ -192,6 +214,7 @@ public class MainActivity extends BoilerplateActivity
 
   /**
    * This method is to switch fragment according to the selected draw item.
+   *
    * @param fragment : The destined fragment.
    */
   private void showFragment(Fragment fragment) {
@@ -200,6 +223,7 @@ public class MainActivity extends BoilerplateActivity
 
   /**
    * This method creates the draw items.
+   *
    * @param position : create item by index to initialize.
    * @return com.example.icecream.menu.DrawerItem
    */
@@ -236,7 +260,7 @@ public class MainActivity extends BoilerplateActivity
   @Override
   public void onClick(View v) {
     switch (v.getId()) {
-        // do nothing
+      // do nothing
     }
   }
 
@@ -262,4 +286,92 @@ public class MainActivity extends BoilerplateActivity
     viewPager.setCurrentItem(1, true);
   }
 
+
+  private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    UpdateRssFeedsAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getUpdateRSSFeedsState(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          // get those feeds successfully
+          Log.i(TAG, "get rss feeds");
+          activity.viewModel.setPersonalRssFeeds(activity.httpHandler.getRssFeeds());
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<MainActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    UpdateArticlesAsyncTask(MainActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.getUpdateArticlesState(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      MainActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          // get those articles successfully
+          Log.i(TAG, "get articles");
+          activity.viewModel.setPersonalArticles(activity.httpHandler.getArticles());
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
 }

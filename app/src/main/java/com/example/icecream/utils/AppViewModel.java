@@ -15,13 +15,14 @@ import java.util.List;
 /**
  * This view model is to provide data to the UI and survive configuration changes. <br/>
  * Activity and Fragment classes are responsible for drawing data to the screen,
- * ViewModel class takes care of holding and processing all the data needed for the UI.
+ * AppViewModel class takes care of holding and processing all the data needed for the UI.
  *
  * @author Kemo
  */
-public class ViewModel extends AndroidViewModel {
+public class AppViewModel extends AndroidViewModel {
 
   private Repository repository;
+
 
   private LiveData<List<User>> allUsers;
 
@@ -31,18 +32,25 @@ public class ViewModel extends AndroidViewModel {
 
   private MutableLiveData<User> userSearchResult;
 
+  private MutableLiveData<List<RssFeed>> personalRssFeeds;
+
+  private MutableLiveData<List<Article>> personalArticles;
+
   /**
    * View model constructor.
    *
    * @param application the register application.
    */
-  public ViewModel(Application application) {
+  public AppViewModel(Application application) {
     super(application);
     repository = new Repository(application);
+
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     allArticles = repository.getAllArticles();
     userSearchResult = repository.getUserSearchResult();
+    personalRssFeeds = repository.getPersonalRssFeeds();
+    personalArticles = repository.getPersonalArticles();
   }
 
   /**
@@ -141,11 +149,43 @@ public class ViewModel extends AndroidViewModel {
    * @return result user.
    */
   public MutableLiveData<User> getUserSearchResult() {
-    if (userSearchResult == null) {
-      userSearchResult = new MutableLiveData<>();
-    }
     return userSearchResult;
   }
 
+  /**
+   * Getter for the personal RSS feeds.
+   *
+   * @return result RSS feeds.
+   */
+  public MutableLiveData<List<RssFeed>> getPersonalRssFeeds() {
+    return personalRssFeeds;
+  }
+
+  /**
+   * Getter for personal the articles.
+   *
+   * @return result articles.
+   */
+  public MutableLiveData<List<Article>> getPersonalArticles() {
+    return personalArticles;
+  }
+
+  /**
+   * Setter for personal RSS feeds
+   *
+   * @param feeds feeds
+   */
+  public void setPersonalRssFeeds(List<RssFeed> feeds) {
+    repository.setPersonalRssFeeds(feeds);
+  }
+
+  /**
+   * Setter for personal articles.
+   *
+   * @param articles articles.
+   */
+  public void setPersonalArticles(List<Article> articles) {
+    repository.setPersonalArticles(articles);
+  }
 
 }

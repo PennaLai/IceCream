@@ -16,7 +16,7 @@ public interface UserRssFeedJoinDao {
   @Insert
   void insert(UserRssFeedJoin userRssFeedJoin);
 
-  @Query("SELECT * FROM RssFeed INNER JOIN UserRssFeedJoin ON "
+  @Query("SELECT RssFeed.* FROM RssFeed INNER JOIN UserRssFeedJoin ON "
       + "RssFeed.id = UserRssFeedJoin.rssFeedId WHERE "
       + "UserRssFeedJoin.userId = :userId")
   LiveData<List<RssFeed>> getRssFeedsByUserId(final Long userId);

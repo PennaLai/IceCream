@@ -3,6 +3,7 @@ package com.example.icecream;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.os.Handler;
@@ -14,12 +15,17 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import cn.smssdk.EventHandler;
 import cn.smssdk.SMSSDK;
+
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
 import com.github.glomadrian.codeinputlib.CodeInput;
 import com.mob.MobSDK;
+
+import java.lang.ref.WeakReference;
+
 import mehdi.sakout.fancybuttons.FancyButton;
 import okhttp3.OkHttpClient;
 
@@ -32,23 +38,41 @@ import okhttp3.OkHttpClient;
  */
 public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
 
-  /** edit text for username. */
+  /**
+   * edit text for username.
+   */
   private EditText etUserName;
-  /** edit text for password. */
+  /**
+   * edit text for password.
+   */
   private EditText etPassword;
-  /** edit text for phone number. */
+  /**
+   * edit text for phone number.
+   */
   private EditText etPhoneNumber;
-  /** button for sending auth code. */
+  /**
+   * button for sending auth code.
+   */
   private FancyButton btSendAuthCode;
-  /** code input for pin code. */
+  /**
+   * code input for pin code.
+   */
   private CodeInput pinCode;
-  /** Used for checking if verification code has been verified. */
+  /**
+   * Used for checking if verification code has been verified.
+   */
   private boolean verified;
-  /** The phone number that user input. */
+  /**
+   * The phone number that user input.
+   */
   private String phoneNumber;
-  /** timer running state. */
+  /**
+   * timer running state.
+   */
   private boolean timerRunning;
-  /** http handler for handling request and response. */
+  /**
+   * http handler for handling request and response.
+   */
   private HttpHandler httpHandler;
 
   @Override
@@ -68,59 +92,56 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     btSendAuthCode.setOnClickListener(this);
     btNextStep.setOnClickListener(this);
 
-    final StrictMode.ThreadPolicy policy =
-        new StrictMode.ThreadPolicy.Builder().permitAll().build();
-    StrictMode.setThreadPolicy(policy);
-
     final OkHttpClient client = new OkHttpClient();
     httpHandler = new HttpHandler(client, this);
 
     initSmsSdk();
   }
 
-  /** This method is to init the sdk handler. */
+  /**
+   * This method is to init the sdk handler.
+   */
   private void initSmsSdk() {
     MobSDK.init(this);
     // the event handler for the SMSSDK
     final EventHandler eventHandler =
-      new EventHandler() {
-
-        @Override
-        public void afterEvent(final int event, final int result, final Object data) {
-        // afterEvent会在子线程被调用，因此如果后续有UI相关操作，需要将数据发送到UI线程
-        Message msg = new Message();
-        msg.arg1 = event;
-        msg.arg2 = result;
-        msg.obj = data;
-        new Handler(
-          Looper.getMainLooper(),
-          msg1 -> {
-            int event1 = msg1.arg1;
-            int result1 = msg1.arg2;
-            Object data1 = msg1.obj;
-            if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
-              if (result1 == SMSSDK.RESULT_COMPLETE) {
-                Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
-              } else {
-                Toast.makeText(RegisterActivity.this, "发送失败，请重试", Toast.LENGTH_LONG)
-                    .show();
-                ((Throwable) data1).printStackTrace();
-              }
-            } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
-              if (result1 == SMSSDK.RESULT_COMPLETE) {
-                verified = true;
-                Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
-              } else {
-                verified = false;
-                Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
-                ((Throwable) data1).printStackTrace();
-              }
-            }
-            return false;
-          })
-          .sendMessage(msg);
-        }
-      };
+        new EventHandler() {
+          @Override
+          public void afterEvent(final int event, final int result, final Object data) {
+            // afterEvent会在子线程被调用，因此如果后续有UI相关操作，需要将数据发送到UI线程
+            Message msg = new Message();
+            msg.arg1 = event;
+            msg.arg2 = result;
+            msg.obj = data;
+            new Handler(
+                Looper.getMainLooper(),
+                msg1 -> {
+                  int event1 = msg1.arg1;
+                  int result1 = msg1.arg2;
+                  Object data1 = msg1.obj;
+                  if (event1 == SMSSDK.EVENT_GET_VERIFICATION_CODE) {
+                    if (result1 == SMSSDK.RESULT_COMPLETE) {
+                      Toast.makeText(RegisterActivity.this, "发送成功", Toast.LENGTH_LONG).show();
+                    } else {
+                      Toast.makeText(RegisterActivity.this, "发送失败，请重试", Toast.LENGTH_LONG)
+                          .show();
+                      ((Throwable) data1).printStackTrace();
+                    }
+                  } else if (event1 == SMSSDK.EVENT_SUBMIT_VERIFICATION_CODE) {
+                    if (result1 == SMSSDK.RESULT_COMPLETE) {
+                      verified = true;
+                      Toast.makeText(RegisterActivity.this, "验证成功", Toast.LENGTH_LONG).show();
+                    } else {
+                      verified = false;
+                      Toast.makeText(RegisterActivity.this, "验证失败", Toast.LENGTH_LONG).show();
+                      ((Throwable) data1).printStackTrace();
+                    }
+                  }
+                  return false;
+                })
+                .sendMessage(msg);
+          }
+        };
     SMSSDK.registerEventHandler(eventHandler);
   }
 
@@ -201,24 +222,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
 
     if (phoneNumberState == InputStringValidator.ValState.Valid) {
       /* check if duplicate */
-      boolean isValidPhone = false;
-      switch (httpHandler.postPhoneState(phoneNumber)) {
-        case DuplicatePhoneNumber:
-          Toast.makeText(this,
-              "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
-          break;
-        case Valid:
-          isValidPhone = true;
-          break;
-        default:
-          break;
-      }
-      if (isValidPhone) {
-        SMSSDK.getVerificationCode("86", phoneNumber);
-        btSendAuthCode.setClickable(false);
-        btSendAuthCode.setBackgroundColor(Color.parseColor("#898989"));
-        startVerifyTimer();
-      }
+      new PhoneStateAsyncTask(this).execute(phoneNumber);
     } else {
       if (phoneNumberState == InputStringValidator.ValState.Empty) {
         Toast.makeText(this,
@@ -298,16 +302,13 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
    * This method is to submit all information and the register request.
    */
   private void submitRegister() {
-    final String userName = etUserName.getText().toString();
+    final String username = etUserName.getText().toString();
     final String password = etPassword.getText().toString();
 
-    if (verifyUsername(userName) && verifyPassword(password)) {
+    if (verifyUsername(username) && verifyPassword(password)) {
       if (verified) {
-        if (httpHandler.postRegisterState(phoneNumber, userName, password)
-            == HttpHandler.ResponseState.Valid) {
-          Toast.makeText(this, "注册成功", Toast.LENGTH_LONG).show();
-        }
-        Toast.makeText(this, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
+        new RegisterAsyncTask(this).execute(
+            new ParamsPhoneNamePassword(phoneNumber, username, password));
       } else {
         Toast.makeText(this, "手机号验证未通过", Toast.LENGTH_LONG).show();
       }
@@ -331,4 +332,91 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     SMSSDK.unregisterAllEventHandler();  // Destroy the callback interface
   }
 
+
+  private static class PhoneStateAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private String phoneNumber;
+    private WeakReference<RegisterActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    PhoneStateAsyncTask(RegisterActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      RegisterActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      phoneNumber = params[0];
+      return activity.httpHandler.postPhoneState(phoneNumber);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      RegisterActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      switch (responseState) {
+        case DuplicatePhoneNumber:
+          Toast.makeText(activity,
+              "这个手机号已经被注册过了", Toast.LENGTH_LONG).show();
+          break;
+        case Valid:
+          SMSSDK.getVerificationCode("86", phoneNumber);
+          activity.btSendAuthCode.setClickable(false);
+          activity.btSendAuthCode.setBackgroundColor(Color.parseColor("#898989"));
+          activity.startVerifyTimer();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private class ParamsPhoneNamePassword {
+    String phone;
+    String username;
+    String password;
+
+    ParamsPhoneNamePassword(String phone, String username, String password) {
+      this.phone = phone;
+      this.username = username;
+      this.password = password;
+    }
+  }
+
+  private static class RegisterAsyncTask extends AsyncTask<ParamsPhoneNamePassword, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<RegisterActivity> activityReference;
+
+    // only retain a weak reference to the activity
+    RegisterAsyncTask(RegisterActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(ParamsPhoneNamePassword... params) {
+      RegisterActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return null;
+      }
+      return activity.httpHandler.postRegisterState(
+          params[0].phone, params[0].username, params[0].password);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      RegisterActivity activity = activityReference.get();
+      if (activity == null || activity.isFinishing()) {
+        return;
+      }
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        Toast.makeText(activity, "注册成功", Toast.LENGTH_LONG).show();
+      }
+      Toast.makeText(activity, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
+    }
+  }
 }
