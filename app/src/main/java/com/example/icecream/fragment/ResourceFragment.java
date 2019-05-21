@@ -3,17 +3,22 @@ package com.example.icecream.fragment;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.Toast;
 
+import butterknife.BindView;
 import com.example.icecream.MainActivity;
 import com.example.icecream.R;
+import com.example.icecream.SearchActivity;
 import com.example.icecream.recycleveiw.ArticlesAdapter;
 import com.example.icecream.search.SimpleToolbar;
 
@@ -31,6 +36,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   private ArticlesAdapter mAdapter;
   private RecyclerView mArticleList;
   private Context mainAppContext;
+
 
   private Toast mToast;
 
@@ -67,8 +73,11 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     /*
      * Set up tool bar for search.
      */
-    SimpleToolbar toolbar = view.findViewById(R.id.toolbar);
+    Toolbar toolbar = view.findViewById(R.id.toolbar);
     ((MainActivity)getActivity()).setUpToolbar(toolbar);
+    ImageView imageView = view.findViewById(R.id.action_search);
+    imageView.setOnClickListener(v -> goToSearch());
+
 
     /*
      * Generate article list using reclycleView.
@@ -89,6 +98,13 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mArticleList.setAdapter(mAdapter);
 
     return view;
+  }
+
+  public void goToSearch(){
+    Class<?> activityCls = SearchActivity.class;
+
+    Intent intent = new Intent(mainAppContext, activityCls);
+    startActivity(intent);
   }
 
   @Override
@@ -135,6 +151,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // tell the main activity to change the screen to the player fragment
     musicConnectorCallback.onArticleSelect();
 
+  }
+
+  private void onBackPressed(){
+    getActivity().onBackPressed();
   }
 
 }

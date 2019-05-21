@@ -20,6 +20,7 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
+import butterknife.BindView;
 import com.example.icecream.R;
 import com.example.icecream.service.SpeakerService;
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class PlayFragment extends Fragment {
   private int playIndex = 0;
 
   private TextView volumeText;
+
+
 
   public static PlayFragment newInstance() {
     return new PlayFragment();
