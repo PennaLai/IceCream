@@ -134,7 +134,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
           @Override
           public void onRefresh(RefreshLayout refreshlayout) {
             refreshlayout.finishRefresh(2000 /*,false*/); // 传入false表示刷新失败
-           Loi(TAG, "onRefresh: REFERASH");
           }
         });
     refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
