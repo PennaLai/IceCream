@@ -24,6 +24,9 @@ import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import java.lang.ref.WeakReference;
 import java.util.Objects;
 
@@ -124,10 +127,28 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
 
+    // 下拉刷新和底部加载初始化和监听函数
+    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+    refreshLayout.setOnRefreshListener(
+        new OnRefreshListener() {
+          @Override
+          public void onRefresh(RefreshLayout refreshlayout) {
+            refreshlayout.finishRefresh(2000 /*,false*/); // 传入false表示刷新失败
+           Loi(TAG, "onRefresh: REFERASH");
+          }
+        });
+    refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
+      @Override
+      public void onLoadMore(RefreshLayout refreshlayout) {
+        refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+      }
+    });
+
     subscribe("18929357397", "https://36kr.com/feed");
     getPersonalRssFeeds("18929357397");
 //    unsubscribe("18929357397", "https://36kr.com/feed");
 //    getPersonalArticles("18929357397");
+
     return view;
   }
 
@@ -191,7 +212,9 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   }
 
 
+
   private void getPersonalRssFeeds(String phoneNumber) {
+
     new UpdateRssFeedsAsyncTask(this).execute(phoneNumber);
   }
 
@@ -206,6 +229,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   private void unsubscribe(String phoneNumber, String url) {
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
+
+
 
 
   private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
