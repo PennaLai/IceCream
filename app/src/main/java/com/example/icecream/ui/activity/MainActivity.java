@@ -25,6 +25,7 @@ import android.view.View;
 import com.example.icecream.R;
 
 import com.example.icecream.ui.fragment.PlayFragment;
+import com.example.icecream.ui.fragment.ReadFragment;
 import com.example.icecream.ui.fragment.ResourceFragment;
 import com.example.icecream.ui.component.menu.DrawerAdapter;
 import com.example.icecream.ui.component.menu.DrawerItem;
@@ -85,7 +86,8 @@ public class MainActivity extends AppCompatActivity
     // 定义数据
     final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
     data.put(0, ResourceFragment.newInstance());
-    data.put(1, PlayFragment.newInstance());
+    data.put(1, ReadFragment.newInstance());
+//    data.put(1, PlayFragment.newInstance());
 
     // 找到ViewPager
     viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -250,6 +252,14 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onArticleSelect() {
     Log.i(TAG, "onArticleSelect: Go fuck your self");
+    toReadFragment();
+  }
+
+  public void toResourceFragment() {
+    viewPager.setCurrentItem(0, true);
+  }
+
+  public void toReadFragment() {
     viewPager.setCurrentItem(1, true);
   }
 
