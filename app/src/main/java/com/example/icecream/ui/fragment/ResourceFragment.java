@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.icecream.R;
+import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
@@ -25,6 +26,7 @@ import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 
 import java.lang.ref.WeakReference;
+import java.util.List;
 import java.util.Objects;
 
 import okhttp3.OkHttpClient;
@@ -124,8 +126,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
 
-    subscribe("18929357397", "https://36kr.com/feed");
-    getPersonalRssFeeds("18929357397");
+//    subscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalRssFeeds("18929357397");
 //    unsubscribe("18929357397", "https://36kr.com/feed");
 //    getPersonalArticles("18929357397");
     return view;
@@ -190,9 +192,12 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
   }
 
+  private void getAllRssFeeds(String phoneNumber) {
+    new UpdateAllFeedsAsyncTask(this).execute(phoneNumber);
+  }
 
   private void getPersonalRssFeeds(String phoneNumber) {
-    new UpdateRssFeedsAsyncTask(this).execute(phoneNumber);
+    new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
   }
 
   private void getPersonalArticles(String phoneNumber) {
@@ -207,13 +212,57 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
-
-  private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class UpdateAllFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
 
     private WeakReference<ResourceFragment> reference;
 
     // only retain a weak reference to the activity
-    UpdateRssFeedsAsyncTask(ResourceFragment context) {
+    UpdateAllFeedsAsyncTask(ResourceFragment context) {
+      reference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      ResourceFragment fragment = reference.get();
+      if (fragment == null) {
+        return null;
+      }
+      return fragment.httpHandler.getUpdateAllFeedsState(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      ResourceFragment fragment = reference.get();
+      if (fragment == null) {
+        return;
+      }
+      switch (responseState) {
+        case Valid:
+          // get those feeds successfully
+          Log.i(TAG, "inserting all rss feeds");
+          List<RssFeed> list = fragment.httpHandler.getAllRssFeeds();
+          fragment.viewModel.insertAllRssFeeds(list.toArray(new RssFeed[0]));
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static class UpdatePersonalFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+
+    private WeakReference<ResourceFragment> reference;
+
+    // only retain a weak reference to the activity
+    UpdatePersonalFeedsAsyncTask(ResourceFragment context) {
       reference = new WeakReference<>(context);
     }
 

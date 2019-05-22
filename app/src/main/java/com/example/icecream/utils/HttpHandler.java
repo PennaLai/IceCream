@@ -70,6 +70,7 @@ public class HttpHandler {
 
   private List<RssFeed> rssFeeds = new ArrayList<>();
   private List<Article> articles = new ArrayList<>();
+  private List<RssFeed> allRssFeeds = new ArrayList<>();
 
   /**
    * Constructor for http handler.
@@ -341,6 +342,26 @@ public class HttpHandler {
       Log.e(TAG, "postPhoneState: ", e);
     }
     return responseState;
+  }
+
+  /**
+   * Gets all RSS feeds in remote database.
+   *
+   * @param phoneNumber user phone.
+   * @return response state.
+   */
+  public ResponseState getUpdateAllFeedsState(@NonNull final String phoneNumber) {
+    // TODO
+    return ResponseState.ServerWrong;
+  }
+
+  /**
+   * Gets all RSS feeds result.
+   *
+   * @return all RSS feeds.
+   */
+  public List<RssFeed> getAllRssFeeds() {
+    return allRssFeeds;
   }
 
   /**

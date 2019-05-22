@@ -42,7 +42,6 @@ public class AppViewModel extends AndroidViewModel {
   public AppViewModel(Application application) {
     super(application);
     repository = new Repository(application);
-
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     userSearchResult = repository.getUserSearchResult();
@@ -129,6 +128,15 @@ public class AppViewModel extends AndroidViewModel {
    */
   public void updateUser(User... user) {
     repository.updateUser(user);
+  }
+
+  /**
+   * Insert the RSS feed(s).
+   *
+   * @param rssFeeds RSS feeds.
+   */
+  public void insertAllRssFeeds(RssFeed... rssFeeds) {
+    repository.insertRssFeed(rssFeeds);
   }
 
   /**
