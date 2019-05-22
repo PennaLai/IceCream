@@ -65,6 +65,10 @@ dependencies {
     androidTestImplementation "android.arch.persistence.room:testing:1.1.1"
     implementation "com.github.zhengken:LyricViewDemo:v1.2"
 
+    compile 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-26'
+    compile 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-26'
+
+
     androidTestImplementation "com.android.support.test.espresso:espresso-core:3.0.2"
     androidTestImplementation "com.android.support.test.espresso:espresso-contrib:3.0.2"
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:3.0.2"
