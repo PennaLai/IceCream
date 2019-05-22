@@ -23,7 +23,6 @@ public class AppViewModel extends AndroidViewModel {
 
   private Repository repository;
 
-
   private LiveData<List<User>> allUsers;
 
   private LiveData<List<RssFeed>> allRssFeeds;
@@ -68,33 +67,6 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
-   * Find the user by phone number.
-   *
-   * @param phone the input phone number.
-   */
-  public void findUserByPhone(String phone) {
-    repository.findUserByPhone(phone);
-  }
-
-  /**
-   * Find all Feeds of the user.
-   *
-   * @param user user of interest.
-   */
-  public void findRssFeedsByUser(User user) {
-    repository.findRssFeedsByUser(user);
-  }
-
-  /**
-   * Find all articles of the user.
-   *
-   * @param user user of interest.
-   */
-  public void findArticlesByUser(User user) {
-    repository.findArticlesByUser(user);
-  }
-
-  /**
    * Get all the RSS feeds of a user.
    *
    * @return the RSS feed list of the user.
@@ -136,7 +108,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param rssFeeds RSS feeds.
    */
   public void insertAllRssFeeds(RssFeed... rssFeeds) {
-    repository.insertRssFeed(rssFeeds);
+    repository.insertRssFeeds(rssFeeds);
   }
 
   /**
@@ -188,7 +160,7 @@ public class AppViewModel extends AndroidViewModel {
    * Subscribe.
    *
    * @param phone phone.
-   * @param url   url.
+   * @param url   feed url.
    */
   public void subscribe(String phone, String url) {
     repository.insertUserRssFeedByPhoneUrl(phone, url);
@@ -198,9 +170,67 @@ public class AppViewModel extends AndroidViewModel {
    * Unsubscribe.
    *
    * @param phone phone.
-   * @param url   url.
+   * @param url   feed url.
    */
   public void unsubscribe(String phone, String url) {
     repository.deleteUserRssFeedByPhoneUrl(phone, url);
   }
+
+  /**
+   * Star the article.
+   *
+   * @param phone user phone.
+   * @param url   article url.
+   */
+  public void star(String phone, String url) {
+
+  }
+
+  /**
+   * Unstar the article.
+   *
+   * @param phone user phone.
+   * @param url   article url.
+   */
+  public void unstar(String phone, String url) {
+
+  }
+
+  /**
+   * Load the articles without network.
+   *
+   * @param phone user phone.
+   */
+  public void loadArticlesByPhone(String phone) {
+    repository.findPersonalArticlesByPhone(phone);
+  }
+
+  /**
+   * Load the starred articles.
+   *
+   * @param phone phone.
+   */
+  public void loadStarArticlesByPhone(String phone) {
+    repository.findStarArticlesByPhone(phone);
+  }
+
+  /**
+   * Insert articles.
+   *
+   * @param articles article list.
+   */
+  public void insertArticles(List<Article> articles) {
+    repository.insertArticle(articles.toArray(new Article[0]));
+  }
+
+  /**
+   * Insert RSS feeds.
+   *
+   * @param phone    user phone.
+   * @param rssFeeds rss feed list.
+   */
+  public void insertPersonalRssFeeds(String phone, List<RssFeed> rssFeeds) {
+    repository.insertUserRssFeeds(phone, rssFeeds);
+  }
+
 }

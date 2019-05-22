@@ -4,40 +4,107 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.icecream.database.entity.RssFeed;
+import com.example.icecream.database.entity.User;
 
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
 
+/**
+ * This class is to handle the resource from server and client.
+ *
+ * @author Kemo
+ */
 public class ResourceHandler {
 
   private AppViewModel viewModel;
 
   private HttpHandler httpHandler;
 
+  /**
+   * Constructor.
+   *
+   * @param httpHandler http handler.
+   * @param viewModel   view model.
+   */
   public ResourceHandler(HttpHandler httpHandler, AppViewModel viewModel) {
     this.viewModel = viewModel;
     this.httpHandler = httpHandler;
   }
 
-  public void getAllRssFeeds() {
-    new ResourceHandler.UpdateAllFeedsAsyncTask(this).execute();
+  /**
+   * Updates all the available feeds.
+   */
+  public void updateAllRssFeeds() {
+    new UpdateAllFeedsAsyncTask(this).execute();
   }
 
-  public void getPersonalRssFeeds(String phoneNumber) {
-    new ResourceHandler.UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
+  /**
+   * Updates the newest articles.
+   */
+  public void updateNewArticles() {
+
   }
 
-  public void getPersonalArticles(String phoneNumber) {
-    new ResourceHandler.UpdateArticlesAsyncTask(this).execute(phoneNumber);
+  /**
+   * Update personal resources.
+   *
+   * @param phoneNumber user phone.
+   */
+  public void updatePersonalFeedsAndArticles(String phoneNumber) {
+    updatePersonalRssFeeds(phoneNumber);
+    updatePersonalArticles(phoneNumber);
   }
 
+  /**
+   * Updates the subscribed feeds.
+   *
+   * @param phoneNumber user phone.
+   */
+  private void updatePersonalRssFeeds(String phoneNumber) {
+    new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
+  }
+
+  /**
+   * Updates the subscribes articles.
+   *
+   * @param phoneNumber user phone.
+   */
+  private void updatePersonalArticles(String phoneNumber) {
+    new UpdateArticlesAsyncTask(this).execute(phoneNumber);
+  }
+
+  /**
+   * Subscribes the feed.
+   *
+   * @param phoneNumber user phone.
+   * @param url         feed url.
+   */
   public void subscribe(String phoneNumber, String url) {
-    new ResourceHandler.SubscribeAsyncTask(this).execute(phoneNumber, url);
+    new SubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
+  /**
+   * Unsubscribes the feed.
+   *
+   * @param phoneNumber user phone.
+   * @param url         feed url.
+   */
   public void unsubscribe(String phoneNumber, String url) {
-    new ResourceHandler.UnsubscribeAsyncTask(this).execute(phoneNumber, url);
+    new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
+  }
+
+  public void loadRssFeeds() {
+
+  }
+
+  /**
+   * Load the articles.
+   *
+   * @param phone phone.
+   */
+  public void loadArticles(String phone) {
+    viewModel.loadArticlesByPhone(phone);
   }
 
 
@@ -71,8 +138,8 @@ public class ResourceHandler {
 
   private static class UpdatePersonalFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private AppViewModel viewModel;
-
     private HttpHandler httpHandler;
+    private String phone;
 
     UpdatePersonalFeedsAsyncTask(ResourceHandler resourceHandler) {
       viewModel = resourceHandler.viewModel;
@@ -81,7 +148,8 @@ public class ResourceHandler {
 
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
-      return httpHandler.getUpdateRSSFeedsState(params[0]);
+      phone = params[0];
+      return httpHandler.getUpdateRSSFeedsState(phone);
     }
 
     @Override
@@ -91,6 +159,8 @@ public class ResourceHandler {
           // get those feeds successfully
           Log.i(TAG, "get rss feeds");
           viewModel.setPersonalRssFeeds(httpHandler.getPersonalRssFeeds());
+          // store
+          viewModel.insertPersonalRssFeeds(phone, httpHandler.getPersonalRssFeeds());
           break;
         case InvalidToken:
           // TODO back to login
@@ -128,6 +198,9 @@ public class ResourceHandler {
           // get those articles successfully
           Log.i(TAG, "get articles");
           viewModel.setPersonalArticles(httpHandler.getPersonalArticles());
+          // store
+          viewModel.insertArticles(httpHandler.getPersonalArticles());
+          Log.i(TAG, "insert articles succeed");
           break;
         case InvalidToken:
           // TODO back to login
@@ -153,7 +226,6 @@ public class ResourceHandler {
       viewModel = resourceHandler.viewModel;
       httpHandler = resourceHandler.httpHandler;
     }
-
 
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
@@ -221,4 +293,26 @@ public class ResourceHandler {
       }
     }
   }
+
+  private static class LoadArticlesAsyncTask extends AsyncTask<String, Void, Void> {
+    private AppViewModel viewModel;
+
+    LoadArticlesAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+    }
+
+    @Override
+    protected Void doInBackground(String... params) {
+
+
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+
+
+    }
+  }
+
 }

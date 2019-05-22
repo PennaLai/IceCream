@@ -16,6 +16,7 @@ import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 import com.example.icecream.database.entity.UserRssFeedJoin;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -40,6 +41,7 @@ public class Repository {
   private MutableLiveData<List<Article>> articleSearchResults = new MutableLiveData<>();
   private MutableLiveData<List<RssFeed>> personalRssFeeds = new MutableLiveData<>();
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();
+  private MutableLiveData<List<Article>> starArticles = new MutableLiveData<>();
 
   private void setUser(User user) {
     userSearchResult.setValue(user);
@@ -61,6 +63,10 @@ public class Repository {
     personalArticles.setValue(articles);
   }
 
+  public void setStarArticles(List<Article> articles) {
+    starArticles.setValue(articles);
+  }
+
   /**
    * Constructor<br/>
    * register the application to repository.
@@ -77,6 +83,8 @@ public class Repository {
     allUsers = userDao.getAllUsers();
     allRssFeeds = rssFeedDao.getAllFeeds();
     allArticles = articleDao.getAllArticles();
+
+
   }
 
   /**
@@ -95,16 +103,6 @@ public class Repository {
    */
   public LiveData<List<RssFeed>> getAllRssFeeds() {
     return allRssFeeds;
-  }
-
-
-  /**
-   * Get all articles from local database.
-   *
-   * @return all articles.
-   */
-  public LiveData<List<Article>> getAllArticles() {
-    return allArticles;
   }
 
   /**
@@ -134,23 +132,21 @@ public class Repository {
     new UserUpdateAsyncTask(userDao).execute(user);
   }
 
-  /**
-   * Delete user(s) from database.
-   *
-   * @param user the input user.
-   */
-  public void deleteUser(User... user) {
-    new UserDeleteAsyncTask(userDao).execute(user);
+  public void insertRssFeeds(RssFeed... rssFeeds) {
+    new RssFeedInsertAsyncTask(rssFeedDao).execute(rssFeeds);
   }
 
   /**
    * Insert RSS feed(s) into database.
    *
-   * @param rssFeed the input RSS feed.
+   * @param phone    user phone.
+   * @param rssFeeds the input RSS feeds.
    */
-  public void insertRssFeed(RssFeed... rssFeed) {
-    RssFeedInsertAsyncTask task = new RssFeedInsertAsyncTask(rssFeedDao);
-    task.execute(rssFeed);
+  public void insertUserRssFeeds(String phone, List<RssFeed> rssFeeds) {
+    new RssFeedInsertAsyncTask(rssFeedDao).execute(rssFeeds.toArray(new RssFeed[0]));
+    new InsertUserRssFeedsAsyncTask(
+        userRssFeedJoinDao, userDao, rssFeedDao
+    ).execute(new ParamPhoneFeedList(phone, rssFeeds));
   }
 
   /**
@@ -243,20 +239,29 @@ public class Repository {
    * @param user user of interest.
    */
   public void findRssFeedsByUser(User user) {
-    PersonalFeedAsyncTask task = new PersonalFeedAsyncTask(userRssFeedJoinDao);
+    PersonalFeedsGetAsyncTask task = new PersonalFeedsGetAsyncTask(userRssFeedJoinDao);
     task.delegate = this;
     task.execute(user);
   }
 
-  /**
-   * Find all the articles of a user.
-   *
-   * @param user user of interest.
-   */
-  public void findArticlesByUser(User user) {
-    PersonalArticleAsyncTask task = new PersonalArticleAsyncTask(userArticleJoinDao);
+
+  public void findPersonalArticlesByPhone(String phone) {
+    PersonalArticlesGetAsyncTask task = new PersonalArticlesGetAsyncTask(
+        userDao, userRssFeedJoinDao, articleDao
+    );
     task.delegate = this;
-    task.execute(user);
+    task.execute(phone);
+  }
+
+  /**
+   * Find all the starred articles of a user.
+   *
+   * @param phone user phone.
+   */
+  public void findStarArticlesByPhone(String phone) {
+    StarArticlesAsyncTask task = new StarArticlesAsyncTask(userDao, userArticleJoinDao);
+    task.delegate = this;
+    task.execute(phone);
   }
 
   /**
@@ -307,7 +312,7 @@ public class Repository {
   /**
    * Synchronously update user token.
    *
-   * @param user user.
+   * @param user  user.
    * @param token user's token.
    */
   public void updateTokenSync(@NonNull User user, @NonNull String token) {
@@ -547,11 +552,11 @@ public class Repository {
     }
   }
 
-  private static class PersonalFeedAsyncTask extends AsyncTask<User, Void, List<RssFeed>> {
+  private static class PersonalFeedsGetAsyncTask extends AsyncTask<User, Void, List<RssFeed>> {
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private Repository delegate = null;
 
-    PersonalFeedAsyncTask(UserRssFeedJoinDao dao) {
+    PersonalFeedsGetAsyncTask(UserRssFeedJoinDao dao) {
       userRssFeedJoinDao = dao;
     }
 
@@ -567,24 +572,61 @@ public class Repository {
     }
   }
 
+  private static class PersonalArticlesGetAsyncTask extends AsyncTask<String, Void, List<Article>> {
+    private UserDao userDao;
+    private UserRssFeedJoinDao userRssFeedJoinDao;
+    private ArticleDao articleDao;
+    private Repository delegate = null;
 
-  private static class PersonalArticleAsyncTask extends AsyncTask<User, Void, List<Article>> {
+    PersonalArticlesGetAsyncTask(UserDao userDao,
+                                 UserRssFeedJoinDao userRssFeedJoinDao,
+                                 ArticleDao articleDao) {
+      this.userDao = userDao;
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
+      this.articleDao = articleDao;
+    }
+
+    @Override
+    protected List<Article> doInBackground(final String... params) {
+      Long userId = userDao.getUserByPhone(params[0]).getId();
+      List<RssFeed> rssFeeds = userRssFeedJoinDao.getRssFeedsByUserId(userId);
+      List<Article> articles = new LinkedList<>();
+      for (RssFeed rssFeed : rssFeeds) {
+        articles.addAll(articleDao.getArticlesByRssFeedUrl(rssFeed.getUrl()));
+        if (articles.size() > 30) {
+          // do not load too much.
+          break;
+        }
+      }
+      return articles;
+    }
+
+    @Override
+    protected void onPostExecute(List<Article> result) {
+      delegate.setPersonalArticles(result);
+    }
+  }
+
+
+  private static class StarArticlesAsyncTask extends AsyncTask<String, Void, List<Article>> {
+    private UserDao userDao;
     private UserArticleJoinDao userArticleJoinDao;
     private Repository delegate = null;
 
-    PersonalArticleAsyncTask(UserArticleJoinDao dao) {
+    StarArticlesAsyncTask(UserDao userDao, UserArticleJoinDao dao) {
+      this.userDao = userDao;
       userArticleJoinDao = dao;
     }
 
     @Override
-    protected List<Article> doInBackground(final User... params) {
-      return userArticleJoinDao.getArticlesByUserId(params[0].getId());
+    protected List<Article> doInBackground(final String... params) {
+      return userArticleJoinDao.getArticlesByUserId(userDao.getUserByPhone(params[0]).getId());
     }
 
 
     @Override
     protected void onPostExecute(List<Article> result) {
-      delegate.setPersonalArticles(result);
+      delegate.setStarArticles(result);
     }
   }
 
@@ -630,4 +672,43 @@ public class Repository {
       return null;
     }
   }
+
+  private class ParamPhoneFeedList {
+    String phone;
+    List<RssFeed> rssFeeds;
+
+    ParamPhoneFeedList(String phone, List<RssFeed> rssFeeds) {
+      this.phone = phone;
+      this.rssFeeds = rssFeeds;
+    }
+  }
+
+
+  private static class InsertUserRssFeedsAsyncTask extends AsyncTask<ParamPhoneFeedList, Void, Void> {
+    private UserRssFeedJoinDao userRssFeedJoinDao;
+    private UserDao userDao;
+    private RssFeedDao rssFeedDao;
+
+    InsertUserRssFeedsAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
+                                UserDao userDao,
+                                RssFeedDao rssFeedDao) {
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
+      this.userDao = userDao;
+      this.rssFeedDao = rssFeedDao;
+    }
+
+    @Override
+    protected Void doInBackground(final ParamPhoneFeedList... params) {
+
+      Long userId = userDao.getUserByPhone(params[0].phone).getId();
+      for (RssFeed rssFeed : params[0].rssFeeds) {
+        userRssFeedJoinDao.insert(new UserRssFeedJoin(
+            userId, rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getId())
+        );
+      }
+      return null;
+    }
+  }
+
+
 }

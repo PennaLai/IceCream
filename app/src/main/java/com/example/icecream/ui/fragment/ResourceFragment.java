@@ -141,11 +141,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
         refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
       }
     });
-
-//    subscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalRssFeeds("18929357397");
-//    unsubscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalArticles("18929357397");
+    resourceHandler.updateAllRssFeeds();
+    resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
+    resourceHandler.updatePersonalFeedsAndArticles("18929357397");
+    resourceHandler.loadArticles("18929357397");
 
     return view;
   }
@@ -169,8 +168,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * {@link ArticlesAdapter.ListItemClickListener}
    * <p>
    * This callback is invoked when you click on an item in the list.
-   *
-   *
    */
   @Override
   public void onListItemClick(Article article) {
