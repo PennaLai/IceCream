@@ -4,13 +4,11 @@ package com.example.icecream.ui.fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,23 +16,20 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.icecream.R;
-import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.ResourceHandler;
 
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
-import java.lang.ref.WeakReference;
-import java.util.List;
+
 import java.util.Objects;
 
 import okhttp3.OkHttpClient;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -120,7 +115,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
     // http
-    httpHandler = new HttpHandler(new OkHttpClient(), getActivity().getApplication());
+    httpHandler = new HttpHandler(getActivity().getApplication());
 
     // view model
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
@@ -144,11 +139,11 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
         refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
       }
     });
-
-//    subscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalRssFeeds("18929357397");
-//    unsubscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalArticles("18929357397");
+    ResourceHandler.getAllRssFeeds();
+    ResourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+    ResourceHandler.getPersonalRssFeeds("18929357397");
+//    ResourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
+    ResourceHandler.getPersonalArticles("18929357397");
 
     return view;
   }
@@ -212,253 +207,4 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
   }
 
-  private void getAllRssFeeds() {
-    new UpdateAllFeedsAsyncTask(this).execute();
-  }
-
-  private void getPersonalRssFeeds(String phoneNumber) {
-    new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
-  }
-
-  private void getPersonalArticles(String phoneNumber) {
-    new UpdateArticlesAsyncTask(this).execute(phoneNumber);
-  }
-
-  private void subscribe(String phoneNumber, String url) {
-    new SubscribeAsyncTask(this).execute(phoneNumber, url);
-  }
-
-  private void unsubscribe(String phoneNumber, String url) {
-    new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
-  }
-
-  private static class UpdateAllFeedsAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-
-    // only retain a weak reference to the activity
-    UpdateAllFeedsAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(Void... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      return fragment.httpHandler.getUpdateAllFeedsState();
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those feeds successfully
-          Log.i(TAG, "inserting all rss feeds");
-          List<RssFeed> list = fragment.httpHandler.getAllRssFeeds();
-          fragment.viewModel.insertAllRssFeeds(list.toArray(new RssFeed[0]));
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UpdatePersonalFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-
-    // only retain a weak reference to the activity
-    UpdatePersonalFeedsAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      return fragment.httpHandler.getUpdateRSSFeedsState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those feeds successfully
-          Log.i(TAG, "get rss feeds");
-          fragment.viewModel.setPersonalRssFeeds(fragment.httpHandler.getPersonalRssFeeds());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-
-    // only retain a weak reference to the activity
-    UpdateArticlesAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      return fragment.httpHandler.getUpdateArticlesState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those articles successfully
-          Log.i(TAG, "get articles");
-          fragment.viewModel.setPersonalArticles(fragment.httpHandler.getPersonalArticles());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-
-  private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-    private String phone;
-    private String rssFeedUrl;
-
-    // only retain a weak reference to the activity
-    SubscribeAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
-        return null;
-      }
-      phone = params[0];
-      rssFeedUrl = params[1];
-      return fragment.httpHandler.getSubscribeFeedState(phone, rssFeedUrl);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          fragment.viewModel.subscribe(phone, rssFeedUrl);
-          Log.i(TAG, "subscribe succeed");
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-    private String phone;
-    private String rssFeedUrl;
-
-    // only retain a weak reference to the activity
-    UnsubscribeAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      phone = params[0];
-      rssFeedUrl = params[1];
-      return fragment.httpHandler.getUnsubscribeFeedState(phone, rssFeedUrl);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          fragment.viewModel.unsubscribe(phone, rssFeedUrl);
-          Log.i(TAG, "unsubscribe succeed");
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
 }
