@@ -33,7 +33,7 @@ import org.json.JSONObject;
 public class HttpHandler {
 
   private static final String TAG = HttpHandler.class.getName();
-  private final OkHttpClient okHttpClient;
+  private final OkHttpClient okHttpClient = new OkHttpClient();
 
   private static final String PROTOCOL = "http";
   private static final String HOST = "39.108.73.166";
@@ -77,10 +77,9 @@ public class HttpHandler {
   /**
    * Constructor for http handler.
    *
-   * @param okHttpClient http client
+   * @param application This app.
    */
-  public HttpHandler(final OkHttpClient okHttpClient, Application application) {
-    this.okHttpClient = okHttpClient;
+  public HttpHandler(final Application application) {
     repository = new Repository(application);
   }
 
@@ -238,6 +237,7 @@ public class HttpHandler {
             break;
           case "2":
             responseState = ResponseState.Valid;
+            String token = responseJsonObject.getString("token");
             // check if it is in local database
             User user = repository.getUserByPhoneSync(phoneNumber);
             if (user == null) {
@@ -245,11 +245,10 @@ public class HttpHandler {
               if (username == null) {
                 username = "";
               }
-              repository.insertUserSync(new User(phoneNumber, username, password));
+              repository.insertUserSync(new User(phoneNumber, username, password, token));
             } else {
-              // add auth token here
-              String token = responseJsonObject.getString("token");
-              repository.updateTokenByPhoneSync(phoneNumber, token);
+
+              repository.updateTokenSync(user, token);
             }
             break;
           default:
@@ -294,7 +293,7 @@ public class HttpHandler {
         if (responseJsonObject.getString(MESSAGE_CODE).equals("0")) {
           responseState = ResponseState.Valid;
           // add user to database
-          User user = new User(phoneNumber, username, password);
+          User user = new User(phoneNumber, username, password, "");
           repository.insertUser(user);
         } else {
           responseState = ResponseState.DuplicatePhoneNumber;

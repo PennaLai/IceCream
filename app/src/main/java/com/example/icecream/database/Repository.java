@@ -307,11 +307,10 @@ public class Repository {
   /**
    * Synchronously update user token.
    *
-   * @param phone user's phone.
+   * @param user user.
    * @param token user's token.
    */
-  public void updateTokenByPhoneSync(@NonNull String phone, @NonNull String token) {
-    User user = userDao.getUserByPhone(phone);
+  public void updateTokenSync(@NonNull User user, @NonNull String token) {
     user.setAuthToken(token);
     userDao.update(user);
   }
