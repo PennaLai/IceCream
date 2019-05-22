@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.icecream.R;
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
@@ -82,7 +83,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     /**
      * if the article is select, Resource fragment -> Main activity -> Player fragment.
      */
-    void onArticleSelect();
+    void onArticleSelect(Article article);
   }
 
   @Override
@@ -173,37 +174,11 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * <p>
    * This callback is invoked when you click on an item in the list.
    *
-   * @param clickedItemIndex Index in the list of the item that was clicked.
+   *
    */
   @Override
-  public void onListItemClick(int clickedItemIndex) {
-    // COMPLETED (11) In the beginning of the method, cancel the Toast if it isn't null
-    /*
-     * Even if a Toast isn't showing, it's okay to cancel it. Doing so
-     * ensures that our new Toast will show immediately, rather than
-     * being delayed while other pending Toasts are shown.
-     *
-     * Comment out these three lines, run the app, and click on a bunch of
-     * different items if you're not sure what I'm talking about.
-     */
-    if (mToast != null) {
-      mToast.cancel();
-    }
-
-    // COMPLETED (12) Show a Toast when an item is clicked, displaying that item number that was clicked
-    /*
-     * Create a Toast and store it in our Toast field.
-     * The Toast that shows up will have a message similar to the following:
-     *
-     *                     Item #42 clicked.
-     */
-    String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-    mToast = Toast.makeText(mainAppContext, toastMessage, Toast.LENGTH_LONG);
-
-    mToast.show();
-    // tell the main activity to change the screen to the player fragment
-    musicConnectorCallback.onArticleSelect();
-
+  public void onListItemClick(Article article) {
+    musicConnectorCallback.onArticleSelect(article);
   }
 
   private void onBackPressed() {

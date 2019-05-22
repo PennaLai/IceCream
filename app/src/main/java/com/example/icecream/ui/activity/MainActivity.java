@@ -24,6 +24,7 @@ import android.view.View;
 
 import com.example.icecream.R;
 
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.fragment.PlayFragment;
 import com.example.icecream.ui.fragment.ReadFragment;
 import com.example.icecream.ui.fragment.ResourceFragment;
@@ -249,9 +250,12 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
+  /**
+   * Select the article and go the reading page.
+   * @param article
+   */
   @Override
-  public void onArticleSelect() {
-    Log.i(TAG, "onArticleSelect: Go fuck your self");
+  public void onArticleSelect(Article article) {
     toReadFragment();
   }
 
