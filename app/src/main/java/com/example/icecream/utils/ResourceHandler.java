@@ -20,28 +20,38 @@ public class ResourceHandler {
     this.httpHandler = httpHandler;
   }
 
-  public static void getAllRssFeeds() {
-    new ResourceHandler.UpdateAllFeedsAsyncTask().execute();
+  public void getAllRssFeeds() {
+    new ResourceHandler.UpdateAllFeedsAsyncTask(this).execute();
   }
 
-  public static void getPersonalRssFeeds(String phoneNumber) {
-    new ResourceHandler.UpdatePersonalFeedsAsyncTask().execute(phoneNumber);
+  public void getPersonalRssFeeds(String phoneNumber) {
+    new ResourceHandler.UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
   }
 
-  public static void getPersonalArticles(String phoneNumber) {
-    new ResourceHandler.UpdateArticlesAsyncTask().execute(phoneNumber);
+  public void getPersonalArticles(String phoneNumber) {
+    new ResourceHandler.UpdateArticlesAsyncTask(this).execute(phoneNumber);
   }
 
-  public static void subscribe(String phoneNumber, String url) {
-    new ResourceHandler.SubscribeAsyncTask().execute(phoneNumber, url);
+  public void subscribe(String phoneNumber, String url) {
+    new ResourceHandler.SubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
-  public static void unsubscribe(String phoneNumber, String url) {
-    new ResourceHandler.UnsubscribeAsyncTask().execute(phoneNumber, url);
+  public void unsubscribe(String phoneNumber, String url) {
+    new ResourceHandler.UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
 
   private static class UpdateAllFeedsAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
+
+    private AppViewModel viewModel;
+
+    private HttpHandler httpHandler;
+
+    UpdateAllFeedsAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
     @Override
     protected HttpHandler.ResponseState doInBackground(Void... params) {
       return httpHandler.getUpdateAllFeedsState();
@@ -60,6 +70,14 @@ public class ResourceHandler {
   }
 
   private static class UpdatePersonalFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+    private AppViewModel viewModel;
+
+    private HttpHandler httpHandler;
+
+    UpdatePersonalFeedsAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
 
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
@@ -89,6 +107,15 @@ public class ResourceHandler {
   }
 
   private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+    private AppViewModel viewModel;
+
+    private HttpHandler httpHandler;
+
+    UpdateArticlesAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       return httpHandler.getUpdateArticlesState(params[0]);
@@ -119,6 +146,14 @@ public class ResourceHandler {
   private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private String phone;
     private String rssFeedUrl;
+    private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+
+    SubscribeAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
 
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
@@ -151,10 +186,16 @@ public class ResourceHandler {
   private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private String phone;
     private String rssFeedUrl;
+    private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+
+    UnsubscribeAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
 
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
-
       phone = params[0];
       rssFeedUrl = params[1];
       return httpHandler.getUnsubscribeFeedState(phone, rssFeedUrl);

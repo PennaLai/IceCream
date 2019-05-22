@@ -61,9 +61,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    */
   private MusicConnector musicConnectorCallback;
 
-  private AppViewModel viewModel;
-
-  private HttpHandler httpHandler;
+  ResourceHandler resourceHandler;
 
 
   /**
@@ -115,17 +113,19 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
     // http
-    httpHandler = new HttpHandler(getActivity().getApplication());
+    HttpHandler httpHandler = new HttpHandler(getActivity().getApplication());
 
     // view model
-    viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
+    resourceHandler = new ResourceHandler(httpHandler, viewModel);
+
 
     // 下拉刷新和底部加载初始化和监听函数
-    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+    RefreshLayout refreshLayout = (RefreshLayout) view.findViewById(R.id.refreshLayout);
     refreshLayout.setOnRefreshListener(
         new OnRefreshListener() {
           @Override
@@ -139,11 +139,11 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
         refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
       }
     });
-    ResourceHandler.getAllRssFeeds();
-    ResourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-    ResourceHandler.getPersonalRssFeeds("18929357397");
-//    ResourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
-    ResourceHandler.getPersonalArticles("18929357397");
+    resourceHandler.getAllRssFeeds();
+    resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+    resourceHandler.getPersonalRssFeeds("18929357397");
+//    resourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
+    resourceHandler.getPersonalArticles("18929357397");
 
     return view;
   }
