@@ -41,7 +41,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * The interface that receives onClick messages.
    */
   public interface ListItemClickListener {
-    void onListItemClick(int clickedItemIndex);
+    void onListItemClick(Article article);
   }
 
   /**
@@ -122,12 +122,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     if (mArticles != null && position < mArticles.size()) {
       Article current = mArticles.get(position);
       if (current != null) {
-        holder.bindContent(current.getTitle(), "kemo",
-            current.getDescription(), current.getPublishTime());
+        holder.bindContent(current);
       }
-    } else {
-      return;
-      //holder.bindContent("标题", "作者", "内容", "日期");
     }
   }
 
@@ -173,6 +169,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      */
     TextView viewHolderIndex;
 
+    Article article;
+
     /**
      * Constructor for our ViewHolder. Within this constructor, we get a reference to our TextViews
      * and set an onClickListener to listen for clicks. Those will be handled in the onClick method
@@ -195,18 +193,26 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
 
     /**
-     * This method is to bind the content to the ui item view.
-     *
-     * @param title       article title
-     * @param author      article author
-     * @param content     article content
-     * @param publishTime article publish time
+     * Bind content from repository to the view.
+     * @param article
      */
-    void bindContent(String title, String author, String content, String publishTime) {
-      this.title.setText(title);
-      this.author.setText(author);
-      this.content.setText(content);
-      this.publicTime.setText(publishTime);
+    void bindContent(Article article) {
+      this.article = article;
+      updateContent();
+    }
+
+
+    /**
+     * This used to update content depend on article.
+     *
+     */
+    private void updateContent() {
+      if (article == null)
+        return;
+      this.title.setText(article.getTitle());
+      this.author.setText("AUTHOR");
+      this.content.setText(article.getDescription());
+      this.publicTime.setText(article.getPublishTime());
     }
 
     /**
@@ -216,8 +222,8 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      */
     @Override
     public void onClick(View v) {
-      int clickedPosition = getAdapterPosition(); // the item position(indicate the item index)
-      mOnClickListener.onListItemClick(clickedPosition);
+      int clickedPosition = getAdapterPosition();
+      mOnClickListener.onListItemClick(this.article);
     }
   }
 }
