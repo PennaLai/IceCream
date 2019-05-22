@@ -29,6 +29,7 @@ import android.widget.RemoteViews;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import com.example.icecream.R;
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.fragment.PlayFragment.NotificationClickReceiver;
@@ -36,7 +37,7 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ReadFragment extends Fragment{
+public class ReadFragment extends Fragment {
 
   private static final String TAG = PlayFragment.class.getName();
 
@@ -52,8 +53,11 @@ public class ReadFragment extends Fragment{
   /** is there is a song playing now. */
   boolean isPlaying;
 
-  /** to count the song number we has palyed now*/
+  /** to count the song number we has played now. */
   private int playSongCount = 0;
+
+  /** the article we are reading now. */
+  private Article article;
 
   /** to update the ui progress thread. */
   Thread progressUpdateThread;
@@ -156,12 +160,21 @@ public class ReadFragment extends Fragment{
     return view;
   }
 
-  private void backToResource(){
+
+  /**
+   * Back to the resource fragment view.
+   */
+  private void backToResource() {
     try {
       ((MainActivity) getActivity()).toResourceFragment();
-    } catch (NullPointerException e){
+    } catch (NullPointerException e) {
       // do nothing
     }
+  }
+
+  public void setArticle(Article article) {
+    this.article = article;
+    playNextMusic();
   }
 
 
@@ -291,6 +304,7 @@ public class ReadFragment extends Fragment{
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
+        // TODO update button ui
       } else {
         speakerService.pauseMusic();
       }
@@ -298,12 +312,19 @@ public class ReadFragment extends Fragment{
   }
 
   /**
+   * start New Song.
+   */
+  private void startNewSong() {
+    isPlaying = false; // stop update the progress
+    speakerService.startNewSong(waitingMusicList.get(playIndex));
+    playSongCount++;
+  }
+
+  /**
    * Start the next song.
    */
   private void playNextMusic() {
-    isPlaying = false; // stop update the progress to avoid null point.
-    speakerService.startNewSong(waitingMusicList.get(playIndex));
-    playSongCount++;
+    startNewSong();
     playIndexIncrease();
   }
 
@@ -311,9 +332,7 @@ public class ReadFragment extends Fragment{
    * Back to the last song.
    */
   private void playPreMusic() {
-    isPlaying = false; // stop update the progress
-    speakerService.startNewSong(waitingMusicList.get(playIndex));
-    playSongCount++;
+    startNewSong();
     playIndexDecrease();
   }
 
