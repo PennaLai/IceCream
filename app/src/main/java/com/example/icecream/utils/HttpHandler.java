@@ -1,6 +1,5 @@
 package com.example.icecream.utils;
 
-import android.app.Activity;
 import android.app.Application;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -21,7 +20,6 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 /**
@@ -55,8 +53,8 @@ public class HttpHandler {
    */
   private static final String RSS_FEEDS_URL = MAIN_URL + "list/feeds";
   private static final String ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
-  private static final String SUBSCRIBE_URL = MAIN_URL + "/addChannel";
-  private static final String UNSUBSCRIBE_URL = MAIN_URL + "/deleteChannel";
+  private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel";
+  private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel";
 
   private static final String MESSAGE = "message";
   private static final String MESSAGE_CODE = "msgCode";
@@ -119,14 +117,23 @@ public class HttpHandler {
      */
     UnsubscribeFail,
     /**
-     * user account is matched in database.
+     * User account is matched in database.
      */
-    Valid
+    Valid,
+    /**
+     * Server side goes wrong.
+     */
+    ServerWrong
   }
 
   private String getUpdateUsername(@NonNull String phoneNumber) {
     String url = USER_INFO_URL + "?phone=" + phoneNumber;
     String responseString = getHttpResponseString(url);
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return null;
+    }
     JSONObject responseJsonObject;
     String response = "";
     try {
@@ -135,7 +142,7 @@ public class HttpHandler {
         // user found.
         response = responseJsonObject.getString(MESSAGE);
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "getUpdateUsername: ", e);
     }
     return response;
@@ -207,10 +214,15 @@ public class HttpHandler {
     try {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postLoginState: ", e);
     }
     String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -228,6 +240,9 @@ public class HttpHandler {
           User user = repository.getUserByPhoneSync(phoneNumber);
           if (user == null) {
             String username = getUpdateUsername(phoneNumber);
+            if (username == null) {
+              username = "";
+            }
             repository.insertUserSync(new User(phoneNumber, username, password));
           } else {
             // add auth token here
@@ -238,7 +253,7 @@ public class HttpHandler {
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postLoginState: ", e);
     }
     return responseState;
@@ -261,10 +276,15 @@ public class HttpHandler {
       jsonObject.put("phoneNumber", phoneNumber);
       jsonObject.put("password", password);
       jsonObject.put("username", username);
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postRegisterState: ", e);
     }
     String responseString = postHttpResponseString(REGISTER_URL, jsonObject.toString());
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -274,8 +294,10 @@ public class HttpHandler {
         // add user to database
         User user = new User(phoneNumber, username, password);
         repository.insertUser(user);
+      } else {
+        responseState = ResponseState.DuplicatePhoneNumber;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postRegisterState: ", e);
     }
     return responseState;
@@ -292,10 +314,15 @@ public class HttpHandler {
     JSONObject requestJsonObject = new JSONObject();
     try {
       requestJsonObject.put("phoneNumber", phoneNumber);
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postPhoneState: ", e);
     }
     String responseString = postHttpResponseString(BEFORE_REGISTER, requestJsonObject.toString());
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -310,7 +337,7 @@ public class HttpHandler {
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "postPhoneState: ", e);
     }
     return responseState;
@@ -328,7 +355,11 @@ public class HttpHandler {
     String token = user.getAuthToken();
     String url = RSS_FEEDS_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
-    Log.i(TAG, responseString);
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -363,7 +394,7 @@ public class HttpHandler {
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "getUpdateRSSFeedsState: ", e);
     }
     return responseState;
@@ -390,7 +421,11 @@ public class HttpHandler {
     String token = user.getAuthToken();
     String url = ARTICLES_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
-    Log.i(TAG, responseString);
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -414,13 +449,14 @@ public class HttpHandler {
             articles.clear();
             for (int i = 0; i < jsonArray.length(); i++) {
               JSONObject jsonobject = jsonArray.getJSONObject(i);
+              JSONObject rssFeed = new JSONObject(jsonobject.getString("rssFeedEntity"));
               Article article = new Article(
                   jsonobject.getLong("id"),
-                  jsonobject.getLong("rssFeedId"),
+                  rssFeed.getString("url"),
                   jsonobject.getString("title"),
                   jsonobject.getString("link"),
                   jsonobject.getString("description"),
-                  jsonobject.getString("publishTime")
+                  jsonobject.getString("publishedTime")
               );
               articles.add(article);
             }
@@ -429,7 +465,7 @@ public class HttpHandler {
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "getUpdateRSSFeedsState: ", e);
     }
     return responseState;
@@ -454,9 +490,14 @@ public class HttpHandler {
   public ResponseState getSubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = SUBSCRIBE_URL + "?token=" + token + "&url" + rssFeedUrl;
+    String url = SUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
+    Log.i(TAG, "Subscribe request: " + url);
     String responseString = getHttpResponseString(url);
-    Log.i(TAG, responseString);
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -478,12 +519,11 @@ public class HttpHandler {
           // token is valid and refresh local database.
           responseState = ResponseState.Valid;
           Log.i(TAG, "Successfully subscribe");
-          // TODO
           break;
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "getSubscribeFeedState: ", e);
     }
     return responseState;
@@ -500,9 +540,13 @@ public class HttpHandler {
   public ResponseState getUnsubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = UNSUBSCRIBE_URL + "?token=" + token + "&url" + rssFeedUrl;
+    String url = UNSUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
     String responseString = getHttpResponseString(url);
-    Log.i(TAG, responseString);
+    if (responseString != null) {
+      Log.i(TAG, responseString);
+    } else {
+      return ResponseState.ServerWrong;
+    }
     JSONObject responseJsonObject;
     ResponseState responseState = null;
     try {
@@ -524,12 +568,11 @@ public class HttpHandler {
           // token is valid and refresh local database.
           responseState = ResponseState.Valid;
           Log.i(TAG, "Successfully unsubscribe");
-          // TODO
           break;
         default:
           break;
       }
-    } catch (JSONException e) {
+    } catch (Exception e) {
       Log.e(TAG, "getUnsubscribeFeedState: ", e);
     }
     return responseState;

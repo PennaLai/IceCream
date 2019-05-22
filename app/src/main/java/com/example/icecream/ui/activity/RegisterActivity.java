@@ -415,8 +415,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
       }
       if (responseState == HttpHandler.ResponseState.Valid) {
         Toast.makeText(activity, "注册成功", Toast.LENGTH_LONG).show();
+        activity.goToLoginPage();
+      } else {
+        Toast.makeText(activity, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
       }
-      Toast.makeText(activity, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
     }
   }
 }

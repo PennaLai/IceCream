@@ -122,6 +122,12 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
+
+
+    subscribe("18929357397", "https://36kr.com/feed");
+    getPersonalRssFeeds("18929357397");
+//    unsubscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalArticles("18929357397");
     return view;
   }
 
@@ -185,8 +191,20 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   }
 
 
-  private void getRssFeeds(String phoneNumber) {
+  private void getPersonalRssFeeds(String phoneNumber) {
     new UpdateRssFeedsAsyncTask(this).execute(phoneNumber);
+  }
+
+  private void getPersonalArticles(String phoneNumber) {
+    new UpdateArticlesAsyncTask(this).execute(phoneNumber);
+  }
+
+  private void subscribe(String phoneNumber, String url) {
+    new SubscribeAsyncTask(this).execute(phoneNumber, url);
+  }
+
+  private void unsubscribe(String phoneNumber, String url) {
+    new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
 
@@ -261,7 +279,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
       switch (responseState) {
         case Valid:
           // get those articles successfully
-          Log.i("dd", "get articles");
+          Log.i(TAG, "get articles");
           fragment.viewModel.setPersonalArticles(fragment.httpHandler.getPersonalArticles());
           break;
         case InvalidToken:
@@ -311,8 +329,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
       }
       switch (responseState) {
         case Valid:
-          Log.i(TAG, "subscribe succeed");
           fragment.viewModel.subscribe(phone, rssFeedUrl);
+          Log.i(TAG, "subscribe succeed");
           break;
         case InvalidToken:
           // TODO back to login
@@ -358,8 +376,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
       }
       switch (responseState) {
         case Valid:
-          Log.i(TAG, "unsubscribe succeed");
           fragment.viewModel.unsubscribe(phone, rssFeedUrl);
+          Log.i(TAG, "unsubscribe succeed");
           break;
         case InvalidToken:
           // TODO back to login
