@@ -35,7 +35,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    */
   private List<Article> mArticles;
 
-  private List<String> mFeedNames;
+//  private List<String> mFeedNames;
 
   /**
    * The interface that receives onClick messages.
@@ -122,7 +122,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     if (mArticles != null && position < mArticles.size()) {
       Article current = mArticles.get(position);
       if (current != null) {
-        holder.bindContent(current.getTitle(), mFeedNames.get(position),
+        holder.bindContent(current.getTitle(), "kemo",
             current.getDescription(), current.getPublishTime());
       }
     } else {

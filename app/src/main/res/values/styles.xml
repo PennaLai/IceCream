@@ -19,23 +19,23 @@
     </style>
 
 
-    <!--Toolbar-->
-    <style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">
-        <!-- 设置-弹窗的背景-颜色-->
-        <item name="android:colorBackground">@color/nb.theme.background</item>
-        <!-- 字体的颜色-->
-        <item name="android:textColor">@color/nb.text.default</item>
-        <!-- 字体大小-->
-        <item name="android:textSize">16sp</item>
-        <item name="android:gravity">center_vertical</item>
-        <!-- 用于替换菜单的三个小白点，换成自已的图片-->
-        <item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.Menu</item>
-        <!--用于控制menu弹出的位置，位于toolbar的下面，而不是上面-->
-        <item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>
-        <!-- 用于修改item默认的分割线-->
-        <item name="android:dropDownListViewStyle">@style/dropDownStyle</item>
-        <item name="dropDownListViewStyle">@style/dropDownStyle</item>
-    </style>
+    <!--&lt;!&ndash;Toolbar&ndash;&gt;-->
+    <!--<style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">-->
+        <!--&lt;!&ndash; 设置-弹窗的背景-颜色&ndash;&gt;-->
+        <!--<item name="android:colorBackground">@color/nb.theme.background</item>-->
+        <!--&lt;!&ndash; 字体的颜色&ndash;&gt;-->
+        <!--<item name="android:textColor">@color/nb.text.default</item>-->
+        <!--&lt;!&ndash; 字体大小&ndash;&gt;-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="android:gravity">center_vertical</item>-->
+        <!--&lt;!&ndash; 用于替换菜单的三个小白点，换成自已的图片&ndash;&gt;-->
+        <!--<item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.Menu</item>-->
+        <!--&lt;!&ndash;用于控制menu弹出的位置，位于toolbar的下面，而不是上面&ndash;&gt;-->
+        <!--<item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>-->
+        <!--&lt;!&ndash; 用于修改item默认的分割线&ndash;&gt;-->
+        <!--<item name="android:dropDownListViewStyle">@style/dropDownStyle</item>-->
+        <!--<item name="dropDownListViewStyle">@style/dropDownStyle</item>-->
+    <!--</style>-->
 
 
     <style name="ActionButton.Overflow.Menu" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">

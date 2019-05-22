@@ -203,21 +203,27 @@ public class Repository {
   /**
    * Insert user rss feed join.
    *
-   * @param user    input user.
-   * @param rssFeed input rss feed.
+   * @param phone phone.
+   * @param url   url.
    */
-  public void insertUserRssFeed(User user, RssFeed rssFeed) {
-    new InsertUserRssFeedAsyncTask(userRssFeedJoinDao).execute(new ParamUserRssFeed(user, rssFeed));
+  public void insertUserRssFeedByPhoneUrl(String phone, String url) {
+    new InsertUserRssFeedAsyncTask(
+        userRssFeedJoinDao,
+        userDao,
+        rssFeedDao).execute(phone, url);
   }
 
   /**
    * Delete user rss feed join.
    *
-   * @param user    input user.
-   * @param rssFeed input rss feed.
+   * @param phone phone.
+   * @param url   url.
    */
-  public void deleteUserRssFeed(User user, RssFeed rssFeed) {
-    new DeleteUserRssFeedAsyncTask(userRssFeedJoinDao).execute(new ParamUserRssFeed(user, rssFeed));
+  public void deleteUserRssFeedByPhoneUrl(String phone, String url) {
+    new DeleteUserRssFeedAsyncTask(
+        userRssFeedJoinDao,
+        userDao,
+        rssFeedDao).execute(phone, url);
   }
 
   /**
@@ -583,40 +589,45 @@ public class Repository {
     }
   }
 
-  private class ParamUserRssFeed {
-    User user;
-    RssFeed rssFeed;
-
-    public ParamUserRssFeed(User user, RssFeed rssFeed) {
-      this.user = user;
-      this.rssFeed = rssFeed;
-    }
-  }
-
-  private static class InsertUserRssFeedAsyncTask extends AsyncTask<ParamUserRssFeed, Void, Void> {
+  private static class InsertUserRssFeedAsyncTask extends AsyncTask<String, Void, Void> {
     private UserRssFeedJoinDao userRssFeedJoinDao;
+    private UserDao userDao;
+    private RssFeedDao rssFeedDao;
 
-    InsertUserRssFeedAsyncTask(UserRssFeedJoinDao dao) {
-      userRssFeedJoinDao = dao;
+    InsertUserRssFeedAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
+                               UserDao userDao,
+                               RssFeedDao rssFeedDao) {
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
+      this.userDao = userDao;
+      this.rssFeedDao = rssFeedDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamUserRssFeed... params) {
-      userRssFeedJoinDao.insert(new UserRssFeedJoin(params[0].user.getId(), params[0].rssFeed.getId()));
+    protected Void doInBackground(final String... params) {
+      userRssFeedJoinDao.insert(new UserRssFeedJoin(
+          userDao.getUserByPhone(params[0]).getId(),
+          rssFeedDao.getRssFeedByUrl(params[1]).getId()));
       return null;
     }
   }
 
-  private static class DeleteUserRssFeedAsyncTask extends AsyncTask<ParamUserRssFeed, Void, Void> {
+  private static class DeleteUserRssFeedAsyncTask extends AsyncTask<String, Void, Void> {
     private UserRssFeedJoinDao userRssFeedJoinDao;
+    private UserDao userDao;
+    private RssFeedDao rssFeedDao;
 
-    DeleteUserRssFeedAsyncTask(UserRssFeedJoinDao dao) {
-      userRssFeedJoinDao = dao;
+    DeleteUserRssFeedAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
+                               UserDao userDao, RssFeedDao rssFeedDao) {
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
+      this.userDao = userDao;
+      this.rssFeedDao = rssFeedDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamUserRssFeed... params) {
-      userRssFeedJoinDao.insert(new UserRssFeedJoin(params[0].user.getId(), params[0].rssFeed.getId()));
+    protected Void doInBackground(final String... params) {
+      userRssFeedJoinDao.delete(new UserRssFeedJoin(
+          userDao.getUserByPhone(params[0]).getId(),
+          rssFeedDao.getRssFeedByUrl(params[1]).getId()));
       return null;
     }
   }

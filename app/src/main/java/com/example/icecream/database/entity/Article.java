@@ -13,17 +13,17 @@ import android.support.annotation.NonNull;
  */
 @Entity(foreignKeys = @ForeignKey(
     entity = RssFeed.class,
-    parentColumns = "id",
-    childColumns = "feedId",
+    parentColumns = "url",
+    childColumns = "feedUrl",
     onDelete = ForeignKey.CASCADE),
-    indices = {@Index("feedId"), @Index("title")})
+    indices = {@Index("feedUrl"), @Index("title")})
 public class Article {
 
   @PrimaryKey()
   private Long id;
 
   @NonNull
-  private Long feedId;
+  private String feedUrl;
 
   @NonNull
   private String title;
@@ -42,10 +42,10 @@ public class Article {
    * @param description article description.
    * @param publishTime article publish time.
    */
-  public Article(@NonNull Long id, @NonNull Long feedId, @NonNull String title,
+  public Article(@NonNull Long id, @NonNull String feedUrl, @NonNull String title,
                  String link, String description, String publishTime) {
     this.id = id;
-    this.feedId = feedId;
+    this.feedUrl = feedUrl;
     this.title = title;
     this.link = link;
     this.description = description;
@@ -61,12 +61,12 @@ public class Article {
   }
 
   @NonNull
-  public Long getFeedId() {
-    return feedId;
+  public String getFeedUrl() {
+    return feedUrl;
   }
 
-  public void setFeedId(@NonNull Long feedId) {
-    this.feedId = feedId;
+  public void setFeedUrl(@NonNull String feedUrl) {
+    this.feedUrl = feedUrl;
   }
 
   @NonNull
