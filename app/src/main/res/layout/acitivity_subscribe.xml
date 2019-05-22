@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:padding="20dp">
+
+  <TextView
+    android:textStyle="bold"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="@string/subscribe"
+    android:textColor="@color/black"
+    android:textSize="30sp"/>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="20dp"
+    android:orientation="horizontal">
+
+    <com.robertlevonyan.views.chip.Chip
+      android:id="@+id/kr_chip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      app:mcv_selectable="true"
+      app:mcv_hasIcon="true"
+      app:mcv_chipIcon="@drawable/kr_logo"
+      app:mcv_chipText="@string/kr" />
+
+    <com.robertlevonyan.views.chip.Chip
+      android:id="@+id/ifanr_chip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      app:mcv_selectable="true"
+      app:mcv_hasIcon="true"
+      app:mcv_chipIcon="@drawable/ifanr_logo"
+      app:mcv_chipText="@string/ifanr" />
+
+    <com.robertlevonyan.views.chip.Chip
+      android:id="@+id/feng_chip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      app:mcv_selectable="true"
+      app:mcv_hasIcon="true"
+      app:mcv_chipIcon="@drawable/feng_logo"
+      app:mcv_chipText="@string/feng" />
+  </LinearLayout>
+
+  <LinearLayout
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+    <com.robertlevonyan.views.chip.Chip
+      android:id="@+id/geekpark_chip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      app:mcv_selectable="true"
+      app:mcv_hasIcon="true"
+      app:mcv_chipIcon="@drawable/geekpark_logo"
+      app:mcv_chipText="@string/geekpark" />
+    <com.robertlevonyan.views.chip.Chip
+      android:id="@+id/zhihu_chip"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_margin="10dp"
+      app:mcv_selectable="true"
+      app:mcv_hasIcon="true"
+      app:mcv_chipIcon="@drawable/zhihu_logo"
+      app:mcv_chipText="@string/zhihu" />
+  </LinearLayout>
+
+</LinearLayout>
