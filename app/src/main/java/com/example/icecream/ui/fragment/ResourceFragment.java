@@ -212,8 +212,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
   }
 
-  private void getAllRssFeeds(String phoneNumber) {
-    new UpdateAllFeedsAsyncTask(this).execute(phoneNumber);
+  private void getAllRssFeeds() {
+    new UpdateAllFeedsAsyncTask(this).execute();
   }
 
   private void getPersonalRssFeeds(String phoneNumber) {
@@ -232,7 +232,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
-  private static class UpdateAllFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class UpdateAllFeedsAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
 
     private WeakReference<ResourceFragment> reference;
 
@@ -242,12 +242,12 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
 
     @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
+    protected HttpHandler.ResponseState doInBackground(Void... params) {
       ResourceFragment fragment = reference.get();
       if (fragment == null) {
         return null;
       }
-      return fragment.httpHandler.getUpdateAllFeedsState(params[0]);
+      return fragment.httpHandler.getUpdateAllFeedsState();
     }
 
     @Override
