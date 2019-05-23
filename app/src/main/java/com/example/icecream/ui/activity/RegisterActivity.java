@@ -92,7 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     btSendAuthCode.setOnClickListener(this);
     btNextStep.setOnClickListener(this);
 
-    httpHandler = new HttpHandler(getApplication());
+    httpHandler = HttpHandler.getInstance(getApplication());
 
     initSmsSdk();
   }

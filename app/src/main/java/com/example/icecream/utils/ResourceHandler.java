@@ -4,7 +4,6 @@ import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.icecream.database.entity.RssFeed;
-import com.example.icecream.database.entity.User;
 
 import java.util.List;
 
@@ -17,8 +16,9 @@ import static android.content.ContentValues.TAG;
  */
 public class ResourceHandler {
 
-  private AppViewModel viewModel;
+  private static volatile ResourceHandler instance;
 
+  private AppViewModel viewModel;
   private HttpHandler httpHandler;
 
   /**
@@ -27,9 +27,21 @@ public class ResourceHandler {
    * @param httpHandler http handler.
    * @param viewModel   view model.
    */
-  public ResourceHandler(HttpHandler httpHandler, AppViewModel viewModel) {
+  private ResourceHandler(HttpHandler httpHandler, AppViewModel viewModel) {
     this.viewModel = viewModel;
     this.httpHandler = httpHandler;
+  }
+
+  public static ResourceHandler getInstance(final HttpHandler httpHandler,
+                                            final AppViewModel viewModel) {
+    if (instance == null) {
+      synchronized (ResourceHandler.class) {
+        if (instance == null) {
+          instance = new ResourceHandler(httpHandler, viewModel);
+        }
+      }
+    }
+    return instance;
   }
 
   /**
@@ -51,7 +63,7 @@ public class ResourceHandler {
    *
    * @param phoneNumber user phone.
    */
-  public void updatePersonalFeedsAndArticles(String phoneNumber) {
+  public void updatePersonalFeedsAndArticles(final String phoneNumber) {
     new UpdatePersonalFeedsArticlesAsyncTask(this).execute(phoneNumber);
   }
 
@@ -60,7 +72,7 @@ public class ResourceHandler {
    *
    * @param phoneNumber user phone.
    */
-  public void updatePersonalRssFeeds(String phoneNumber) {
+  public void updatePersonalRssFeeds(final String phoneNumber) {
     new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
   }
 
@@ -69,7 +81,7 @@ public class ResourceHandler {
    *
    * @param phoneNumber user phone.
    */
-  public void updatePersonalArticles(String phoneNumber) {
+  public void updatePersonalArticles(final String phoneNumber) {
     new UpdateArticlesAsyncTask(this).execute(phoneNumber);
   }
 
@@ -79,7 +91,7 @@ public class ResourceHandler {
    * @param phoneNumber user phone.
    * @param url         feed url.
    */
-  public void subscribe(String phoneNumber, String url) {
+  public void subscribe(final String phoneNumber, String url) {
     new SubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
@@ -89,7 +101,7 @@ public class ResourceHandler {
    * @param phoneNumber user phone.
    * @param url         feed url.
    */
-  public void unsubscribe(String phoneNumber, String url) {
+  public void unsubscribe(final String phoneNumber, String url) {
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 

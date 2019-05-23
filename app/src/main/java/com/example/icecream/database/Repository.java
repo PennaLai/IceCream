@@ -3,6 +3,7 @@ package com.example.icecream.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -28,6 +29,8 @@ import static android.content.ContentValues.TAG;
  * @author Kemo
  */
 public class Repository {
+
+  private static volatile Repository instance;
 
   private UserDao userDao;
   private RssFeedDao rssFeedDao;
@@ -76,7 +79,7 @@ public class Repository {
    *
    * @param application input application.
    */
-  public Repository(Application application) {
+  private Repository(Application application) {
     AppDataBase db = AppDataBase.getDatabase(application);
     userDao = db.userDao();
     rssFeedDao = db.rssFeedDao();
@@ -86,8 +89,23 @@ public class Repository {
     allUsers = userDao.getAllUsers();
     allRssFeeds = rssFeedDao.getAllFeeds();
     allArticles = articleDao.getAllArticles();
+  }
 
-
+  /**
+   * Gets the singleton instance.
+   *
+   * @param application input application.
+   * @return instance.
+   */
+  public static Repository getInstance(final Application application) {
+    if (instance == null) {
+      synchronized (Repository.class) {
+        if (instance == null) {
+          instance = new Repository(application);
+        }
+      }
+    }
+    return instance;
   }
 
   /**
@@ -706,7 +724,6 @@ public class Repository {
       for (RssFeed rssFeed : rssFeeds) {
         Log.i(TAG, "insert: " + rssFeed.getUrl());
         rssFeedDao.insert(rssFeed);
-        Log.i(TAG, "result: " + rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getUrl());
       }
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
       for (RssFeed rssFeed : rssFeeds) {

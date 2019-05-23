@@ -32,6 +32,7 @@ import org.json.JSONObject;
  */
 public class HttpHandler {
 
+  private static volatile HttpHandler instance;
   private static final String TAG = HttpHandler.class.getName();
   private final OkHttpClient okHttpClient = new OkHttpClient();
 
@@ -79,8 +80,19 @@ public class HttpHandler {
    *
    * @param application This app.
    */
-  public HttpHandler(final Application application) {
-    repository = new Repository(application);
+  private HttpHandler(final Application application) {
+    repository = Repository.getInstance(application);
+  }
+
+  public static HttpHandler getInstance(final Application application) {
+    if (instance == null) {
+      synchronized (HttpHandler.class) {
+        if (instance == null) {
+          instance = new HttpHandler(application);
+        }
+      }
+    }
+    return instance;
   }
 
   /**

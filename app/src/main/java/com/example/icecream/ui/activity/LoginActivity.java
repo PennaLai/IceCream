@@ -2,6 +2,7 @@ package com.example.icecream.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,6 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
 
 import java.lang.ref.WeakReference;
-
-import okhttp3.OkHttpClient;
 
 
 /**
@@ -46,7 +45,9 @@ public class LoginActivity extends AppCompatActivity {
 //    TextView skip = findViewById(R.id.tv_skip);
 //    TextView forget = findViewById(R.id.tv_forget);
 
-    httpHandler = new HttpHandler(getApplication());
+    httpHandler = HttpHandler.getInstance(getApplication());
+
+
   }
 
   /**
@@ -255,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
           activity.goToMainPage(phoneNumber);
           break;
         default:
-          activity.showToastMessage("登录失败，请重试");
+          activity.showToastMessage("登录失败，请稍后重试");
           break;
       }
     }

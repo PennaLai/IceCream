@@ -17,21 +17,15 @@ import android.widget.Toast;
 
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
-import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
-
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 import java.util.Objects;
-
-import okhttp3.OkHttpClient;
 
 
 /**
@@ -115,7 +109,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
     // http
-    HttpHandler httpHandler = new HttpHandler(getActivity().getApplication());
+    HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
     // view model
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
@@ -123,7 +117,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
-    resourceHandler = new ResourceHandler(httpHandler, viewModel);
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
 
 
     // 下拉刷新和底部加载初始化和监听函数

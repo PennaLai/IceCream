@@ -43,7 +43,7 @@ public class AppViewModel extends AndroidViewModel {
    */
   public AppViewModel(Application application) {
     super(application);
-    repository = new Repository(application);
+    repository = Repository.getInstance(application);
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     userSearchResult = repository.getUserSearchResult();
