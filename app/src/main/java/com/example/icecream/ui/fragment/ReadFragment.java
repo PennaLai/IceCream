@@ -164,7 +164,7 @@ public class ReadFragment extends Fragment {
     btNext.setOnClickListener(v -> startNextArticle());
     sbProgress.getConfigBuilder()
         .max(100)
-        .sectionCount(10)
+        .sectionCount(20)
         .build();
     // TODO: reuse the seekbar
 //        sbProgress.setProgress(new VolumeListener());
