@@ -23,6 +23,7 @@ import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.MyLock;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
@@ -99,7 +100,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     ImageView imageView = view.findViewById(R.id.action_search);
     imageView.setOnClickListener(v -> goToSearch());
 
-
     /*
      * Generate article list using recycleView.
      */
@@ -151,6 +151,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
     // 用户设置读取
     userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+
     return view;
   }
 
