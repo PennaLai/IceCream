@@ -1,4 +1,5 @@
 package com.example.icecream.ui.fragment;
+
 import static android.content.Context.NOTIFICATION_SERVICE;
 
 import android.app.Activity;
@@ -26,13 +27,14 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.RemoteViews;
-import android.widget.SeekBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
+import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
-import com.example.icecream.ui.fragment.PlayFragment.NotificationClickReceiver;
+import com.wang.avi.AVLoadingIndicatorView;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,11 +43,24 @@ public class ReadFragment extends Fragment {
 
   private static final String TAG = PlayFragment.class.getName();
 
-  /** background player service.*/
+  /** background player service. */
   private SpeakerService speakerService;
 
   /** all the music that waiting for play. */
   private List<String> waitingMusicList = new ArrayList<>();
+
+  /** article title. */
+  private TextView articleTitle;
+
+  /** article publish time. */
+  private TextView articleTime;
+
+  /** article content. */
+  private TextView articleContent;
+
+  private AVLoadingIndicatorView downloadIndicator;
+
+  private ScrollView articleScrollView;
 
   /** to control the progress update thread exit. */
   boolean needUpdate;
@@ -68,6 +83,7 @@ public class ReadFragment extends Fragment {
 
   private RemoteViews remoteViews;
 
+  /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
 
   private static final String ACTION_PRE = "ACTION_PRE";
@@ -89,15 +105,14 @@ public class ReadFragment extends Fragment {
   /** use to update the ui while playing music. */
   private final ReadFragment.MusicHandler uiUpdateHandle = new ReadFragment.MusicHandler(this);
 
-  /**
-   * used for callback to update the UI.
-   */
+  /** used for callback to update the UI. */
   public interface OnPlayerUiListener {
     void updateNewSongUi();
   }
 
   /**
    * Handler to update the ui while playing music.
+   *
    * @author Penna
    */
   private static class MusicHandler extends Handler {
@@ -110,14 +125,15 @@ public class ReadFragment extends Fragment {
     @Override
     public void handleMessage(Message msg) {
       super.handleMessage(msg);
-      ReadFragment playFragment = readFragmentWeakReference.get();
-      if (playFragment != null) {
+      ReadFragment readFragment = readFragmentWeakReference.get();
+      if (readFragment != null) {
         switch (msg.what) {
           case 0:
             double progress = msg.getData().getDouble("progress");
-            int max = playFragment.sbProgress.getMax();
+            int max = readFragment.sbProgress.getMax();
             int position = (int) (max * progress);
-            playFragment.sbProgress.setProgress(position);
+            readFragment.sbProgress.setProgress(position);
+            readFragment.articleScrollView.smoothScrollTo(0, position); // 测试
             break;
           default:
             break;
@@ -126,21 +142,24 @@ public class ReadFragment extends Fragment {
     }
   }
 
-
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
     iVBack = view.findViewById(R.id.read_iv_back);
     iVBack.setOnClickListener(v -> backToResource());
-
+    articleTitle = view.findViewById(R.id.tv_read_title);
+    articleTime = view.findViewById(R.id.tv_publish_time);
+    articleContent = view.findViewById(R.id.tv_main_content);
+    articleScrollView = view.findViewById(R.id.sv_article_view);
+    downloadIndicator = view.findViewById(R.id.ld_download);
     ImageView btPlay = view.findViewById(R.id.read_iv_play);
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     sbProgress = view.findViewById(R.id.read_pb_progress);
     btPlay.setOnClickListener(v -> playBackgroundMusic());
-    btNext.setOnClickListener(v -> playNextMusic());
-//    sbProgress.setp(new VolumeListener());
-//     bind speaker service
+    btNext.setOnClickListener(v -> startNextArticle());
+    //    sbProgress.setp(new VolumeListener());
+    //     bind speaker service
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(
@@ -151,19 +170,16 @@ public class ReadFragment extends Fragment {
     // start to update progress
     progressUpdateThread = new Thread(new ProgressUpdateThread());
     needUpdate = true;
-    progressUpdateThread.start();  // TODO: 之后不应该在这里开始start线程, 不然会造成资源浪费,
+    progressUpdateThread.start(); // TODO: 之后不应该在这里开始start线程, 不然会造成资源浪费
     // use for test
     waitingMusicList.add("music/I_am_happy.mp3");
     waitingMusicList.add("music/love_song.mp3");
     waitingMusicList.add("music/Reality.mp3");
-
+    downloadIndicator.show();
     return view;
   }
 
-
-  /**
-   * Back to the resource fragment view.
-   */
+  /** Back to the resource fragment view. */
   private void backToResource() {
     try {
       ((MainActivity) getActivity()).toResourceFragment();
@@ -172,47 +188,48 @@ public class ReadFragment extends Fragment {
     }
   }
 
+  /**
+   * from the resource fragment -> set new article and start it.
+   * @param article
+   */
   public void setArticle(Article article) {
     this.article = article;
-    playNextMusic();
+    startNextArticle();
   }
 
-
-  /**
-   * initialize the notification bar.
-   */
+  /** initialize the notification bar. */
   private void crateNotification() {
     if (speakerService == null) {
       return;
     }
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
-    remoteViews = new RemoteViews(getActivity().getPackageName(),R.layout.music_notify);
+    remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
     NotificationCompat.Builder builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
     // 点击跳转到主界面
-    PendingIntent intent_go = PendingIntent.getActivity(getActivity(), 5, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent intent_go =
+        PendingIntent.getActivity(getActivity(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
 
     // 4个参数context, requestCode, intent, flags
-    PendingIntent intent_close = PendingIntent.getActivity(getActivity(), 0, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent intent_close =
+        PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
     // 设置上一曲
     Intent prv = new Intent();
     prv.setAction(ACTION_PRE);
-    PendingIntent intent_prev = PendingIntent.getBroadcast(getActivity(), 1, prv,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent intent_prev =
+        PendingIntent.getBroadcast(getActivity(), 1, prv, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
 
     // 下一曲
     Intent next = new Intent();
     next.setAction(ACTION_NEXT);
-    PendingIntent intent_next = PendingIntent.getBroadcast(getActivity(), 3, next,
-        PendingIntent.FLAG_UPDATE_CURRENT);
+    PendingIntent intent_next =
+        PendingIntent.getBroadcast(getActivity(), 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
 
     // 设置播放
@@ -228,15 +245,16 @@ public class ReadFragment extends Fragment {
       Intent playorpause = new Intent();
       playorpause.setAction(ACTION_PAUSE);
       PendingIntent intent_play =
-          PendingIntent.getBroadcast(getActivity(), 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
+          PendingIntent.getBroadcast(
+              getActivity(), 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
       remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
     }
 
     // 设置收藏, 未来做的事情
-//    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-//        PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-//
+    //    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
+    //        PendingIntent.FLAG_UPDATE_CURRENT);
+    //    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
+    //
 
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
 
@@ -258,49 +276,40 @@ public class ReadFragment extends Fragment {
     filter.addAction(ACTION_PAUSE);
     // register the receiver
     getActivity().registerReceiver(broadcastReceiver, filter);
-
   }
 
-
-  /**
-   * Receiver click event from notification bar.
-   */
+  /** Receiver click event from notification bar. */
   public class NotificationClickReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
       String action = intent.getAction();
       if (action.equalsIgnoreCase(ACTION_PRE)) {
-        playPreMusic();
+        startPreArticle();
       } else if (action.equalsIgnoreCase(ACTION_NEXT)) {
-        playNextMusic();
+        startNextArticle();
       } else if (action.equalsIgnoreCase(ACTION_PLAY)) {
         playBackgroundMusic();
       } else if (action.equalsIgnoreCase(ACTION_PAUSE)) {
         playBackgroundMusic();
       }
-
     }
   }
 
-  /**
-   * To destroy the music bar notification.
-   */
+  /** To destroy the music bar notification. */
   private void notificationDestory() {
     if (remoteViews != null) {
       musicBarManage.cancel(1);
     }
   }
 
-  /**
-   * Play music or pause music.
-   */
+  /** Play music or pause music. */
   private void playBackgroundMusic() {
     if (musicBarManage == null) {
       crateNotification();
     }
     if (playSongCount == 0) {
-      playNextMusic();
+      startNextArticle();
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
@@ -311,113 +320,110 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /**
-   * start New Song.
-   */
-  private void startNewSong() {
+  /** start New Song. */
+  private void startNewArticle() {
+    if (article == null) return;
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
+    articleTitle.setText(article.getTitle());
+    articleTime.setText(article.getPublishTime());
+    articleContent.setText(article.getDescription());
     playSongCount++;
   }
 
-  /**
-   * Start the next song.
-   */
-  private void playNextMusic() {
-    startNewSong();
+  /** Start the next song. */
+  private void startNextArticle() {
+    startNewArticle();
     playIndexIncrease();
   }
 
-  /**
-   * Back to the last song.
-   */
-  private void playPreMusic() {
-    startNewSong();
+  /** Back to the last song. */
+  private void startPreArticle() {
+    startNewArticle();
     playIndexDecrease();
   }
 
-  /**
-   * to update ui after click pre or next or play or pause.
-   */
+  /** to update ui after click pre or next or play or pause. */
   private void checkUiUpdate() {
-    //TODO finish it.
+    // TODO finish it.
   }
 
-
   /**
-   * after the service prepare the song resource and start to play
-   * it should call back this method to update the new song ui for example
-   * max progress, start to update progress thread.
+   * after the service prepare the song resource and start to play it should call back this method
+   * to update the new song ui for example max progress, start to update progress thread.
    */
   private void updateNewSongUi() {
     isPlaying = true; // start the progress again
   }
 
   /**
-   * increase the play waiting list to next one,
-   * it is a circular list(will go back to the first one).
+   * increase the play waiting list to next one, it is a circular list(will go back to the first
+   * one).
    */
   private void playIndexIncrease() {
     playIndex++;
-    if (playIndex >= waitingMusicList.size())
-      playIndex = 0;
+    if (playIndex >= waitingMusicList.size()) playIndex = 0;
   }
 
-  /**
-   * decrease the play waiting list to last one.
-   */
+  /** decrease the play waiting list to last one. */
   private void playIndexDecrease() {
     playIndex--;
-    if (playIndex < 0)
-      playIndex = waitingMusicList.size()-1;
+    if (playIndex < 0) playIndex = waitingMusicList.size() - 1;
   }
-//
-//  /**
-//   * listener for the progress bar.
-//   */
-//  private class VolumeListener implements SeekBar.OnSeekBarChangeListener {
-//
-//    public void onProgressChanged(SeekBar seekBar, int progress,
-//        boolean fromUser) {
-//      // Log the progress
-//      //set textView's text
-//      volumeText.setText(String.valueOf(progress));
-//    }
-//
-//    public void onStartTrackingTouch(SeekBar seekBar) {}
-//
-//    public void onStopTrackingTouch(SeekBar seekBar) {
-//      int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
-//      speakerService.seeTo(progress);
-//    }
-//
-//  }
+  //
+  //  /**
+  //   * listener for the progress bar.
+  //   */
+  //  private class VolumeListener implements SeekBar.OnSeekBarChangeListener {
+  //
+  //    public void onProgressChanged(SeekBar seekBar, int progress,
+  //        boolean fromUser) {
+  //      // Log the progress
+  //      //set textView's text
+  //      volumeText.setText(String.valueOf(progress));
+  //    }
+  //
+  //    public void onStartTrackingTouch(SeekBar seekBar) {}
+  //
+  //    public void onStopTrackingTouch(SeekBar seekBar) {
+  //      int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
+  //      speakerService.seeTo(progress);
+  //    }
+  //
+  //  }
 
-  /**
-   * Use to connected and disconnected the service.
-   */
-  private ServiceConnection speakConnection = new ServiceConnection() {
-    @Override
-    public void onServiceConnected(ComponentName name, IBinder service) {
-      speakerService = ((SpeakerService.SpeakerBinder) service).getService();
-      speakerService.setOnPlayerUIListener(() -> updateNewSongUi());
+  /** Use to connected and disconnected the service. */
+  private ServiceConnection speakConnection =
+      new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+          speakerService = ((SpeakerService.SpeakerBinder) service).getService();
+          speakerService.setOnPlayerUIListener(() -> updateNewSongUi());
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+          speakerService.destroyMediaPlayer();
+        }
+      };
+
+  @Override
+  public void onDestroy() {
+    super.onDestroy();
+    needUpdate = false; // finish the ui update thread.
+    notificationDestory();
+    Activity activity = getActivity();
+    if (activity != null) {
+      activity.unbindService(speakConnection);
     }
+  }
 
-    @Override
-    public void onServiceDisconnected(ComponentName name) {
-
-    }
-  };
-
-
-  /**
-   * update the progress ui thread.
-   */
+  /** update the progress ui thread. */
   public class ProgressUpdateThread implements Runnable {
 
     @Override
     public void run() {
-      //used for passing progress to ui
+      // used for passing progress to ui
       Bundle data = new Bundle();
       try {
         while (needUpdate) {
@@ -434,7 +440,5 @@ public class ReadFragment extends Fragment {
         Log.e(TAG, "run: ", e);
       }
     }
-
   }
-
 }

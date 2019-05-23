@@ -28,6 +28,22 @@
     </FrameLayout>
   </android.support.design.widget.AppBarLayout>
 
+  <com.wang.avi.AVLoadingIndicatorView
+    android:id="@+id/ld_download"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:visibility="visible"
+    app:indicatorName="BallPulseIndicator"
+    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.528"/>
+
   <!--If there are paragraphs-->
   <!--<android.support.v7.widget.RecyclerView-->
     <!--android:layout_width="match_parent"-->
@@ -36,18 +52,19 @@
     <!--app:layout_constraintTop_toTopOf="parent"-->
     <!--tools:layout_editor_absoluteX="0dp"/>-->
   <ScrollView
+    android:id="@+id/sv_article_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    app:layout_constraintTop_toTopOf="parent"
-    app:layout_constraintBottom_toBottomOf="parent"
     android:layout_marginTop="60dp"
-    android:layout_marginBottom="40dp">
+    android:layout_marginBottom="40dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
     <android.support.constraint.ConstraintLayout
       android:layout_width="match_parent"
       android:layout_height="wrap_content"
       android:padding="5dp">
       <TextView
-        android:id="@+id/read_tv_title"
+        android:id="@+id/tv_read_title"
         android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -62,64 +79,52 @@
         app:layout_constraintTop_toTopOf="parent"/>
 
       <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/tv_publish_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:layout_marginStart="8dp"
         android:text="Steven Welch · 21 June, 2018"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/read_tv_title"/>
+        app:layout_constraintTop_toBottomOf="@+id/tv_read_title"/>
 
-      <ImageView
-        android:id="@+id/imageView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:background="@drawable/coners_bg"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4"
-        app:srcCompat="@drawable/default_cover"/>
 
       <TextView
+        android:id="@+id/tv_main_content"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="291dp"
         android:layout_marginTop="16dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
-        android:layout_marginBottom="16dp"
         android:lineSpacingExtra="10sp"
         android:text="@string/content"
         android:textColor="@color/black"
         android:textSize="14sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageView"
-        app:layout_constraintBottom_toBottomOf="parent"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/tv_publish_time"/>
 
     </android.support.constraint.ConstraintLayout>
 
   </ScrollView>
 
   <LinearLayout
+    android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="40dp"
     android:orientation="vertical"
-    app:layout_constraintBottom_toBottomOf="parent"
-    android:layout_marginBottom="0dp">
+    app:layout_constraintBottom_toBottomOf="parent">
 
     <ProgressBar
       android:id="@+id/read_pb_progress"
       style="?android:attr/progressBarStyleHorizontal"
       android:layout_width="match_parent"
       android:layout_height="1dp"
-      android:progressDrawable="@drawable/progress_bar_color"
       android:progress="0"
+      android:progressDrawable="@drawable/progress_bar_color"
       />
 
     <android.support.constraint.ConstraintLayout
