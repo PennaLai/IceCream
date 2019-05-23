@@ -9,9 +9,9 @@ import android.support.annotation.NonNull;
  * Join class for user and RSS feed many to many relationship.
  */
 @Entity(primaryKeys = {"userId", "rssFeedId"},
-    foreignKeys = {
-        @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "userId"),
-        @ForeignKey(entity = RssFeed.class, parentColumns = "id", childColumns = "rssFeedId")},
+//    foreignKeys = {
+//        @ForeignKey(entity = User.class, parentColumns = "id", childColumns = "userId"),
+//        @ForeignKey(entity = RssFeed.class, parentColumns = "id", childColumns = "rssFeedId")},
     indices = {@Index("userId"), @Index("rssFeedId")})
 public class UserRssFeedJoin {
 

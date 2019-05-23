@@ -5,6 +5,7 @@ import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.example.icecream.database.dao.ArticleDao;
 import com.example.icecream.database.dao.RssFeedDao;
@@ -18,6 +19,8 @@ import com.example.icecream.database.entity.UserRssFeedJoin;
 
 import java.util.LinkedList;
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * The repository to hold all the data in local database.
@@ -143,7 +146,6 @@ public class Repository {
    * @param rssFeeds the input RSS feeds.
    */
   public void insertUserRssFeeds(String phone, List<RssFeed> rssFeeds) {
-    new RssFeedInsertAsyncTask(rssFeedDao).execute(rssFeeds.toArray(new RssFeed[0]));
     new InsertUserRssFeedsAsyncTask(
         userRssFeedJoinDao, userDao, rssFeedDao
     ).execute(new ParamPhoneFeedList(phone, rssFeeds));
@@ -592,6 +594,7 @@ public class Repository {
       List<RssFeed> rssFeeds = userRssFeedJoinDao.getRssFeedsByUserId(userId);
       List<Article> articles = new LinkedList<>();
       for (RssFeed rssFeed : rssFeeds) {
+        Log.i(TAG, rssFeed.getUrl());
         articles.addAll(articleDao.getArticlesByRssFeedUrl(rssFeed.getUrl()));
         if (articles.size() > 30) {
           // do not load too much.
@@ -699,9 +702,14 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final ParamPhoneFeedList... params) {
-
+      List<RssFeed> rssFeeds = params[0].rssFeeds;
+      for (RssFeed rssFeed : rssFeeds) {
+        Log.i(TAG, "insert: " + rssFeed.getUrl());
+        rssFeedDao.insert(rssFeed);
+        Log.i(TAG, "result: " + rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getUrl());
+      }
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
-      for (RssFeed rssFeed : params[0].rssFeeds) {
+      for (RssFeed rssFeed : rssFeeds) {
         userRssFeedJoinDao.insert(new UserRssFeedJoin(
             userId, rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getId())
         );

@@ -52,8 +52,7 @@ public class ResourceHandler {
    * @param phoneNumber user phone.
    */
   public void updatePersonalFeedsAndArticles(String phoneNumber) {
-    updatePersonalRssFeeds(phoneNumber);
-    updatePersonalArticles(phoneNumber);
+    new UpdatePersonalFeedsArticlesAsyncTask(this).execute(phoneNumber);
   }
 
   /**
@@ -61,7 +60,7 @@ public class ResourceHandler {
    *
    * @param phoneNumber user phone.
    */
-  private void updatePersonalRssFeeds(String phoneNumber) {
+  public void updatePersonalRssFeeds(String phoneNumber) {
     new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
   }
 
@@ -70,7 +69,7 @@ public class ResourceHandler {
    *
    * @param phoneNumber user phone.
    */
-  private void updatePersonalArticles(String phoneNumber) {
+  public void updatePersonalArticles(String phoneNumber) {
     new UpdateArticlesAsyncTask(this).execute(phoneNumber);
   }
 
@@ -196,7 +195,6 @@ public class ResourceHandler {
       switch (responseState) {
         case Valid:
           // get those articles successfully
-          Log.i(TAG, "get articles");
           viewModel.setPersonalArticles(httpHandler.getPersonalArticles());
           // store
           viewModel.insertArticles(httpHandler.getPersonalArticles());
@@ -294,23 +292,50 @@ public class ResourceHandler {
     }
   }
 
-  private static class LoadArticlesAsyncTask extends AsyncTask<String, Void, Void> {
+
+  private static class UpdatePersonalFeedsArticlesAsyncTask
+      extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+    private String phone;
 
-    LoadArticlesAsyncTask(ResourceHandler resourceHandler) {
+    UpdatePersonalFeedsArticlesAsyncTask(ResourceHandler resourceHandler) {
       viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
     }
 
     @Override
-    protected Void doInBackground(String... params) {
-
-
-      return null;
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      phone = params[0];
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRSSFeedsState(phone);
+      if (responseState != HttpHandler.ResponseState.Valid) {
+        return responseState;
+      }
+      viewModel.insertPersonalRssFeeds(phone, httpHandler.getPersonalRssFeeds());
+      httpHandler.getUpdateArticlesState(phone);
+      return responseState;
     }
 
     @Override
-    protected void onPostExecute(Void result) {
-
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      switch (responseState) {
+        case Valid:
+          viewModel.setPersonalRssFeeds(httpHandler.getPersonalRssFeeds());
+          viewModel.setPersonalArticles(httpHandler.getPersonalArticles());
+          viewModel.insertArticles(httpHandler.getPersonalArticles());
+          Log.i(TAG, "insert articles succeed");
+          break;
+        case InvalidToken:
+          // TODO back to login
+//          activity.login();
+          break;
+        case NoSuchUser:
+          // TODO back to login
+//          activity.login();
+          break;
+        default:
+          break;
+      }
 
     }
   }
