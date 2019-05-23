@@ -124,8 +124,10 @@ public class SubscribeActivity extends AppCompatActivity {
             rssFeeds -> {
               allSubscribes = rssFeeds;
               for (RssFeed rssFeed : allSubscribes) {
-                if (rssFeed.getId() >= 0 && rssFeed.getId() < SUBSCRIBE_NUM) {
-                  chips[1].setSubscribe(true);  // TODO : 更改黄最新接口
+                int id = new Long(rssFeed.getId()).intValue();
+                if (id >= 0 && id < SUBSCRIBE_NUM) {
+                  Log.i("sss", "onCreate: "+rssFeed.getChannelName()+"id"+rssFeed.getId());
+                  chips[id].setSubscribe(true); // TODO : 更改黄最新接口
                 }
               }
             });
@@ -171,11 +173,15 @@ public class SubscribeActivity extends AppCompatActivity {
       Toast.makeText(SubscribeActivity.this, "你还没有登录哦", Toast.LENGTH_LONG).show();
       return;
     }
+    // problem: duplicate subscribe
     for (SubscribeItem element : chips) {
-        if (element.isHasSubscribe()) {
-          resourceHandler.subscribe(phoneNumber,
-              element.getSubScribeUrl());
-        }
+      if (element.isHasSubscribe()) {
+        resourceHandler.subscribe(phoneNumber,
+            element.getSubScribeUrl());
+      } else {
+        resourceHandler.unsubscribe(phoneNumber,
+            element.getSubScribeUrl());
+      }
     }
   }
 
