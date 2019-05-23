@@ -247,6 +247,7 @@ public class LoginActivity extends AppCompatActivity {
         case Valid:
           activity.showToastMessage("登录成功");
           // store phone
+          activity.userSettingHandler.setLoginPhone(phoneNumber);
           activity.goToMainPage();
           break;
         default:

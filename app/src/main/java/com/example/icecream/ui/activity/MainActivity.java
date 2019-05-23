@@ -1,6 +1,7 @@
 package com.example.icecream.ui.activity;
 
 import android.app.Fragment;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 
 import android.content.Intent;
@@ -25,6 +26,7 @@ import android.view.View;
 import com.example.icecream.R;
 
 import com.example.icecream.database.entity.Article;
+import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.ui.fragment.PlayFragment;
 import com.example.icecream.ui.fragment.ReadFragment;
 import com.example.icecream.ui.fragment.ResourceFragment;
@@ -33,11 +35,15 @@ import com.example.icecream.ui.component.menu.DrawerItem;
 import com.example.icecream.ui.component.menu.SimpleItem;
 import com.example.icecream.ui.component.menu.SpaceItem;
 
+import com.example.icecream.utils.AppViewModel;
+import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 import java.util.Arrays;
 
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -72,13 +78,10 @@ public class MainActivity extends AppCompatActivity
 
   final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
 
-
-
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
 
     // 定义数据
 
@@ -136,7 +139,6 @@ public class MainActivity extends AppCompatActivity
     draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
-
 
   }
 
