@@ -26,6 +26,7 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
 
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
@@ -125,10 +126,12 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
     resourceHandler = new ResourceHandler(httpHandler, viewModel);
 
-
+//    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);
+//    header.setAccentColor(getResources().getColor(R.color.light_pink)); // 强调颜色
+//    header.setPrimaryColor(getResources().getColor(R.color.green)); // 主题颜色
     // 下拉刷新和底部加载初始化和监听函数
-    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
-//    refreshLayout.setEnableLoadMore(false); // 禁用上拉加载
+    RefreshLayout refreshLayout = view.findViewById(R.id.refreshLayout);
+    refreshLayout.setEnableLoadMore(false); // 禁用上拉加载
     refreshLayout.setOnRefreshListener(
         refresh -> {
           refreshResource();
@@ -137,7 +140,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
-//    refreshResource();
+    refreshResource();
     return view;
   }
 

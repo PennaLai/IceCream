@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity
 
   final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
 
-  private String phone;
 
 
   @Override
@@ -79,8 +78,6 @@ public class MainActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    // get phone from login
-    phone = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
     // 定义数据
 
