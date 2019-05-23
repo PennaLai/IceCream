@@ -32,9 +32,6 @@ public class IntroActivity extends AhoyOnboarderActivity {
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-//    setContentView(R.layout.activity_intro);
-//    TextView button = findViewById(R.id.test);
-//    button.setOnClickListener(v -> go());
     initIntroCards();
     setOnboardPages(pages);
     setColorBackground(R.color.light_blue);
