@@ -44,4 +44,8 @@
     <!--button-->
     <color name="nb.widget.button.normal">@color/white</color>
     <color name="nb.widget.button.selected">#E3E3E3</color>
+
+    <!--For subscribe-->
+    <color name="selected">#424242</color>
+    <color name="unselected">#e0e0e0</color>
 </resources>

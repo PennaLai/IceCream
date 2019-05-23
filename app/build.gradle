@@ -55,7 +55,9 @@ dependencies {
     implementation "com.android.support:design:$supportLibVersion"
     implementation "com.android.support:recyclerview-v7:$supportLibVersion"
     implementation 'de.hdodenhof:circleimageview:3.0.0'
-    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+//    implementation "com.jakewharton:butterknife:$rootProject.butterknifeVersion"
+
+    implementation 'com.robertlevonyan.view:MaterialChipView:1.2.2'
 //    implementation 'com.yuqirong:searchbar:0.0.1'
     def lifecycle_version = "1.1.1"
     implementation "android.arch.lifecycle:extensions:$lifecycle_version"
