@@ -1,13 +1,21 @@
 package com.example.icecream.ui.activity;
 
+import android.arch.lifecycle.MutableLiveData;
+import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import com.example.icecream.R;
+import com.example.icecream.database.entity.RssFeed;
+import com.example.icecream.utils.AppViewModel;
+import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.ResourceHandler;
 import com.robertlevonyan.views.chip.Chip;
+import java.util.List;
 
 public class SubscribeActivity extends AppCompatActivity {
 
@@ -59,6 +67,14 @@ public class SubscribeActivity extends AppCompatActivity {
         this.textView.setTextColor(getResources().getColor(R.color.colorChipText));
       }
     }
+
+    private boolean isHasSubscribe() {
+      return hasSubscribe;
+    }
+
+    private String getSubScribeUrl() {
+      return subScribeUrl;
+    }
   }
 
   /** the subscribe number. */
@@ -70,6 +86,8 @@ public class SubscribeActivity extends AppCompatActivity {
   /** select all chip. */
   private Chip all;
 
+  private List<RssFeed> allSubscribes;
+
   private ImageView back;
 
   private Button confirm;
@@ -79,7 +97,13 @@ public class SubscribeActivity extends AppCompatActivity {
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.acitivity_subscribe);
-
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    // TODO: 从本地获取
+//    viewModel.getPersonalRssFeeds().observe(this, rssFeeds -> allSubscribes = rssFeeds);
+//
+//    for (RssFeed rssFeed: allSubscribes) {
+//      Log.i("SUBSCRIBE", "onCreate: "+rssFeed.getUrl());
+//    }
     chips[0] = new SubscribeItem("36氪", false, "https://36kr.com/feed",
         findViewById(R.id.kr_chip), findViewById(R.id.kr_tv));
     chips[1] = new SubscribeItem("爱范儿", true, "https://www.ifanr.com/feed",
@@ -94,6 +118,8 @@ public class SubscribeActivity extends AppCompatActivity {
     all = findViewById(R.id.all_chip);
     back = findViewById(R.id.sub_iv_back);
     confirm = findViewById(R.id.sub_btn_confirm);
+
+
 
 
     all.setOnSelectClickListener((v, selected)-> {
@@ -115,9 +141,23 @@ public class SubscribeActivity extends AppCompatActivity {
     });
 
     confirm.setOnClickListener(v -> {
-      // TODO
+      confirmSubscribe();
       onBackPressed();
     });
+  }
+
+  private void confirmSubscribe() {
+    // http
+    HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+
+    for (SubscribeItem element : chips) {
+        if (element.isHasSubscribe()) {
+          resourceHandler.subscribe("18929357397",
+              element.getSubScribeUrl());
+        }
+    }
   }
 
 
