@@ -23,7 +23,6 @@ public class UserSettingHandler {
     // store current phone
     settings = application.getSharedPreferences(PREFERENCE_FILE, 0);
     loginPhone = settings.getString(CURRENT_LOGIN_PHONE, null);
-
   }
 
   public static UserSettingHandler getInstance(final Application application) {
@@ -37,4 +36,23 @@ public class UserSettingHandler {
     return instance;
   }
 
+  /**
+   * Gets the previous login phone.
+   *
+   * @return phone.
+   */
+  public String getLoginPhone() {
+    return loginPhone;
+  }
+
+  /**
+   * Stores the phone.
+   *
+   * @param phone phone.
+   */
+  public void setLoginPhone(String phone) {
+    SharedPreferences.Editor editor = settings.edit();
+    editor.putString(CURRENT_LOGIN_PHONE, phone);
+    editor.apply();
+  }
 }

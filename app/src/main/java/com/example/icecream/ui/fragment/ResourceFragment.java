@@ -118,10 +118,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-
+    resourceHandler.loadArticles("18929357397");
 
     // 下拉刷新和底部加载初始化和监听函数
-    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+    RefreshLayout refreshLayout = (RefreshLayout) view.findViewById(R.id.refreshLayout);
 //    refreshLayout.setEnableLoadMore(false); // 禁用上拉加载
     refreshLayout.setOnRefreshListener(
         refresh -> {
@@ -151,23 +151,14 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * To refresh resource.
    */
   private void refreshResource() {
-//    getAllRssFeeds();
-//    subscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalRssFeeds("18929357397");
-//    //    unsubscribe("18929357397", "https://36kr.com/feed");
-//    getPersonalArticles("18929357397");
-      resourceHandler.updateAllRssFeeds();
-      resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
-      resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
-      resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
-      resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-      resourceHandler.updatePersonalRssFeeds("18929357397");
-      resourceHandler.updatePersonalArticles("18929357397");
-
+    resourceHandler.updateAllRssFeeds();
+    resourceHandler.unsubscribe("18929357397", "https://www.zhihu.com/rss");
+    resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
+    resourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
+    resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+    resourceHandler.updatePersonalRssFeeds("18929357397");
+    resourceHandler.updatePersonalArticles("18929357397");
   }
-
-
-
 
 
   /**

@@ -48,6 +48,7 @@ public class HttpHandler {
   private static final String LOGIN_URL = MAIN_URL + "signin";
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
+  private static final String CHECK_TOKEN_URL = MAIN_URL + "checkToken";
   private static final String USER_INFO_URL = MAIN_URL + "userinfo";
 
   /**
@@ -337,9 +338,8 @@ public class HttpHandler {
       responseState = ResponseState.ServerWrong;
     } else {
       Log.i(TAG, responseString);
-      JSONObject responseJsonObject;
       try {
-        responseJsonObject = new JSONObject(responseString);
+        JSONObject responseJsonObject = new JSONObject(responseString);
         switch (responseJsonObject.getString(MESSAGE_CODE)) {
           case "1":
             responseState = ResponseState.DuplicatePhoneNumber;
@@ -352,6 +352,49 @@ public class HttpHandler {
         }
       } catch (Exception e) {
         Log.e(TAG, "postPhoneState: ", e);
+      }
+    }
+    return responseState;
+  }
+
+  /**
+   * Sends get request to check the token.
+   *
+   * @param phoneNumber user phone.
+   * @return response state.
+   */
+  public ResponseState getCheckToken(@NonNull final String phoneNumber) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    if (user == null) {
+      return ResponseState.InvalidToken;
+    }
+    String token = user.getAuthToken();
+    String responseString = getHttpResponseString(CHECK_TOKEN_URL + "?token=" + token);
+    ResponseState responseState;
+    if (responseString == null) {
+      responseState = ResponseState.ServerWrong;
+    } else {
+      Log.i(TAG, responseString);
+      responseState = null;
+      try {
+        JSONObject responseJsonObject = new JSONObject(responseString);
+        switch (responseJsonObject.getString(MESSAGE_CODE)) {
+          case "0":
+            // token is invalid. Needs to re-login.
+            responseState = ResponseState.InvalidToken;
+            break;
+          case "1":
+            // user account may have been deleted. Needs to re-login.
+            responseState = ResponseState.NoSuchUser;
+            break;
+          case "2":
+            responseState = ResponseState.Valid;
+            break;
+          default:
+            break;
+        }
+      } catch (Exception e) {
+        Log.e(TAG, "getCheckToken: ", e);
       }
     }
     return responseState;

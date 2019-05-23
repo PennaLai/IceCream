@@ -18,6 +18,9 @@ import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 import com.example.icecream.database.entity.UserRssFeedJoin;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -597,6 +600,7 @@ public class Repository {
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private ArticleDao articleDao;
     private Repository delegate = null;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 
     PersonalArticlesGetAsyncTask(UserDao userDao,
                                  UserRssFeedJoinDao userRssFeedJoinDao,
@@ -619,6 +623,14 @@ public class Repository {
           break;
         }
       }
+      Collections.sort(articles, (a1, a2) -> {
+        try {
+          return sdf.parse(a2.getPublishTime()).compareTo(sdf.parse(a1.getPublishTime()));
+        } catch (ParseException e) {
+          e.printStackTrace();
+        }
+        return 0;
+      });
       return articles;
     }
 

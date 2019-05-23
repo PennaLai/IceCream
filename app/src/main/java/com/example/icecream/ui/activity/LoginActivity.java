@@ -2,7 +2,6 @@ package com.example.icecream.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +10,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.icecream.R;
+import com.example.icecream.utils.UserSettingHandler;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
 import com.example.icecream.utils.HttpHandler;
@@ -30,6 +30,7 @@ import java.lang.ref.WeakReference;
 public class LoginActivity extends AppCompatActivity {
 
   private HttpHandler httpHandler;
+  private UserSettingHandler userSettingHandler;
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
 
@@ -46,8 +47,12 @@ public class LoginActivity extends AppCompatActivity {
 //    TextView forget = findViewById(R.id.tv_forget);
 
     httpHandler = HttpHandler.getInstance(getApplication());
+    userSettingHandler = UserSettingHandler.getInstance(getApplication());
+    autoLogin();
+  }
 
-
+  private void autoLogin() {
+    new AutoLoginAsyncTask(this).execute(userSettingHandler.getLoginPhone());
   }
 
   /**
@@ -68,7 +73,7 @@ public class LoginActivity extends AppCompatActivity {
     final String password = "123456";
 //    final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
-      new LoginAsyncTask(this).execute(new ParamsPhonePassword(phoneNumber, password));
+      new LoginAsyncTask(this).execute(phoneNumber, password);
     }
   }
 
@@ -205,18 +210,7 @@ public class LoginActivity extends AppCompatActivity {
     startActivity(startRegisterActivityIntent);
   }
 
-  private class ParamsPhonePassword {
-    String phone;
-    String password;
-
-    ParamsPhonePassword(String phone, String password) {
-      this.phone = phone;
-      this.password = password;
-    }
-  }
-
-
-  private static class LoginAsyncTask extends AsyncTask<ParamsPhonePassword, Void, HttpHandler.ResponseState> {
+  private static class LoginAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
 
     private String phoneNumber;
     private String password;
@@ -228,20 +222,20 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @Override
-    protected HttpHandler.ResponseState doInBackground(ParamsPhonePassword... params) {
+    protected HttpHandler.ResponseState doInBackground(String... params) {
       LoginActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
+      if (activity == null) {
         return null;
       }
-      phoneNumber = params[0].phone;
-      password = params[0].password;
+      phoneNumber = params[0];
+      password = params[1];
       return activity.httpHandler.postLoginState(phoneNumber, password);
     }
 
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       LoginActivity activity = activityReference.get();
-      if (activity == null || activity.isFinishing()) {
+      if (activity == null) {
         return;
       }
       switch (responseState) {
@@ -253,6 +247,8 @@ public class LoginActivity extends AppCompatActivity {
           break;
         case Valid:
           activity.showToastMessage("登录成功");
+          // store phone
+          activity.userSettingHandler.setLoginPhone(phoneNumber);
           activity.goToMainPage(phoneNumber);
           break;
         default:
@@ -262,4 +258,32 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
+  private static class AutoLoginAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+    private WeakReference<LoginActivity> activityReference;
+    private String phone;
+
+    // only retain a weak reference to the activity
+    AutoLoginAsyncTask(LoginActivity context) {
+      activityReference = new WeakReference<>(context);
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      LoginActivity activity = activityReference.get();
+      if (activity == null) {
+        return null;
+      }
+      phone = params[0];
+      return activity.httpHandler.getCheckToken(phone);
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      LoginActivity activity = activityReference.get();
+      System.out.println("login: " + phone + "state: " + responseState);
+      if (activity != null && responseState == HttpHandler.ResponseState.Valid) {
+        activity.goToMainPage(phone);
+      }
+    }
+  }
 }
