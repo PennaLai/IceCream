@@ -9,16 +9,21 @@ import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
+import com.example.icecream.utils.UserSettingHandler;
 import com.robertlevonyan.views.chip.Chip;
 import java.util.List;
 
 public class SubscribeActivity extends AppCompatActivity {
 
+  /**
+   * the select item to store the subscribe information.
+   */
   class SubscribeItem {
 
     /** item name. */
@@ -36,28 +41,30 @@ public class SubscribeActivity extends AppCompatActivity {
     /** I do not know. */
     TextView textView;
 
-    private SubscribeItem(String name, boolean hasSubscribe, String subScribeUrl,
+    /** initial to not select state. */
+    private SubscribeItem(String name, String subScribeUrl,
         FrameLayout chip, TextView textView) {
       this.name = name;
       this.subScribeUrl = subScribeUrl;
       this.chip = chip;
       this.textView = textView;
-      this.chip.setOnClickListener(v -> {
-        clickSubScribe();
-      });
-      this.setSubscribe(hasSubscribe);
+      this.chip.setOnClickListener(v -> clickSubScribe());
+      this.setSubscribe(false);
     }
 
+    /** when click the item, it should change the state and update ui. */
     private void clickSubScribe() {
       this.hasSubscribe = !this.hasSubscribe;
       updateUi();
     }
 
+    /** direct set the state and update ui. */
     private void setSubscribe(boolean dest) {
       this.hasSubscribe = dest;
       updateUi();
     }
 
+    /** update ui depend the state.*/
     private void updateUi() {
       if (this.hasSubscribe) {
         this.chip.setBackgroundDrawable(getResources().getDrawable(R.drawable.chip_selected));
@@ -68,13 +75,16 @@ public class SubscribeActivity extends AppCompatActivity {
       }
     }
 
+    /** return state. */
     private boolean isHasSubscribe() {
       return hasSubscribe;
     }
 
+    /** return the url. */
     private String getSubScribeUrl() {
       return subScribeUrl;
     }
+
   }
 
   /** the subscribe number. */
@@ -86,11 +96,8 @@ public class SubscribeActivity extends AppCompatActivity {
   /** select all chip. */
   private Chip all;
 
+  /** store the all subscribe list. */
   private List<RssFeed> allSubscribes;
-
-  private ImageView back;
-
-  private Button confirm;
 
 
   @Override
@@ -98,31 +105,36 @@ public class SubscribeActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.acitivity_subscribe);
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    // TODO: 从本地获取
-//    viewModel.getPersonalRssFeeds().observe(this, rssFeeds -> allSubscribes = rssFeeds);
-//
-//    for (RssFeed rssFeed: allSubscribes) {
-//      Log.i("SUBSCRIBE", "onCreate: "+rssFeed.getUrl());
-//    }
-    chips[0] = new SubscribeItem("36氪", false, "https://36kr.com/feed",
+
+    chips[0] = new SubscribeItem("36氪", "https://36kr.com/feed",
         findViewById(R.id.kr_chip), findViewById(R.id.kr_tv));
-    chips[1] = new SubscribeItem("爱范儿", true, "https://www.ifanr.com/feed",
+    chips[1] = new SubscribeItem("爱范儿", "https://www.ifanr.com/feed",
         findViewById(R.id.ifanr_chip), findViewById(R.id.ifanr_tv));
-    chips[2] = new SubscribeItem("威锋网", false, "https://www.feng.com/rss.xml",
+    chips[2] = new SubscribeItem("威锋网", "https://www.feng.com/rss.xml",
         findViewById(R.id.feng_chip), findViewById(R.id.feng_tv));
-    chips[3] = new SubscribeItem("极客公园", true, "https://www.geekpark.net/rss",
+    chips[3] = new SubscribeItem("极客公园", "https://www.geekpark.net/rss",
         findViewById(R.id.geekpark_chip), findViewById(R.id.geekpark_tv));
-    chips[4] = new SubscribeItem("知乎", false, "https://www.zhihu.com/rss",
+    chips[4] = new SubscribeItem("知乎",  "https://www.zhihu.com/rss",
         findViewById(R.id.zhihu_chip), findViewById(R.id.zhihu_tv));
 
+    viewModel
+        .getPersonalRssFeeds()
+        .observe(
+            this,
+            rssFeeds -> {
+              allSubscribes = rssFeeds;
+              for (RssFeed rssFeed : allSubscribes) {
+                if (rssFeed.getId() >= 0 && rssFeed.getId() < SUBSCRIBE_NUM) {
+                  chips[1].setSubscribe(true);  // TODO : 更改黄最新接口
+                }
+              }
+            });
+
     all = findViewById(R.id.all_chip);
-    back = findViewById(R.id.sub_iv_back);
-    confirm = findViewById(R.id.sub_btn_confirm);
+    ImageView back = findViewById(R.id.sub_iv_back);
+    Button confirm = findViewById(R.id.sub_btn_confirm);
 
-
-
-
-    all.setOnSelectClickListener((v, selected)-> {
+    all.setOnSelectClickListener((v, selected) -> {
       if (selected) {
         all.setChipText("全选");
         for (int i = 0; i < SUBSCRIBE_NUM; i++) {
@@ -136,9 +148,7 @@ public class SubscribeActivity extends AppCompatActivity {
       }
     });
 
-    back.setOnClickListener(v -> {
-      onBackPressed();
-    });
+    back.setOnClickListener(v -> onBackPressed());
 
     confirm.setOnClickListener(v -> {
       confirmSubscribe();
@@ -146,20 +156,26 @@ public class SubscribeActivity extends AppCompatActivity {
     });
   }
 
+  /**
+   * send the request to the server to subscribe the selected item.
+   */
   private void confirmSubscribe() {
-    // http
     HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-
+    UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
+    String phoneNumber;
+    phoneNumber = userSettingHandler.getLoginPhone();
+    if (phoneNumber == null) {
+      Toast.makeText(SubscribeActivity.this, "你还没有登录哦", Toast.LENGTH_LONG).show();
+      return;
+    }
     for (SubscribeItem element : chips) {
         if (element.isHasSubscribe()) {
-          resourceHandler.subscribe("18929357397",
+          resourceHandler.subscribe(phoneNumber,
               element.getSubScribeUrl());
         }
     }
   }
-
-
 
 }

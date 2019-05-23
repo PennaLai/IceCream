@@ -9,7 +9,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -130,9 +129,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     // load local feeds and articles
-    resourceHandler.loadRssFeeds(phone);
-    resourceHandler.loadArticles(phone);
-
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);
 //    header.setAccentColor(getResources().getColor(R.color.light_pink)); // 强调颜色
