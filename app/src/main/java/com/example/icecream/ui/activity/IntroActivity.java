@@ -36,7 +36,7 @@ public class IntroActivity extends AppCompatActivity {
   private void loadData() {
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel,getApplication());
     UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
     String phoneNumber = userSettingHandler.getLoginPhone();
     if (phoneNumber != null) {

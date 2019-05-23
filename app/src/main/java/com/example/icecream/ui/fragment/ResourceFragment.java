@@ -124,7 +124,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
     // load local feeds and articles
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);

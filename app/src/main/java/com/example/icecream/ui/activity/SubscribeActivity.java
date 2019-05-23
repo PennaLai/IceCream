@@ -162,7 +162,8 @@ public class SubscribeActivity extends AppCompatActivity {
   private void confirmSubscribe() {
     HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    ResourceHandler resourceHandler = ResourceHandler
+        .getInstance(httpHandler, viewModel, getApplication());
     UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
     String phoneNumber;
     phoneNumber = userSettingHandler.getLoginPhone();
