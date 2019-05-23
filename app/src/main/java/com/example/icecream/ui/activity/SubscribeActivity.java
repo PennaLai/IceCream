@@ -120,6 +120,4 @@ public class SubscribeActivity extends AppCompatActivity {
     });
   }
 
-
-
 }

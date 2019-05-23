@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:padding="20dp"
+  >
+
+  <TextView
+    android:id="@+id/paragraph_time"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fontFamily="sans-serif-condensed"
+    android:lineSpacingExtra="8sp"
+    android:text="@string/time"
+    android:textColor="@color/artist"
+    android:textSize="12sp"/>
+
+</LinearLayout>

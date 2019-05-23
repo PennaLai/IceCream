@@ -44,72 +44,121 @@
     app:layout_constraintTop_toTopOf="parent"
     app:layout_constraintVertical_bias="0.528"/>
 
-  <!--If there are paragraphs-->
-  <!--<android.support.v7.widget.RecyclerView-->
-    <!--android:layout_width="match_parent"-->
-    <!--android:layout_height="815dp"-->
-    <!--android:layout_marginTop="56dp"-->
-    <!--app:layout_constraintTop_toTopOf="parent"-->
-    <!--tools:layout_editor_absoluteX="0dp"/>-->
-  <ScrollView
-    android:id="@+id/sv_article_view"
+  <ListView
+    android:id="@+id/lv_article_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="60dp"
+    android:layout_marginTop="52dp"
     android:layout_marginBottom="40dp"
     app:layout_constraintBottom_toBottomOf="parent"
     app:layout_constraintTop_toTopOf="parent">
-    <android.support.constraint.ConstraintLayout
-      android:layout_width="match_parent"
-      android:layout_height="wrap_content"
-      android:padding="5dp">
-      <TextView
-        android:id="@+id/tv_read_title"
-        android:textStyle="bold"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:text="@string/title"
-        android:textColor="@color/black"
-        android:textSize="40sp"
-        android:typeface="sans"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+    <!--<TextView-->
+    <!--android:id="@+id/tv_read_title"-->
+    <!--android:textStyle="bold"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:text="@string/title"-->
+    <!--android:textColor="@color/black"-->
+    <!--android:textSize="40sp"-->
+    <!--android:typeface="sans"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"/>-->
 
-      <TextView
-        android:id="@+id/tv_publish_time"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginStart="8dp"
-        android:text="Steven Welch · 21 June, 2018"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_read_title"/>
+    <!--<TextView-->
+    <!--android:id="@+id/tv_publish_time"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_marginTop="8dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:text="Steven Welch · 21 June, 2018"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_read_title"/>-->
 
 
-      <TextView
-        android:id="@+id/tv_main_content"
-        android:layout_width="match_parent"
-        android:layout_height="291dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginStart="8dp"
-        android:layout_marginEnd="8dp"
-        android:lineSpacingExtra="10sp"
-        android:text="@string/content"
-        android:textColor="@color/black"
-        android:textSize="14sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tv_publish_time"/>
+    <!--<TextView-->
+    <!--android:id="@+id/tv_main_content"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="291dp"-->
+    <!--android:layout_marginTop="16dp"-->
+    <!--android:layout_marginBottom="16dp"-->
+    <!--android:layout_marginStart="8dp"-->
+    <!--android:layout_marginEnd="8dp"-->
+    <!--android:lineSpacingExtra="10sp"-->
+    <!--android:text="@string/content"-->
+    <!--android:textColor="@color/black"-->
+    <!--android:textSize="14sp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintHorizontal_bias="0.0"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toBottomOf="@+id/tv_publish_time"/>-->
 
-    </android.support.constraint.ConstraintLayout>
 
-  </ScrollView>
+  </ListView>
+
+  <!---->
+  <!--<ScrollView-->
+    <!--android:id="@+id/sv_article_view"-->
+    <!--android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent"-->
+    <!--android:layout_marginTop="60dp"-->
+    <!--android:layout_marginBottom="40dp"-->
+    <!--app:layout_constraintBottom_toBottomOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent">-->
+    <!--<android.support.constraint.ConstraintLayout-->
+      <!--android:layout_width="match_parent"-->
+      <!--android:layout_height="wrap_content"-->
+      <!--android:padding="5dp">-->
+      <!--<TextView-->
+        <!--android:id="@+id/tv_read_title"-->
+        <!--android:textStyle="bold"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:text="@string/title"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:textSize="40sp"-->
+        <!--android:typeface="sans"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"/>-->
+
+      <!--<TextView-->
+        <!--android:id="@+id/tv_publish_time"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:text="Steven Welch · 21 June, 2018"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/tv_read_title"/>-->
+
+
+      <!--<TextView-->
+        <!--android:id="@+id/tv_main_content"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="291dp"-->
+        <!--android:layout_marginTop="16dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--android:lineSpacingExtra="10sp"-->
+        <!--android:text="@string/content"-->
+        <!--android:textColor="@color/black"-->
+        <!--android:textSize="14sp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintHorizontal_bias="0.0"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toBottomOf="@+id/tv_publish_time"/>-->
+
+    <!--</android.support.constraint.ConstraintLayout>-->
+
+  <!--</ScrollView>-->
 
   <LinearLayout
     android:id="@+id/linearLayout"
@@ -118,14 +167,26 @@
     android:orientation="vertical"
     app:layout_constraintBottom_toBottomOf="parent">
 
-    <ProgressBar
+    <!--<ProgressBar-->
+      <!--android:id="@+id/read_pb_progress"-->
+      <!--style="?android:attr/progressBarStyleHorizontal"-->
+      <!--android:layout_width="match_parent"-->
+      <!--android:layout_height="1dp"-->
+      <!--android:progress="0"-->
+      <!--android:progressDrawable="@drawable/progress_bar_color"-->
+      <!--/>-->
+
+    <com.xw.repo.BubbleSeekBar
       android:id="@+id/read_pb_progress"
-      style="?android:attr/progressBarStyleHorizontal"
       android:layout_width="match_parent"
-      android:layout_height="1dp"
-      android:progress="0"
-      android:progressDrawable="@drawable/progress_bar_color"
-      />
+      android:layout_height="wrap_content"
+      app:bsb_auto_adjust_section_mark="true"
+      app:bsb_second_track_color="@color/light_blue"
+      app:bsb_section_count="5"
+      app:bsb_show_section_mark="false"
+      app:bsb_show_section_text="false"
+      app:bsb_show_thumb_text="false"
+      app:bsb_touch_to_seek="true"/>
 
     <android.support.constraint.ConstraintLayout
       android:layout_width="match_parent"
