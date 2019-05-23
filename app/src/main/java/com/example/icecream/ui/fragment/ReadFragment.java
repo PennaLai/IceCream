@@ -24,6 +24,10 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
@@ -56,6 +60,8 @@ public class ReadFragment extends Fragment {
   private List<Paragraph> paragraphList = new ArrayList<>();
 
   private ListView paragraphs;
+
+  private int numParagraph;
 
   private AVLoadingIndicatorView downloadIndicator;
 
@@ -164,7 +170,7 @@ public class ReadFragment extends Fragment {
     btNext.setOnClickListener(v -> startNextArticle());
     sbProgress.getConfigBuilder()
         .max(100)
-        .sectionCount(20)
+        .sectionCount(10)
         .build();
     // TODO: reuse the seekbar
 //        sbProgress.setProgress(new VolumeListener());
@@ -174,6 +180,25 @@ public class ReadFragment extends Fragment {
     ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
     paragraphs = (ListView) view.findViewById(R.id.lv_article_view);
     paragraphs.setAdapter(paragraphAdapter);
+    paragraphs.setOnItemSelectedListener(new OnItemSelectedListener() {
+      @Override
+      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+        scrollToParagraph(position);
+      }
+
+      @Override
+      public void onNothingSelected(AdapterView<?> parent) {
+
+      }
+    });
+    paragraphs.setOnItemLongClickListener((parent, view12, position, id) -> {
+      scrollToParagraph(position);
+      return false;
+    });
+    paragraphs.setOnItemClickListener((parent, view1, position, id) -> {
+        scrollToParagraph(position);
+    });
+
 
     Activity activity = getActivity();
     if (activity != null) {
@@ -201,6 +226,10 @@ public class ReadFragment extends Fragment {
     } catch (NullPointerException e) {
       // do nothing
     }
+  }
+
+  private void scrollToParagraph(int position){
+    paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
   }
 
   /**
