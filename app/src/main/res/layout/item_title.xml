@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+  android:orientation="vertical"
+  android:layout_width="match_parent"
+  android:layout_height="wrap_content"
+  android:descendantFocusability="blocksDescendants"
+  android:padding="20dp"
+  >
+
+  <TextView
+    android:id="@+id/paragraph_title"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fontFamily="sans-serif-black"
+    android:lineSpacingExtra="8sp"
+    android:text="@string/title"
+    android:textColor="@color/black"
+    android:textSize="24sp"/>
+
+</LinearLayout>
