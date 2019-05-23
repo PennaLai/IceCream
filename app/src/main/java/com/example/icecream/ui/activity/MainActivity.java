@@ -53,9 +53,9 @@ public class MainActivity extends AppCompatActivity
     ResourceFragment.MusicConnector {
 
   private static final int POS_DASHBOARD = 0;
-  private static final int POS_ACCOUNT = 1;
-  private static final int POS_MESSAGES = 2;
-  private static final int POS_CART = 3;
+  private static final int POS_FEED = 1;
+  private static final int POS_STAR = 2;
+  private static final int POS_SETTING = 3;
   private static final int POS_LOGOUT = 5;
   private static final String TAG = "MainActivity";
 
@@ -71,7 +71,6 @@ public class MainActivity extends AppCompatActivity
 
   final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
 
-  private String phone;
 
 
   @Override
@@ -79,8 +78,6 @@ public class MainActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-    // get phone from login
-    phone = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
     // 定义数据
 
@@ -124,9 +121,9 @@ public class MainActivity extends AppCompatActivity
         new DrawerAdapter(
             Arrays.asList(
                 createItemFor(POS_DASHBOARD).setChecked(true),
-                createItemFor(POS_ACCOUNT),
-                createItemFor(POS_MESSAGES),
-                createItemFor(POS_CART),
+                createItemFor(POS_FEED),
+                createItemFor(POS_STAR),
+                createItemFor(POS_SETTING),
                 new SpaceItem(48),
                 createItemFor(POS_LOGOUT)));
     adapter.setListener(this);
@@ -171,9 +168,14 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
-      login();
+//      login();
+      goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
 //      finish();
+    } else if (position == POS_FEED) {
+//      feed();
+      goToActivity(SubscribeActivity.class);
+      adapter.setSelected(POS_DASHBOARD);
     }
     slidingRootNav.closeMenu();
 //    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
@@ -182,12 +184,24 @@ public class MainActivity extends AppCompatActivity
     Log.i("Draw", "" + position);
   }
 
-  private void login() {
+  private void goToActivity(Class destActivity){
     final Context context = this;
-    final Class destActivity = LoginActivity.class;
     final Intent registerIntent = new Intent(context, destActivity);
     startActivity(registerIntent);
   }
+
+//  private void login() {
+//    final Context context = this;
+//    final Class destActivity = LoginActivity.class;
+//    final Intent registerIntent = new Intent(context, destActivity);
+//    startActivity(registerIntent);
+//  }
+//
+//  private void feed() {
+//    final Context context = this;
+//    final Class destActivity = SubscribeActivity.class;
+//    final Intent registerIntent = new Intent(context, destActivity);
+//    startActivity(registerIntent);  }
 
   /**
    * This method is to switch fragment according to the selected draw item.

@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">IceCream</string>
-    <string name="account_balance">Account Balance</string>
-    <string name="balance_currency">$</string>
-    <string name="balance_amount">524.99</string>
+
+    <string name="subscribe">订阅</string>
+
+    <string name="kr">36氪</string>
+    <string name="zhihu">知乎</string>
+    <string name="geekpark">极客公园</string>
+    <string name="ifanr">爱范儿</string>
+    <string name="feng">威锋</string>
 
     <string name="title">What To Do: Divorced Parent Enrolling A Child At School</string>
 

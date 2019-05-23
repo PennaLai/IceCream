@@ -41,6 +41,7 @@
     <activity
       android:name=".ui.activity.SearchActivity"
       android:launchMode="singleTop" />
+    <activity android:name=".ui.activity.SubscribeActivity"></activity>
 
     <receiver
       android:name=".ui.fragment.ReadFragment$NotificationClickReceiver"
