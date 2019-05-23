@@ -36,6 +36,9 @@ public class LoginActivity extends AppCompatActivity {
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
+//    if (true) {
+//      goToMainPage();
+//    }
     setContentView(R.layout.activity_login);
 
     phoneEdit = findViewById(R.id.phone);
@@ -156,13 +159,12 @@ public class LoginActivity extends AppCompatActivity {
   /**
    * Jump to the MainPage.
    */
-  public void goToMainPage(String phone) {
+  public void goToMainPage() {
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
     // need to clear current activity stack.
     Intent intent = new Intent(context, destinationActivity)
         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    intent.putExtra(Intent.EXTRA_TEXT, phone);
     startActivity(intent);
   }
 
@@ -253,7 +255,7 @@ public class LoginActivity extends AppCompatActivity {
           break;
         case Valid:
           activity.showToastMessage("登录成功");
-          activity.goToMainPage(phoneNumber);
+          activity.goToMainPage();
           break;
         default:
           activity.showToastMessage("登录失败，请稍后重试");

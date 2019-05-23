@@ -133,7 +133,7 @@ public class ReadFragment extends Fragment {
             int max = readFragment.sbProgress.getMax();
             int position = (int) (max * progress);
             readFragment.sbProgress.setProgress(position);
-            readFragment.articleScrollView.smoothScrollTo(0, position); // 测试
+            //readFragment.articleScrollView.smoothScrollTo(0, position);
             break;
           default:
             break;
