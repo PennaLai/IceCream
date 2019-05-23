@@ -201,7 +201,6 @@ public class AppViewModel extends AndroidViewModel {
    * @param articles article list.
    */
   public void insertArticles(List<Article> articles) {
-    Log.i(TAG, articles.get(0).getTitle());
     repository.insertArticle(articles.toArray(new Article[0]));
   }
 
