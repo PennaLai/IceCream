@@ -48,7 +48,9 @@ public class LoginActivity extends AppCompatActivity {
 
     httpHandler = HttpHandler.getInstance(getApplication());
     userSettingHandler = UserSettingHandler.getInstance(getApplication());
-    autoLogin();
+    if (UserSettingHandler.autoLoginFlag){
+      autoLogin();
+    }
   }
 
   private void autoLogin() {

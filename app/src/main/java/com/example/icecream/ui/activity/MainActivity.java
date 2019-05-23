@@ -33,6 +33,7 @@ import com.example.icecream.ui.component.menu.DrawerItem;
 import com.example.icecream.ui.component.menu.SimpleItem;
 import com.example.icecream.ui.component.menu.SpaceItem;
 
+import com.example.icecream.utils.UserSettingHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
 import java.util.Arrays;
@@ -169,6 +170,7 @@ public class MainActivity extends AppCompatActivity
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
 //      login();
+      UserSettingHandler.autoLoginFlag = false;
       goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
 //      finish();

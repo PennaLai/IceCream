@@ -23,6 +23,7 @@ import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
+import com.example.icecream.utils.UserSettingHandler;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -121,8 +122,12 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
+    // get login phone
+    String phone = UserSettingHandler.getInstance(getActivity().getApplication()).getLoginPhone();
+
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    resourceHandler.loadArticles("18929357397");
+    // load local articles
+    resourceHandler.loadArticles(phone);
 
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);

@@ -60,6 +60,12 @@ public class HttpHandler {
   private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel";
 
+  /**
+   * Record urls.
+   */
+  private static final String RECORD_URL = MAIN_URL + "list/record/";
+  private static final String RECORD_INFO_URL = MAIN_URL + "list/recordinfo/";
+
   private static final String MESSAGE = "message";
   private static final String MESSAGE_CODE = "msgCode";
   private static final String MESSAGE_DATA = "data";
@@ -674,4 +680,12 @@ public class HttpHandler {
     }
     return responseState;
   }
+
+  public String getUpdateRecord(@NonNull final Long id) {
+    String url = RECORD_URL + id;
+    String responseString = getHttpResponseString(url);
+    return null;
+  }
+
+
 }
