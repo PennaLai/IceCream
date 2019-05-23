@@ -683,9 +683,12 @@ public class HttpHandler {
 
   public String getUpdateRecord(@NonNull final Long id) {
     String url = RECORD_URL + id;
-    String responseString = getHttpResponseString(url);
-    return null;
+    return getHttpResponseString(url);
   }
 
+  public String getUpdateRecordInfo(@NonNull final Long id) {
+    String url = RECORD_INFO_URL + id;
+    return getHttpResponseString(url);
+  }
 
 }

@@ -126,7 +126,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     String phone = UserSettingHandler.getInstance(getActivity().getApplication()).getLoginPhone();
 
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    // load local articles
+    // load local feeds and articles
+    resourceHandler.loadRssFeeds(phone);
     resourceHandler.loadArticles(phone);
 
 

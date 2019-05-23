@@ -229,7 +229,8 @@ public class Repository {
     new InsertUserRssFeedAsyncTask(
         userRssFeedJoinDao,
         userDao,
-        rssFeedDao).execute(phone, url);
+        rssFeedDao,
+        this).execute(phone, url);
   }
 
   /**
@@ -259,12 +260,13 @@ public class Repository {
   /**
    * Find all the RSS feeds of a user.
    *
-   * @param user user of interest.
+   * @param phone user phone.
    */
-  public void findRssFeedsByUser(User user) {
-    PersonalFeedsGetAsyncTask task = new PersonalFeedsGetAsyncTask(userRssFeedJoinDao);
+  public void findRssFeedsByPhone(String phone) {
+    PersonalFeedsGetAsyncTask task = new PersonalFeedsGetAsyncTask(
+        userDao, userRssFeedJoinDao);
     task.delegate = this;
-    task.execute(user);
+    task.execute(phone);
   }
 
 
@@ -575,17 +577,24 @@ public class Repository {
     }
   }
 
-  private static class PersonalFeedsGetAsyncTask extends AsyncTask<User, Void, List<RssFeed>> {
+  private static class PersonalFeedsGetAsyncTask extends AsyncTask<String, Void, List<RssFeed>> {
+    private UserDao userDao;
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private Repository delegate = null;
 
-    PersonalFeedsGetAsyncTask(UserRssFeedJoinDao dao) {
+    PersonalFeedsGetAsyncTask(UserDao userDao, UserRssFeedJoinDao dao) {
+      this.userDao = userDao;
       userRssFeedJoinDao = dao;
     }
 
     @Override
-    protected List<RssFeed> doInBackground(final User... params) {
-      return userRssFeedJoinDao.getRssFeedsByUserId(params[0].getId());
+    protected List<RssFeed> doInBackground(final String... params) {
+      User user = userDao.getUserByPhone(params[0]);
+      List<RssFeed> result = null;
+      if (user != null) {
+        result = userRssFeedJoinDao.getRssFeedsByUserId(user.getId());
+      }
+      return result;
     }
 
 
@@ -663,25 +672,34 @@ public class Repository {
     }
   }
 
-  private static class InsertUserRssFeedAsyncTask extends AsyncTask<String, Void, Void> {
+  private static class InsertUserRssFeedAsyncTask extends AsyncTask<String, Void, List<RssFeed>> {
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private UserDao userDao;
     private RssFeedDao rssFeedDao;
+    private Repository delegate;
 
     InsertUserRssFeedAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
                                UserDao userDao,
-                               RssFeedDao rssFeedDao) {
+                               RssFeedDao rssFeedDao,
+                               Repository repository) {
       this.userRssFeedJoinDao = userRssFeedJoinDao;
       this.userDao = userDao;
       this.rssFeedDao = rssFeedDao;
+      delegate = repository;
     }
 
     @Override
-    protected Void doInBackground(final String... params) {
+    protected List<RssFeed> doInBackground(final String... params) {
+      Long userId = userDao.getUserByPhone(params[0]).getId();
       userRssFeedJoinDao.insert(new UserRssFeedJoin(
-          userDao.getUserByPhone(params[0]).getId(),
+          userId,
           rssFeedDao.getRssFeedByUrl(params[1]).getId()));
-      return null;
+      return userRssFeedJoinDao.getRssFeedsByUserId(userId);
+    }
+
+    @Override
+    protected void onPostExecute(List<RssFeed> result) {
+      delegate.setPersonalRssFeeds(result);
     }
   }
 

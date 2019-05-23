@@ -105,8 +105,13 @@ public class ResourceHandler {
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
-  public void loadRssFeeds() {
-
+  /**
+   * Load the RSS feeds.
+   *
+   * @param phone
+   */
+  public void loadRssFeeds(String phone) {
+    viewModel.loadRssFeedsByPhone(phone);
   }
 
   /**

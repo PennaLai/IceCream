@@ -172,6 +172,11 @@ public class AppViewModel extends AndroidViewModel {
 
   }
 
+  public void loadRssFeedsByPhone(String phone) {
+    repository.findRssFeedsByPhone(phone);
+  }
+
+
   /**
    * Load the articles without network.
    *
