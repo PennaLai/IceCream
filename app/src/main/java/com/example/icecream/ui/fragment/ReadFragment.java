@@ -24,12 +24,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.RemoteViews;
 import android.widget.ScrollView;
@@ -39,10 +34,7 @@ import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
 import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
-import com.example.icecream.ui.component.paragraph.Paragraph;
-import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
 import com.wang.avi.AVLoadingIndicatorView;
-import com.xw.repo.BubbleSeekBar;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,14 +49,18 @@ public class ReadFragment extends Fragment {
   /** all the music that waiting for play. */
   private List<String> waitingMusicList = new ArrayList<>();
 
-  private List<Paragraph> paragraphList = new ArrayList<>();
+  /** article title. */
+  private TextView articleTitle;
 
-  private ListView paragraphs;
+  /** article publish time. */
+  private TextView articleTime;
 
-  private int numParagraph;
+  /** article content. */
+  private TextView articleContent;
 
   private AVLoadingIndicatorView downloadIndicator;
 
+  private ScrollView articleScrollView;
 
   /** to control the progress update thread exit. */
   boolean needUpdate;
@@ -81,8 +77,7 @@ public class ReadFragment extends Fragment {
   /** to update the ui progress thread. */
   Thread progressUpdateThread;
 
-//  private ProgressBar sbProgress;
-  private BubbleSeekBar sbProgress;
+  private ProgressBar sbProgress;
 
   private NotificationManager musicBarManage;
 
@@ -99,7 +94,7 @@ public class ReadFragment extends Fragment {
   /** record play music index right now. */
   private int playIndex = 0;
 
-//  private TextView volumeText;
+  private TextView volumeText;
 
   private ImageView iVBack;
 
@@ -135,7 +130,7 @@ public class ReadFragment extends Fragment {
         switch (msg.what) {
           case 0:
             double progress = msg.getData().getDouble("progress");
-            int max = 100;
+            int max = readFragment.sbProgress.getMax();
             int position = (int) (max * progress);
             readFragment.sbProgress.setProgress(position);
             //readFragment.articleScrollView.smoothScrollTo(0, position);
@@ -147,59 +142,24 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  private void initParagraphs(){
-    paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
-    paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
-    // TODO: Initial the paragraphs
-    for (int i = 0; i < 10; i++) {
-      paragraphList.add(new Paragraph(getResources().getString(R.string.content),1));
-    }
-  }
-
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
     iVBack = view.findViewById(R.id.read_iv_back);
     iVBack.setOnClickListener(v -> backToResource());
+    articleTitle = view.findViewById(R.id.tv_read_title);
+    articleTime = view.findViewById(R.id.tv_publish_time);
+    articleContent = view.findViewById(R.id.tv_main_content);
+    articleScrollView = view.findViewById(R.id.sv_article_view);
     downloadIndicator = view.findViewById(R.id.ld_download);
     ImageView btPlay = view.findViewById(R.id.read_iv_play);
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     sbProgress = view.findViewById(R.id.read_pb_progress);
     btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> startNextArticle());
-    sbProgress.getConfigBuilder()
-        .max(100)
-        .sectionCount(10)
-        .build();
-    // TODO: reuse the seekbar
-//        sbProgress.setProgress(new VolumeListener());
-//         bind speaker service
-
-    initParagraphs();
-    ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
-    paragraphs = (ListView) view.findViewById(R.id.lv_article_view);
-    paragraphs.setAdapter(paragraphAdapter);
-    paragraphs.setOnItemSelectedListener(new OnItemSelectedListener() {
-      @Override
-      public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-        scrollToParagraph(position);
-      }
-
-      @Override
-      public void onNothingSelected(AdapterView<?> parent) {
-
-      }
-    });
-    paragraphs.setOnItemLongClickListener((parent, view12, position, id) -> {
-      scrollToParagraph(position);
-      return false;
-    });
-    paragraphs.setOnItemClickListener((parent, view1, position, id) -> {
-        scrollToParagraph(position);
-    });
-
-
+    //    sbProgress.setp(new VolumeListener());
+    //     bind speaker service
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(
@@ -226,10 +186,6 @@ public class ReadFragment extends Fragment {
     } catch (NullPointerException e) {
       // do nothing
     }
-  }
-
-  private void scrollToParagraph(int position){
-    paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
   }
 
   /**
@@ -369,6 +325,9 @@ public class ReadFragment extends Fragment {
     if (article == null) return;
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
+    articleTitle.setText(article.getTitle());
+    articleTime.setText(article.getPublishTime());
+    articleContent.setText(article.getDescription());
     playSongCount++;
   }
 
@@ -412,26 +371,26 @@ public class ReadFragment extends Fragment {
     if (playIndex < 0) playIndex = waitingMusicList.size() - 1;
   }
   //
-//    /**
-//     * listener for the progress bar.
-//     */
-//    private class VolumeListener implements BubbleSeekBar {
-//
-//      public void onProgressChanged(SeekBar seekBar, int progress,
-//          boolean fromUser) {
-//        // Log the progress
-//        //set textView's text
-//        volumeText.setText(String.valueOf(progress));
-//      }
-//
-//      public void onStartTrackingTouch(SeekBar seekBar) {}
-//
-//      public void onStopTrackingTouch(SeekBar seekBar) {
-//        int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
-//        speakerService.seeTo(progress);
-//      }
-//
-//    }
+  //  /**
+  //   * listener for the progress bar.
+  //   */
+  //  private class VolumeListener implements SeekBar.OnSeekBarChangeListener {
+  //
+  //    public void onProgressChanged(SeekBar seekBar, int progress,
+  //        boolean fromUser) {
+  //      // Log the progress
+  //      //set textView's text
+  //      volumeText.setText(String.valueOf(progress));
+  //    }
+  //
+  //    public void onStartTrackingTouch(SeekBar seekBar) {}
+  //
+  //    public void onStopTrackingTouch(SeekBar seekBar) {
+  //      int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
+  //      speakerService.seeTo(progress);
+  //    }
+  //
+  //  }
 
   /** Use to connected and disconnected the service. */
   private ServiceConnection speakConnection =
