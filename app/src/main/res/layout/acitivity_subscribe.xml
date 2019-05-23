@@ -69,38 +69,76 @@
       android:layout_marginTop="20dp"
       android:orientation="horizontal">
 
-      <com.robertlevonyan.views.chip.Chip
+      <FrameLayout
         android:id="@+id/kr_chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:mcv_chipIcon="@drawable/kr_logo"
-        app:mcv_chipText="@string/kr"
-        app:mcv_hasIcon="true"
-        app:mcv_closable="true"
-        />
+        android:background="@drawable/chip_unselected"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/kr_logo"/>
+        <TextView
+          android:id="@+id/kr_tv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="35dp"
+          android:layout_marginRight="10dp"
+          android:layout_gravity="center_vertical"
+          android:text="@string/kr"
+          android:textColor="@color/colorChipText"
+          android:textSize="12sp"/>
+      </FrameLayout>
 
-      <com.robertlevonyan.views.chip.Chip
+
+      <FrameLayout
         android:id="@+id/ifanr_chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:mcv_chipIcon="@drawable/ifanr_logo"
-        app:mcv_chipText="@string/ifanr"
-        app:mcv_hasIcon="true"
-        app:mcv_closable="true"
-        />
+        android:background="@drawable/chip_unselected"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/ifanr_logo"/>
+        <TextView
+          android:id="@+id/ifanr_tv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="35dp"
+          android:layout_marginRight="10dp"
+          android:layout_gravity="center_vertical"
+          android:text="@string/ifanr"
+          android:textColor="@color/colorChipText"
+          android:textSize="12sp"/>
+      </FrameLayout>
 
-      <com.robertlevonyan.views.chip.Chip
+      <FrameLayout
         android:id="@+id/feng_chip"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        app:mcv_chipIcon="@drawable/feng_logo"
-        app:mcv_chipText="@string/feng"
-        app:mcv_hasIcon="true"
-        app:mcv_closable="true"
-        />
+        android:background="@drawable/chip_unselected"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/feng_logo"/>
+        <TextView
+          android:id="@+id/feng_tv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="35dp"
+          android:layout_marginRight="10dp"
+          android:layout_gravity="center_vertical"
+          android:text="@string/feng"
+          android:textColor="@color/colorChipText"
+          android:textSize="12sp"/>
+      </FrameLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -140,7 +178,7 @@
         <de.hdodenhof.circleimageview.CircleImageView
           android:layout_width="30dp"
           android:layout_height="30dp"
-          android:src="@drawable/geekpark_logo"/>
+          android:src="@drawable/zhihu_logo"/>
         <TextView
           android:id="@+id/zhihu_tv"
           android:layout_width="wrap_content"
@@ -148,11 +186,11 @@
           android:layout_marginLeft="35dp"
           android:layout_marginRight="10dp"
           android:layout_gravity="center_vertical"
-          android:text="@string/geekpark"
+          android:text="@string/zhihu"
           android:textColor="@color/colorChipText"
           android:textSize="12sp"/>
       </FrameLayout>
-      
+
     </LinearLayout>
 
 
