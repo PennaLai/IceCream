@@ -54,5 +54,6 @@ public class UserSettingHandler {
     SharedPreferences.Editor editor = settings.edit();
     editor.putString(CURRENT_LOGIN_PHONE, phone);
     editor.apply();
+    loginPhone = phone;
   }
 }
