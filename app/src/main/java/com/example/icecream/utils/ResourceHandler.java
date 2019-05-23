@@ -1,10 +1,12 @@
 package com.example.icecream.utils;
 
+import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.icecream.database.entity.RssFeed;
 
+import java.io.InputStream;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -20,6 +22,7 @@ public class ResourceHandler {
 
   private AppViewModel viewModel;
   private HttpHandler httpHandler;
+  private Application application;
 
   /**
    * Constructor.
@@ -27,17 +30,21 @@ public class ResourceHandler {
    * @param httpHandler http handler.
    * @param viewModel   view model.
    */
-  private ResourceHandler(HttpHandler httpHandler, AppViewModel viewModel) {
+  private ResourceHandler(HttpHandler httpHandler,
+                          AppViewModel viewModel,
+                          Application application) {
     this.viewModel = viewModel;
     this.httpHandler = httpHandler;
+    this.application = application;
   }
 
   public static ResourceHandler getInstance(final HttpHandler httpHandler,
-                                            final AppViewModel viewModel) {
+                                            final AppViewModel viewModel,
+                                            final Application application) {
     if (instance == null) {
       synchronized (ResourceHandler.class) {
         if (instance == null) {
-          instance = new ResourceHandler(httpHandler, viewModel);
+          instance = new ResourceHandler(httpHandler, viewModel, application);
         }
       }
     }
@@ -54,9 +61,29 @@ public class ResourceHandler {
   /**
    * Updates the newest articles.
    */
-  public void updateNewArticles() {
+  private void updateNewArticles() {
 
   }
+
+  /**
+   * Download speech for article id.
+   *
+   * @param id article id.
+   */
+  public void downloadSpeech(final Long id) {
+    new UpdateSpeechAsyncTask(this).execute(id);
+  }
+
+  /**
+   * Gets the speech url by article id.
+   *
+   * @param id article id.
+   * @return url.
+   */
+  public String getSpeechFileUrl(final Long id) {
+    return application.getFilesDir() + "speech/" + id + ".mp3";
+  }
+
 
   /**
    * Update personal resources.
@@ -105,8 +132,13 @@ public class ResourceHandler {
     new UnsubscribeAsyncTask(this).execute(phoneNumber, url);
   }
 
-  public void loadRssFeeds() {
-
+  /**
+   * Load the RSS feeds.
+   *
+   * @param phone
+   */
+  public void loadRssFeeds(String phone) {
+    viewModel.loadRssFeedsByPhone(phone);
   }
 
   /**
@@ -348,8 +380,20 @@ public class ResourceHandler {
         default:
           break;
       }
-
     }
   }
 
+  private static class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, Void> {
+    private HttpHandler httpHandler;
+
+    UpdateSpeechAsyncTask(ResourceHandler resourceHandler) {
+      httpHandler = resourceHandler.httpHandler;
+    }
+
+    @Override
+    protected Void doInBackground(Long... params) {
+      httpHandler.getUpdateSpeech(params[0]);
+      return null;
+    }
+  }
 }

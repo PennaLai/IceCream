@@ -61,33 +61,6 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
-   * Get all the feeds that currently have been stored.
-   *
-   * @return List of RSS feeds.
-   */
-  public LiveData<List<RssFeed>> getAllRssFeeds() {
-    return allRssFeeds;
-  }
-
-  /**
-   * Get all the RSS feeds of a user.
-   *
-   * @return the RSS feed list of the user.
-   */
-  public LiveData<List<RssFeed>> getRssFeedsOfUser() {
-    return repository.getPersonalRssFeeds();
-  }
-
-  /**
-   * Get all the articles of a user.
-   *
-   * @return the article list of the user.
-   */
-  public LiveData<List<Article>> getArticlesOfUser() {
-    return repository.getPersonalArticles();
-  }
-
-  /**
    * Execute insertion for user(s) to database.
    *
    * @param user input user(s).
@@ -199,6 +172,11 @@ public class AppViewModel extends AndroidViewModel {
 
   }
 
+  public void loadRssFeedsByPhone(String phone) {
+    repository.findRssFeedsByPhone(phone);
+  }
+
+
   /**
    * Load the articles without network.
    *
@@ -223,7 +201,6 @@ public class AppViewModel extends AndroidViewModel {
    * @param articles article list.
    */
   public void insertArticles(List<Article> articles) {
-    Log.i(TAG, articles.get(0).getTitle());
     repository.insertArticle(articles.toArray(new Article[0]));
   }
 

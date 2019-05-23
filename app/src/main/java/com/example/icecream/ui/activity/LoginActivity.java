@@ -39,16 +39,19 @@ public class LoginActivity extends AppCompatActivity {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_login);
 
+    // if the user has already login and the token is not expired, no need to login
+    userSettingHandler = UserSettingHandler.getInstance(getApplication());
+    String phoneNumber = userSettingHandler.getLoginPhone();
+    if (phoneNumber != null) {
+      goToMainPage();
+    }
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
-//    FancyButton login = findViewById(R.id.bt_login);
-//    TextView signUp = findViewById(R.id.signup);
-//    TextView skip = findViewById(R.id.tv_skip);
-//    TextView forget = findViewById(R.id.tv_forget);
-
     httpHandler = HttpHandler.getInstance(getApplication());
-    userSettingHandler = UserSettingHandler.getInstance(getApplication());
-    autoLogin();
+
+//    if (UserSettingHandler.autoLoginFlag) {
+//      autoLogin();
+//    }
   }
 
   private void autoLogin() {
@@ -67,11 +70,8 @@ public class LoginActivity extends AppCompatActivity {
       Toast.makeText(LoginActivity.this, "不能为空", Toast.LENGTH_LONG).show();
       return;
     }
-//    final String phoneNumber = phoneEditText.toString(); TODO: change it back
-    // test
-    final String phoneNumber = "18929357397";
-    final String password = "123456";
-//    final String password = passwordEditText.toString();
+    final String phoneNumber = phoneEditText.toString();
+    final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
       new LoginAsyncTask(this).execute(phoneNumber, password);
     }
@@ -161,13 +161,12 @@ public class LoginActivity extends AppCompatActivity {
   /**
    * Jump to the MainPage.
    */
-  public void goToMainPage(String phone) {
+  public void goToMainPage() {
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
     // need to clear current activity stack.
     Intent intent = new Intent(context, destinationActivity)
         .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-    intent.putExtra(Intent.EXTRA_TEXT, phone);
     startActivity(intent);
   }
 
@@ -249,7 +248,7 @@ public class LoginActivity extends AppCompatActivity {
           activity.showToastMessage("登录成功");
           // store phone
           activity.userSettingHandler.setLoginPhone(phoneNumber);
-          activity.goToMainPage(phoneNumber);
+          activity.goToMainPage();
           break;
         default:
           activity.showToastMessage("登录失败，请稍后重试");
@@ -282,7 +281,7 @@ public class LoginActivity extends AppCompatActivity {
       LoginActivity activity = activityReference.get();
       System.out.println("login: " + phone + "state: " + responseState);
       if (activity != null && responseState == HttpHandler.ResponseState.Valid) {
-        activity.goToMainPage(phone);
+        activity.goToMainPage();
       }
     }
   }

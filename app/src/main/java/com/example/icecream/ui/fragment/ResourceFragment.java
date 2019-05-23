@@ -22,7 +22,9 @@ import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.MyLock;
 import com.example.icecream.utils.ResourceHandler;
+import com.example.icecream.utils.UserSettingHandler;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.header.ClassicsHeader;
 import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
@@ -45,6 +47,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   private RecyclerView mArticleList;
   private Context mainAppContext;
   private Toast mToast;
+
+  private UserSettingHandler userSettingHandler;
 
 
   /**
@@ -95,7 +99,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     ImageView imageView = view.findViewById(R.id.action_search);
     imageView.setOnClickListener(v -> goToSearch());
 
-
     /*
      * Generate article list using recycleView.
      */
@@ -121,9 +124,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    resourceHandler.loadArticles("18929357397");
-
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
+    // load local feeds and articles
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);
 //    header.setAccentColor(getResources().getColor(R.color.light_pink)); // 强调颜色
@@ -139,6 +141,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
+
+    // 用户设置读取
+    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+
     return view;
   }
 
@@ -158,13 +164,9 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * To refresh resource.
    */
   private void refreshResource() {
-    resourceHandler.updateAllRssFeeds();
-    resourceHandler.unsubscribe("18929357397", "https://www.zhihu.com/rss");
-    resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
-    resourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
-    resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-    resourceHandler.updatePersonalRssFeeds("18929357397");
-    resourceHandler.updatePersonalArticles("18929357397");
+    String phoneNumber = userSettingHandler.getLoginPhone();
+    resourceHandler.updatePersonalRssFeeds(phoneNumber);  // do not delete
+    resourceHandler.updatePersonalArticles(phoneNumber);
   }
 
 
