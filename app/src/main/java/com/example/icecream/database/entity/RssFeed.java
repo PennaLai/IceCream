@@ -14,7 +14,7 @@ import android.support.annotation.NonNull;
 @Entity(indices = {@Index(value = "url", unique = true)})
 public class RssFeed {
 
-  @PrimaryKey(autoGenerate = true)
+  @PrimaryKey
   private Long id;
 
   @NonNull
@@ -31,17 +31,19 @@ public class RssFeed {
    * @param channelName the channel name.
    * @param category    the category.
    */
-  public RssFeed(@NonNull String url, String channelName, String category) {
+  public RssFeed(@NonNull Long id, @NonNull String url, String channelName, String category) {
+    this.id = id;
     this.url = url;
     this.channelName = channelName;
     this.category = category;
   }
 
+  @NonNull
   public Long getId() {
     return id;
   }
 
-  public void setId(Long id) {
+  public void setId(@NonNull Long id) {
     this.id = id;
   }
 

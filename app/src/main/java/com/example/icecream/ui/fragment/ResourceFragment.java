@@ -128,7 +128,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // get login phone
     String phone = UserSettingHandler.getInstance(getActivity().getApplication()).getLoginPhone();
 
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
     // load local feeds and articles
     resourceHandler.loadRssFeeds(phone);
     resourceHandler.loadArticles(phone);
@@ -172,6 +172,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    */
   private void refreshResource() {
     String phoneNumber = userSettingHandler.getLoginPhone();
+    resourceHandler.updatePersonalRssFeeds(phoneNumber);
     resourceHandler.updatePersonalArticles(phoneNumber);
   }
 

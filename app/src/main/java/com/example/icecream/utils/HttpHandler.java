@@ -9,6 +9,11 @@ import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -18,10 +23,8 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import okio.BufferedSink;
+import okio.Okio;
 
 /**
  * A util class to handle the http request and response.<br/>
@@ -63,8 +66,8 @@ public class HttpHandler {
   /**
    * Record urls.
    */
-  private static final String RECORD_URL = MAIN_URL + "list/record/";
-  private static final String RECORD_INFO_URL = MAIN_URL + "list/recordinfo/";
+  private static final String SPEECH_URL = MAIN_URL + "list/record_mp3/";
+  private static final String SPEECH_INFO_URL = MAIN_URL + "list/record_info/";
 
   private static final String MESSAGE = "message";
   private static final String MESSAGE_CODE = "msgCode";
@@ -77,6 +80,7 @@ public class HttpHandler {
    * We mainly use synchronous method of repository in http handler.
    */
   private Repository repository;
+  private Application application;
 
   private List<RssFeed> rssFeeds = new ArrayList<>();
   private List<Article> articles = new ArrayList<>();
@@ -88,6 +92,7 @@ public class HttpHandler {
    * @param application This app.
    */
   private HttpHandler(final Application application) {
+    this.application = application;
     repository = Repository.getInstance(application);
   }
 
@@ -185,8 +190,9 @@ public class HttpHandler {
     try {
       Response response = okHttpClient.newCall(request).execute();
       if (response.isSuccessful()) {
-        assert response.body() != null;
-        result = response.body().string();
+        if (response.body() != null) {
+          result = response.body().string();
+        }
       }
     } catch (IOException e) {
       Log.e(TAG, "getHttpResponseString: ", e);
@@ -211,13 +217,43 @@ public class HttpHandler {
     try {
       Response response = okHttpClient.newCall(request).execute();
       if (response.isSuccessful()) {
-        assert response.body() != null;
-        result = response.body().string();
+        if (response.body() != null) {
+          result = response.body().string();
+        }
       }
     } catch (IOException e) {
       Log.e(TAG, "postHttpResponseString: ", e);
     }
     return result;
+  }
+
+  /**
+   * Sends the get request to download file to cache.
+   *
+   * @param url      url.
+   * @param fileName download file name.
+   */
+  private void getHttpResponseFile(final String url, String fileName) {
+    Request request = new Request.Builder().url(url).build();
+    try {
+      Response response = okHttpClient.newCall(request).execute();
+      if (response.body() != null) {
+        File file = new File(application.getFilesDir(), fileName);
+        if (!file.exists()) {
+          if (file.mkdirs() && file.createNewFile()) {
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            sink.writeAll(response.body().source());
+            sink.close();
+          }
+        } else {
+          BufferedSink sink = Okio.buffer(Okio.sink(file));
+          sink.writeAll(response.body().source());
+          sink.close();
+        }
+      }
+    } catch (IOException e) {
+      e.printStackTrace();
+    }
   }
 
   /**
@@ -425,6 +461,7 @@ public class HttpHandler {
         for (int i = 0; i < jsonArray.length(); i++) {
           JSONObject jsonobject = jsonArray.getJSONObject(i);
           RssFeed rssFeed = new RssFeed(
+              jsonobject.getLong("id"),
               jsonobject.getString("url"),
               jsonobject.getString("channelName"),
               jsonobject.getString("category"));
@@ -486,6 +523,7 @@ public class HttpHandler {
               for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject jsonobject = jsonArray.getJSONObject(i);
                 RssFeed rssFeed = new RssFeed(
+                    jsonobject.getLong("id"),
                     jsonobject.getString("url"),
                     jsonobject.getString("channelName"),
                     jsonobject.getString("category"));
@@ -681,14 +719,16 @@ public class HttpHandler {
     return responseState;
   }
 
-  public String getUpdateRecord(@NonNull final Long id) {
-    String url = RECORD_URL + id;
-    return getHttpResponseString(url);
+  public void getUpdateSpeech(@NonNull final Long id) {
+    String url = SPEECH_URL + id;
+    getHttpResponseFile(url, "speech/" + id + ".mp3");
+    Log.i(TAG, url);
   }
 
-  public String getUpdateRecordInfo(@NonNull final Long id) {
-    String url = RECORD_INFO_URL + id;
-    return getHttpResponseString(url);
+  public void getUpdateSpeechInfo(@NonNull final Long id) {
+    String url = SPEECH_INFO_URL + id;
+    getHttpResponseFile(url, "speech/" + id + ".mp3");
+    Log.i(TAG, url);
   }
 
 }
