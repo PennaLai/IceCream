@@ -1,5 +1,6 @@
 package com.example.icecream.ui.activity;
 
+import agency.tango.materialintroscreen.MaterialIntroActivity;
 import agency.tango.materialintroscreen.MessageButtonBehaviour;
 import agency.tango.materialintroscreen.SlideFragmentBuilder;
 import agency.tango.materialintroscreen.animations.IViewTranslation;
@@ -21,15 +22,30 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 
-public class IntroActivity extends AppCompatActivity {
+public class IntroActivity extends MaterialIntroActivity {
 
   @Override
   protected void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_intro);
-    TextView button = findViewById(R.id.test);
-    button.setOnClickListener(v -> go());
-
+//    setContentView(R.layout.activity_intro);
+//    TextView button = findViewById(R.id.test);
+//    button.setOnClickListener(v -> go());
+    addSlide(new SlideFragmentBuilder()
+            .backgroundColor(R.color.colorPrimary)
+            .buttonsColor(R.color.colorAccent)
+            .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+            .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+            .image(agency.tango.materialintroscreen.R.drawable.ic_next)
+            .title("title 3")
+            .description("Description 3")
+            .build(),
+        new MessageButtonBehaviour(new View.OnClickListener() {
+          @Override
+          public void onClick(View v) {
+            showMessage("We provide solutions to make you love your work");
+            go();
+          }
+        }, "Work with love"));
     loadData();
   }
 
