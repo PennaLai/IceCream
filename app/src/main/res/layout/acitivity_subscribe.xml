@@ -1,77 +1,172 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-  xmlns:app="http://schemas.android.com/apk/res-auto"
-  android:orientation="vertical"
+
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
   android:layout_width="match_parent"
   android:layout_height="match_parent"
-  android:padding="20dp">
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:background="@color/backgroundColor"
+  android:orientation="vertical">
 
-  <TextView
-    android:textStyle="bold"
-    android:layout_width="wrap_content"
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/sub_activity_bar"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:text="@string/subscribe"
-    android:textColor="@color/black"
-    android:textSize="30sp"/>
+    android:layout_marginTop="0dp"
+    android:background="@color/backgroundColor"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteX="8dp">
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:padding="10dp">
+      <ImageView
+        android:id="@+id/sub_iv_back"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_action_back"/>
+    </FrameLayout>
+  </android.support.design.widget.AppBarLayout>
 
   <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="20dp"
-    android:orientation="horizontal">
+    android:layout_height="723dp"
+    android:layout_marginTop="53dp"
+    android:padding="20dp"
+    android:orientation="vertical"
+    app:layout_constraintTop_toTopOf="@+id/sub_activity_bar">
 
-    <com.robertlevonyan.views.chip.Chip
-      android:id="@+id/kr_chip"
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="horizontal">
+      <TextView
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_vertical"
+        android:text="@string/subscribe"
+        android:textColor="@color/smssdk_black"
+        android:textSize="30sp"/>
+
+      <com.robertlevonyan.views.chip.Chip
+        android:id="@+id/all_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        android:layout_gravity="center|end"
+        app:mcv_chipText="全选"
+        app:mcv_selectable="true"
+        />
+
+    </FrameLayout>
+
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:layout_marginTop="20dp"
+      android:orientation="horizontal">
+
+      <com.robertlevonyan.views.chip.Chip
+        android:id="@+id/kr_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:mcv_chipIcon="@drawable/kr_logo"
+        app:mcv_chipText="@string/kr"
+        app:mcv_hasIcon="true"
+        app:mcv_closable="true"
+        />
+
+      <com.robertlevonyan.views.chip.Chip
+        android:id="@+id/ifanr_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:mcv_chipIcon="@drawable/ifanr_logo"
+        app:mcv_chipText="@string/ifanr"
+        app:mcv_hasIcon="true"
+        app:mcv_closable="true"
+        />
+
+      <com.robertlevonyan.views.chip.Chip
+        android:id="@+id/feng_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        app:mcv_chipIcon="@drawable/feng_logo"
+        app:mcv_chipText="@string/feng"
+        app:mcv_hasIcon="true"
+        app:mcv_closable="true"
+        />
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content">
+
+      <FrameLayout
+        android:id="@+id/geekpark_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/chip_unselected"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/geekpark_logo"/>
+        <TextView
+          android:id="@+id/geekpark_tv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="35dp"
+          android:layout_marginRight="10dp"
+          android:layout_gravity="center_vertical"
+          android:text="@string/geekpark"
+          android:textColor="@color/colorChipText"
+          android:textSize="12sp"/>
+      </FrameLayout>
+
+      <FrameLayout
+        android:id="@+id/zhihu_chip"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/chip_unselected"
+        >
+        <de.hdodenhof.circleimageview.CircleImageView
+          android:layout_width="30dp"
+          android:layout_height="30dp"
+          android:src="@drawable/geekpark_logo"/>
+        <TextView
+          android:id="@+id/zhihu_tv"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_marginLeft="35dp"
+          android:layout_marginRight="10dp"
+          android:layout_gravity="center_vertical"
+          android:text="@string/geekpark"
+          android:textColor="@color/colorChipText"
+          android:textSize="12sp"/>
+      </FrameLayout>
+      
+    </LinearLayout>
+
+
+
+    <Space
+      android:layout_width="match_parent"
+      android:layout_height="150dp"/>
+    <Button
+      android:id="@+id/sub_btn_confirm"
       android:layout_width="wrap_content"
       android:layout_height="wrap_content"
-      android:layout_margin="10dp"
-      app:mcv_selectable="true"
-      app:mcv_hasIcon="true"
-      app:mcv_chipIcon="@drawable/kr_logo"
-      app:mcv_chipText="@string/kr" />
+      android:layout_gravity="center"
+      android:text="确认"/>
 
-    <com.robertlevonyan.views.chip.Chip
-      android:id="@+id/ifanr_chip"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="10dp"
-      app:mcv_selectable="true"
-      app:mcv_hasIcon="true"
-      app:mcv_chipIcon="@drawable/ifanr_logo"
-      app:mcv_chipText="@string/ifanr" />
 
-    <com.robertlevonyan.views.chip.Chip
-      android:id="@+id/feng_chip"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="10dp"
-      app:mcv_selectable="true"
-      app:mcv_hasIcon="true"
-      app:mcv_chipIcon="@drawable/feng_logo"
-      app:mcv_chipText="@string/feng" />
   </LinearLayout>
-
-  <LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
-    <com.robertlevonyan.views.chip.Chip
-      android:id="@+id/geekpark_chip"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="10dp"
-      app:mcv_selectable="true"
-      app:mcv_hasIcon="true"
-      app:mcv_chipIcon="@drawable/geekpark_logo"
-      app:mcv_chipText="@string/geekpark" />
-    <com.robertlevonyan.views.chip.Chip
-      android:id="@+id/zhihu_chip"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:layout_margin="10dp"
-      app:mcv_selectable="true"
-      app:mcv_hasIcon="true"
-      app:mcv_chipIcon="@drawable/zhihu_logo"
-      app:mcv_chipText="@string/zhihu" />
-  </LinearLayout>
-
-</LinearLayout>
+</android.support.constraint.ConstraintLayout>
