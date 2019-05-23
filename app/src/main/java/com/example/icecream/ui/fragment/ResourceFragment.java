@@ -137,7 +137,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
-    refreshResource();
+//    refreshResource();
     return view;
   }
 
@@ -157,18 +157,18 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * To refresh resource.
    */
   private void refreshResource() {
-    getAllRssFeeds();
-    subscribe("18929357397", "https://36kr.com/feed");
-    getPersonalRssFeeds("18929357397");
-    //    unsubscribe("18929357397", "https://36kr.com/feed");
-    getPersonalArticles("18929357397");
-    //            resourceHandler.updateAllRssFeeds();
-//            resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
-//            resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
-//            resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
-//            resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-//            resourceHandler.updatePersonalRssFeeds("18929357397");
-//            resourceHandler.updatePersonalArticles("18929357397");
+//    getAllRssFeeds();
+//    subscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalRssFeeds("18929357397");
+//    //    unsubscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalArticles("18929357397");
+      resourceHandler.updateAllRssFeeds();
+      resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
+      resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
+      resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
+      resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+      resourceHandler.updatePersonalRssFeeds("18929357397");
+      resourceHandler.updatePersonalArticles("18929357397");
 
   }
 
