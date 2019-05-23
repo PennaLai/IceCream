@@ -4,6 +4,7 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
+import android.util.Log;
 
 import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.Article;
@@ -11,6 +12,8 @@ import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * This view model is to provide data to the UI and survive configuration changes. <br/>
@@ -22,7 +25,6 @@ import java.util.List;
 public class AppViewModel extends AndroidViewModel {
 
   private Repository repository;
-
 
   private LiveData<List<User>> allUsers;
 
@@ -41,8 +43,7 @@ public class AppViewModel extends AndroidViewModel {
    */
   public AppViewModel(Application application) {
     super(application);
-    repository = new Repository(application);
-
+    repository = Repository.getInstance(application);
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     userSearchResult = repository.getUserSearchResult();
@@ -66,33 +67,6 @@ public class AppViewModel extends AndroidViewModel {
    */
   public LiveData<List<RssFeed>> getAllRssFeeds() {
     return allRssFeeds;
-  }
-
-  /**
-   * Find the user by phone number.
-   *
-   * @param phone the input phone number.
-   */
-  public void findUserByPhone(String phone) {
-    repository.findUserByPhone(phone);
-  }
-
-  /**
-   * Find all Feeds of the user.
-   *
-   * @param user user of interest.
-   */
-  public void findRssFeedsByUser(User user) {
-    repository.findRssFeedsByUser(user);
-  }
-
-  /**
-   * Find all articles of the user.
-   *
-   * @param user user of interest.
-   */
-  public void findArticlesByUser(User user) {
-    repository.findArticlesByUser(user);
   }
 
   /**
@@ -129,6 +103,15 @@ public class AppViewModel extends AndroidViewModel {
    */
   public void updateUser(User... user) {
     repository.updateUser(user);
+  }
+
+  /**
+   * Insert the RSS feed(s).
+   *
+   * @param rssFeeds RSS feeds.
+   */
+  public void insertAllRssFeeds(RssFeed... rssFeeds) {
+    repository.insertRssFeeds(rssFeeds);
   }
 
   /**
@@ -180,23 +163,78 @@ public class AppViewModel extends AndroidViewModel {
    * Subscribe.
    *
    * @param phone phone.
-   * @param url   url.
+   * @param url   feed url.
    */
   public void subscribe(String phone, String url) {
-    User user = repository.getUserByPhoneSync(phone);
-    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
-    repository.insertUserRssFeed(user, rssFeed);
+    repository.insertUserRssFeedByPhoneUrl(phone, url);
   }
 
   /**
    * Unsubscribe.
    *
    * @param phone phone.
-   * @param url   url.
+   * @param url   feed url.
    */
   public void unsubscribe(String phone, String url) {
-    User user = repository.getUserByPhoneSync(phone);
-    RssFeed rssFeed = repository.getRssFeedByUrlSync(url);
-    repository.deleteUserRssFeed(user, rssFeed);
+    repository.deleteUserRssFeedByPhoneUrl(phone, url);
   }
+
+  /**
+   * Star the article.
+   *
+   * @param phone user phone.
+   * @param url   article url.
+   */
+  public void star(String phone, String url) {
+
+  }
+
+  /**
+   * Unstar the article.
+   *
+   * @param phone user phone.
+   * @param url   article url.
+   */
+  public void unstar(String phone, String url) {
+
+  }
+
+  /**
+   * Load the articles without network.
+   *
+   * @param phone user phone.
+   */
+  public void loadArticlesByPhone(String phone) {
+    repository.findPersonalArticlesByPhone(phone);
+  }
+
+  /**
+   * Load the starred articles.
+   *
+   * @param phone phone.
+   */
+  public void loadStarArticlesByPhone(String phone) {
+    repository.findStarArticlesByPhone(phone);
+  }
+
+  /**
+   * Insert articles.
+   *
+   * @param articles article list.
+   */
+  public void insertArticles(List<Article> articles) {
+    Log.i(TAG, articles.get(0).getTitle());
+    repository.insertArticle(articles.toArray(new Article[0]));
+  }
+
+  /**
+   * Insert RSS feeds.
+   *
+   * @param phone    user phone.
+   * @param rssFeeds rss feed list.
+   */
+  public void insertPersonalRssFeeds(String phone, List<RssFeed> rssFeeds) {
+    repository.insertUserRssFeeds(phone, rssFeeds);
+  }
+
 }

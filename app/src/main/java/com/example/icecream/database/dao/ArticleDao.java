@@ -36,4 +36,6 @@ public interface ArticleDao {
   @Query("SELECT * FROM article WHERE title = :title")
   List<Article> getArticlesByTitle(String title);
 
+  @Query("SELECT * FROM article WHERE feedUrl = :url")
+  List<Article> getArticlesByRssFeedUrl(String url);
 }

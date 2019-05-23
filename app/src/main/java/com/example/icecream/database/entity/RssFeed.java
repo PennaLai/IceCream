@@ -11,7 +11,7 @@ import android.support.annotation.NonNull;
  *
  * @author Kemo
  */
-@Entity(indices = {@Index("channelName")})
+@Entity(indices = {@Index(value = "url", unique = true)})
 public class RssFeed {
 
   @PrimaryKey(autoGenerate = true)

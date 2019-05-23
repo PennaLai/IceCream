@@ -4,13 +4,11 @@ package com.example.icecream.ui.fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,18 +16,16 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.icecream.R;
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
+import com.example.icecream.utils.ResourceHandler;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
-import java.lang.ref.WeakReference;
 import java.util.Objects;
-
-import okhttp3.OkHttpClient;
-
-import static android.content.ContentValues.TAG;
 
 
 /**
@@ -61,9 +57,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    */
   private MusicConnector musicConnectorCallback;
 
-  private AppViewModel viewModel;
-
-  private HttpHandler httpHandler;
+  ResourceHandler resourceHandler;
 
 
   /**
@@ -77,7 +71,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     /**
      * if the article is select, Resource fragment -> Main activity -> Player fragment.
      */
-    void onArticleSelect();
+    void onArticleSelect(Article article);
   }
 
   @Override
@@ -115,19 +109,34 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     mAdapter = new ArticlesAdapter(NUM_LIST_ITEMS, this);
     mArticleList.setAdapter(mAdapter);
     // http
-    httpHandler = new HttpHandler(new OkHttpClient(), getActivity().getApplication());
+    HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
     // view model
-    viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
+
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+
+
+    // 下拉刷新和底部加载初始化和监听函数
+    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+//    refreshLayout.setEnableLoadMore(false); // 禁用上拉加载
+    refreshLayout.setOnRefreshListener(
+        refresh -> {
+          refreshResource();
+          refresh.finishRefresh(2000 /*,false*/); // 传入false表示刷新失败
+        });
+    refreshLayout.setOnLoadMoreListener(refresh -> {
+      refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
+    });
+//    refreshResource();
     return view;
   }
 
   public void goToSearch() {
     Class<?> activityCls = SearchActivity.class;
-
     Intent intent = new Intent(mainAppContext, activityCls);
     startActivity(intent);
   }
@@ -138,44 +147,38 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     musicConnectorCallback = (MainActivity) context;
   }
 
+  /**
+   * To refresh resource.
+   */
+  private void refreshResource() {
+//    getAllRssFeeds();
+//    subscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalRssFeeds("18929357397");
+//    //    unsubscribe("18929357397", "https://36kr.com/feed");
+//    getPersonalArticles("18929357397");
+      resourceHandler.updateAllRssFeeds();
+      resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
+      resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
+      resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
+      resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+      resourceHandler.updatePersonalRssFeeds("18929357397");
+      resourceHandler.updatePersonalArticles("18929357397");
+
+  }
+
+
+
+
 
   /**
    * This is where we receive our callback from
    * {@link ArticlesAdapter.ListItemClickListener}
    * <p>
    * This callback is invoked when you click on an item in the list.
-   *
-   * @param clickedItemIndex Index in the list of the item that was clicked.
    */
   @Override
-  public void onListItemClick(int clickedItemIndex) {
-    // COMPLETED (11) In the beginning of the method, cancel the Toast if it isn't null
-    /*
-     * Even if a Toast isn't showing, it's okay to cancel it. Doing so
-     * ensures that our new Toast will show immediately, rather than
-     * being delayed while other pending Toasts are shown.
-     *
-     * Comment out these three lines, run the app, and click on a bunch of
-     * different items if you're not sure what I'm talking about.
-     */
-    if (mToast != null) {
-      mToast.cancel();
-    }
-
-    // COMPLETED (12) Show a Toast when an item is clicked, displaying that item number that was clicked
-    /*
-     * Create a Toast and store it in our Toast field.
-     * The Toast that shows up will have a message similar to the following:
-     *
-     *                     Item #42 clicked.
-     */
-    String toastMessage = "Item #" + clickedItemIndex + " clicked.";
-    mToast = Toast.makeText(mainAppContext, toastMessage, Toast.LENGTH_LONG);
-
-    mToast.show();
-    // tell the main activity to change the screen to the player fragment
-    musicConnectorCallback.onArticleSelect();
-
+  public void onListItemClick(Article article) {
+    musicConnectorCallback.onArticleSelect(article);
   }
 
   private void onBackPressed() {
@@ -184,194 +187,4 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     }
   }
 
-
-  private void getRssFeeds(String phoneNumber) {
-    new UpdateRssFeedsAsyncTask(this).execute(phoneNumber);
-  }
-
-
-  private static class UpdateRssFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-
-    // only retain a weak reference to the activity
-    UpdateRssFeedsAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      return fragment.httpHandler.getUpdateRSSFeedsState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those feeds successfully
-          Log.i(TAG, "get rss feeds");
-          fragment.viewModel.setPersonalRssFeeds(fragment.httpHandler.getPersonalRssFeeds());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-
-    // only retain a weak reference to the activity
-    UpdateArticlesAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      return fragment.httpHandler.getUpdateArticlesState(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          // get those articles successfully
-          Log.i("dd", "get articles");
-          fragment.viewModel.setPersonalArticles(fragment.httpHandler.getPersonalArticles());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-
-  private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-    private String phone;
-    private String rssFeedUrl;
-
-    // only retain a weak reference to the activity
-    SubscribeAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null
-          || fragment.getActivity() == null
-          || fragment.getActivity().isFinishing()) {
-        return null;
-      }
-      phone = params[0];
-      rssFeedUrl = params[1];
-      return fragment.httpHandler.getSubscribeFeedState(phone, rssFeedUrl);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          Log.i(TAG, "subscribe succeed");
-          fragment.viewModel.subscribe(phone, rssFeedUrl);
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-  private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-
-    private WeakReference<ResourceFragment> reference;
-    private String phone;
-    private String rssFeedUrl;
-
-    // only retain a weak reference to the activity
-    UnsubscribeAsyncTask(ResourceFragment context) {
-      reference = new WeakReference<>(context);
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return null;
-      }
-      phone = params[0];
-      rssFeedUrl = params[1];
-      return fragment.httpHandler.getUnsubscribeFeedState(phone, rssFeedUrl);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      ResourceFragment fragment = reference.get();
-      if (fragment == null) {
-        return;
-      }
-      switch (responseState) {
-        case Valid:
-          Log.i(TAG, "unsubscribe succeed");
-          fragment.viewModel.unsubscribe(phone, rssFeedUrl);
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
 }

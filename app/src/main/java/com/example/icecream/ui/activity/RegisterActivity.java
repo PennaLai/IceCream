@@ -92,8 +92,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     btSendAuthCode.setOnClickListener(this);
     btNextStep.setOnClickListener(this);
 
-    final OkHttpClient client = new OkHttpClient();
-    httpHandler = new HttpHandler(client, this.getApplication());
+    httpHandler = HttpHandler.getInstance(getApplication());
 
     initSmsSdk();
   }
@@ -415,8 +414,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
       }
       if (responseState == HttpHandler.ResponseState.Valid) {
         Toast.makeText(activity, "注册成功", Toast.LENGTH_LONG).show();
+        activity.goToLoginPage();
+      } else {
+        Toast.makeText(activity, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
       }
-      Toast.makeText(activity, "出现未知问题，请稍后重试", Toast.LENGTH_LONG).show();
     }
   }
 }

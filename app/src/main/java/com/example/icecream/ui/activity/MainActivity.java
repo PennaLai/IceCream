@@ -24,6 +24,8 @@ import android.view.View;
 
 import com.example.icecream.R;
 
+import com.example.icecream.database.entity.Article;
+import com.example.icecream.ui.fragment.PlayFragment;
 import com.example.icecream.ui.fragment.ReadFragment;
 import com.example.icecream.ui.fragment.ResourceFragment;
 import com.example.icecream.ui.component.menu.DrawerAdapter;
@@ -41,7 +43,6 @@ import java.util.TreeMap;
 
 /**
  * The main activity.
- * <p>
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
  * @author Penna
  * @version V1.0
@@ -50,7 +51,6 @@ public class MainActivity extends AppCompatActivity
     implements View.OnClickListener,
     DrawerAdapter.OnItemSelectedListener,
     ResourceFragment.MusicConnector {
-  // TODO: bind the speaker service here but not playfragment.
 
   private static final int POS_DASHBOARD = 0;
   private static final int POS_FEED = 1;
@@ -69,9 +69,9 @@ public class MainActivity extends AppCompatActivity
   private DrawerAdapter adapter;
   private ViewPager viewPager;
 
+  final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
 
   private String phone;
-
 
 
   @Override
@@ -83,10 +83,10 @@ public class MainActivity extends AppCompatActivity
     phone = getIntent().getStringExtra(Intent.EXTRA_TEXT);
 
     // 定义数据
-    final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
+
     data.put(0, ResourceFragment.newInstance());
     data.put(1, ReadFragment.newInstance());
-//    data.put(1, PlayFragment.newInstance());
+
 
     // 找到ViewPager
     viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -265,22 +265,33 @@ public class MainActivity extends AppCompatActivity
     return true;
   }
 
+  /**
+   * Select the article and go the reading page.
+   * @param article the article
+   */
   @Override
-  public void onArticleSelect() {
-    Log.i(TAG, "onArticleSelect: Go fuck your self");
+  public void onArticleSelect(Article article) {
+    ReadFragment readFragment = ((ReadFragment)data.get(1));
+    readFragment.setArticle(article);
     toReadFragment();
   }
 
+  /**
+   * Switch view to Resource Fragment.
+   */
   public void toResourceFragment() {
     viewPager.setCurrentItem(0, true);
   }
 
+  /**
+   * Switch view to Read Fragment.
+   */
   public void toReadFragment() {
     viewPager.setCurrentItem(1, true);
   }
 
   @Override
-  public void onBackPressed(){
+  public void onBackPressed() {
     super.onBackPressed();
   }
 

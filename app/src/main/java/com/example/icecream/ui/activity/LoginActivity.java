@@ -2,6 +2,7 @@ package com.example.icecream.ui.activity;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -16,8 +17,6 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
 
 import java.lang.ref.WeakReference;
-
-import okhttp3.OkHttpClient;
 
 
 /**
@@ -46,8 +45,9 @@ public class LoginActivity extends AppCompatActivity {
 //    TextView skip = findViewById(R.id.tv_skip);
 //    TextView forget = findViewById(R.id.tv_forget);
 
-    final OkHttpClient client = new OkHttpClient();
-    httpHandler = new HttpHandler(client, this.getApplication());
+    httpHandler = HttpHandler.getInstance(getApplication());
+
+
   }
 
   /**
@@ -62,8 +62,11 @@ public class LoginActivity extends AppCompatActivity {
       Toast.makeText(LoginActivity.this, "不能为空", Toast.LENGTH_LONG).show();
       return;
     }
-    final String phoneNumber = phoneEditText.toString();
-    final String password = passwordEditText.toString();
+//    final String phoneNumber = phoneEditText.toString(); TODO: change it back
+    // test
+    final String phoneNumber = "18929357397";
+    final String password = "123456";
+//    final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
       new LoginAsyncTask(this).execute(new ParamsPhonePassword(phoneNumber, password));
     }
@@ -156,7 +159,9 @@ public class LoginActivity extends AppCompatActivity {
   public void goToMainPage(String phone) {
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
-    Intent intent = new Intent(context, destinationActivity);
+    // need to clear current activity stack.
+    Intent intent = new Intent(context, destinationActivity)
+        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     intent.putExtra(Intent.EXTRA_TEXT, phone);
     startActivity(intent);
   }
@@ -183,7 +188,8 @@ public class LoginActivity extends AppCompatActivity {
    * @param view The system stipulated view object.
    */
   public void skipLogin(final View view) {
-    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+    Intent intent = new Intent(LoginActivity.this, MainActivity.class)
+        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
 
@@ -250,7 +256,7 @@ public class LoginActivity extends AppCompatActivity {
           activity.goToMainPage(phoneNumber);
           break;
         default:
-          activity.showToastMessage("登录失败，请重试");
+          activity.showToastMessage("登录失败，请稍后重试");
           break;
       }
     }
