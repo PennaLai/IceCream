@@ -31,10 +31,10 @@ public class IntroActivity extends MaterialIntroActivity {
 //    TextView button = findViewById(R.id.test);
 //    button.setOnClickListener(v -> go());
     addSlide(new SlideFragmentBuilder()
-            .backgroundColor(R.color.colorPrimary)
+            .backgroundColor(R.color.backgroundColor)
             .buttonsColor(R.color.colorAccent)
-            .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
-            .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
+//            .possiblePermissions(new String[]{Manifest.permission.CALL_PHONE, Manifest.permission.READ_SMS})
+//            .neededPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION})
             .image(agency.tango.materialintroscreen.R.drawable.ic_next)
             .title("title 3")
             .description("Description 3")
