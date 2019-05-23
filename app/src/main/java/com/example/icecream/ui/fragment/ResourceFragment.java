@@ -127,38 +127,22 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
 
 
     // 下拉刷新和底部加载初始化和监听函数
-    RefreshLayout refreshLayout = (RefreshLayout) view.findViewById(R.id.refreshLayout);
+    RefreshLayout refreshLayout = (RefreshLayout)view.findViewById(R.id.refreshLayout);
+//    refreshLayout.setEnableLoadMore(false); // 禁用上拉加载
     refreshLayout.setOnRefreshListener(
-        new OnRefreshListener() {
-          @Override
-          public void onRefresh(RefreshLayout refreshlayout) {
-            refreshlayout.finishRefresh(2000 /*,false*/); // 传入false表示刷新失败
-//            resourceHandler.updateAllRssFeeds();
-//            resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
-//            resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
-//            resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
-//            resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-//            resourceHandler.updatePersonalRssFeeds("18929357397");
-//            resourceHandler.updatePersonalArticles("18929357397");
-          }
+        refresh -> {
+          refreshResource();
+          refresh.finishRefresh(2000 /*,false*/); // 传入false表示刷新失败
         });
-    refreshLayout.setOnLoadMoreListener(new OnLoadMoreListener() {
-      @Override
-      public void onLoadMore(RefreshLayout refreshlayout) {
-        refreshlayout.finishLoadMore(2000/*,false*/);//传入false表示加载失败
-      }
+    refreshLayout.setOnLoadMoreListener(refresh -> {
+      refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
-
-//    resourceHandler.loadArticles("18929357397");
-
-
-
+    refreshResource();
     return view;
   }
 
   public void goToSearch() {
     Class<?> activityCls = SearchActivity.class;
-
     Intent intent = new Intent(mainAppContext, activityCls);
     startActivity(intent);
   }
@@ -168,6 +152,28 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     super.onAttach(context);
     musicConnectorCallback = (MainActivity) context;
   }
+
+  /**
+   * To refresh resource.
+   */
+  private void refreshResource() {
+    getAllRssFeeds();
+    subscribe("18929357397", "https://36kr.com/feed");
+    getPersonalRssFeeds("18929357397");
+    //    unsubscribe("18929357397", "https://36kr.com/feed");
+    getPersonalArticles("18929357397");
+    //            resourceHandler.updateAllRssFeeds();
+//            resourceHandler.unsubscribe("18929357397","https://www.zhihu.com/rss");
+//            resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
+//            resourceHandler.unsubscribe("18929357397","https://36kr.com/feed");
+//            resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
+//            resourceHandler.updatePersonalRssFeeds("18929357397");
+//            resourceHandler.updatePersonalArticles("18929357397");
+
+  }
+
+
+
 
 
   /**

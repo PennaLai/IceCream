@@ -61,8 +61,11 @@ public class LoginActivity extends AppCompatActivity {
       Toast.makeText(LoginActivity.this, "不能为空", Toast.LENGTH_LONG).show();
       return;
     }
-    final String phoneNumber = phoneEditText.toString();
-    final String password = passwordEditText.toString();
+//    final String phoneNumber = phoneEditText.toString(); TODO: change it back
+    // test
+    final String phoneNumber = "18929357397";
+    final String password = "123456";
+//    final String password = passwordEditText.toString();
     if (checkLoginValid(phoneNumber, password)) {
       new LoginAsyncTask(this).execute(new ParamsPhonePassword(phoneNumber, password));
     }
@@ -155,7 +158,9 @@ public class LoginActivity extends AppCompatActivity {
   public void goToMainPage(String phone) {
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
-    Intent intent = new Intent(context, destinationActivity);
+    // need to clear current activity stack.
+    Intent intent = new Intent(context, destinationActivity)
+        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     intent.putExtra(Intent.EXTRA_TEXT, phone);
     startActivity(intent);
   }
@@ -182,7 +187,8 @@ public class LoginActivity extends AppCompatActivity {
    * @param view The system stipulated view object.
    */
   public void skipLogin(final View view) {
-    Intent intent = new Intent(LoginActivity.this, MainActivity.class);
+    Intent intent = new Intent(LoginActivity.this, MainActivity.class)
+        .setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
     startActivity(intent);
   }
 
