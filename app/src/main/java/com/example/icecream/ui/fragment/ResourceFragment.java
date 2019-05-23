@@ -9,6 +9,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +47,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
   private RecyclerView mArticleList;
   private Context mainAppContext;
   private Toast mToast;
+
+  private UserSettingHandler userSettingHandler;
 
 
   /**
@@ -145,6 +148,9 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
+
+    // 用户设置读取
+    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
     return view;
   }
 
@@ -164,13 +170,8 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * To refresh resource.
    */
   private void refreshResource() {
-    resourceHandler.updateAllRssFeeds();
-    resourceHandler.unsubscribe("18929357397", "https://www.zhihu.com/rss");
-    resourceHandler.subscribe("18929357397", "https://www.zhihu.com/rss");
-    resourceHandler.unsubscribe("18929357397", "https://36kr.com/feed");
-    resourceHandler.subscribe("18929357397", "https://36kr.com/feed");
-    resourceHandler.updatePersonalRssFeeds("18929357397");
-    resourceHandler.updatePersonalArticles("18929357397");
+    String phoneNumber = userSettingHandler.getLoginPhone();
+    resourceHandler.updatePersonalArticles(phoneNumber);
   }
 
 
