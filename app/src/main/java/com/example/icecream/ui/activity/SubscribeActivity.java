@@ -97,6 +97,7 @@ public class SubscribeActivity extends AppCompatActivity{
 
     confirm.setOnClickListener(v -> {
       // TODO
+      onBackPressed();
     });
   }
 
