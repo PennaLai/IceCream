@@ -105,7 +105,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/read_iv_play"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_previous"/>
+        app:srcCompat="@drawable/ic_previous_article"/>
 
       <ImageView
         android:id="@+id/read_iv_next"
@@ -117,7 +117,7 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/read_iv_play"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_next"/>
+        app:srcCompat="@drawable/ic_next_article"/>
 
       <ImageView
         android:id="@+id/read_iv_more"
