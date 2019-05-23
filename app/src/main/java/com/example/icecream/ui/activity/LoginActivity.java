@@ -46,8 +46,7 @@ public class LoginActivity extends AppCompatActivity {
 //    TextView skip = findViewById(R.id.tv_skip);
 //    TextView forget = findViewById(R.id.tv_forget);
 
-    final OkHttpClient client = new OkHttpClient();
-    httpHandler = new HttpHandler(client, this.getApplication());
+    httpHandler = new HttpHandler(getApplication());
   }
 
   /**
