@@ -139,7 +139,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
-    refreshResource();
     return view;
   }
 
