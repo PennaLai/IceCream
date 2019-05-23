@@ -2,8 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
   package="com.example.icecream">
 
-  <uses-permission android:name="android.permission.INTERNET" />
-  <!--android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"-->
+  <uses-permission android:name="android.permission.INTERNET"/>
+
   <application
     android:allowBackup="true"
     android:icon="@mipmap/ic_launcher"
@@ -12,42 +12,49 @@
     android:supportsRtl="true"
     android:theme="@style/Theme.AppCompat.DayNight.NoActionBar"
     android:usesCleartextTraffic="true">
-    <service
-      android:name=".service.SpeakerService"
-      android:enabled="true"
-      android:exported="true"></service>
-
-    <activity
-      android:name=".ui.activity.MainActivity"
-      android:launchMode="singleTask">
+    <activity android:name=".ui.activity.IntroActivity"
+      >
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.LAUNCHER"/>
+      </intent-filter>
     </activity>
 
-    <activity
-      android:name=".ui.activity.RegisterActivity"
-      android:launchMode="singleTop"></activity>
-    <activity
-      android:name=".ui.activity.ForgetPasswordActivity"
-      android:launchMode="standard"></activity>
-    <activity
-      android:name=".ui.activity.LoginActivity"
-      android:launchMode="singleTask">
-      <intent-filter>
-        <action android:name="android.intent.action.MAIN" />
-        <action android:name="android.intent.action.VIEW" />
+    <service
+      android:enabled="true"
+      android:exported="true"
+      android:name=".service.SpeakerService"/>
 
-        <category android:name="android.intent.category.LAUNCHER" />
+    <activity
+      android:launchMode="singleTask"
+      android:name=".ui.activity.MainActivity">
+    </activity>
+    <activity
+      android:launchMode="singleTop"
+      android:name=".ui.activity.RegisterActivity"/>
+    <activity
+      android:launchMode="standard"
+      android:name=".ui.activity.ForgetPasswordActivity"/>
+    <activity
+      android:launchMode="singleTask"
+      android:name=".ui.activity.LoginActivity">
+      <intent-filter>
+        <action android:name="android.intent.action.MAIN"/>
+        <action android:name="android.intent.action.VIEW"/>
+
+        <category android:name="android.intent.category.LAUNCHER"/>
       </intent-filter>
     </activity>
     <activity
-      android:name=".ui.activity.SearchActivity"
-      android:launchMode="singleTop" />
-    <activity android:name=".ui.activity.SubscribeActivity"></activity>
+      android:launchMode="singleTop"
+      android:name=".ui.activity.SearchActivity"/>
+    <activity android:name=".ui.activity.SubscribeActivity"/>
 
     <receiver
-      android:name=".ui.fragment.ReadFragment$NotificationClickReceiver"
       android:enabled="true"
-      android:exported="true"></receiver>
-
+      android:exported="true"
+      android:name=".ui.fragment.ReadFragment$NotificationClickReceiver"/>
   </application>
 
 </manifest>

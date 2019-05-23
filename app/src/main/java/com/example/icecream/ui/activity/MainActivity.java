@@ -83,8 +83,6 @@ public class MainActivity extends AppCompatActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
 
-
-
     // 定义数据
 
     data.put(0, ResourceFragment.newInstance());
@@ -141,15 +139,6 @@ public class MainActivity extends AppCompatActivity
     draw_list.setAdapter(adapter);
 
     adapter.setSelected(POS_DASHBOARD);
-    // load data into view model
-    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
-    String phoneNumber = userSettingHandler.getLoginPhone();
-    resourceHandler.loadRssFeeds(phoneNumber);
-    resourceHandler.loadArticles(phoneNumber);
-
 
   }
 

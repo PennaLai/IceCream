@@ -124,9 +124,6 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // observe articles from subscribed feeds
     viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
 
-    // get login phone
-    String phone = UserSettingHandler.getInstance(getActivity().getApplication()).getLoginPhone();
-
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     // load local feeds and articles
 
@@ -168,6 +165,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    */
   private void refreshResource() {
     String phoneNumber = userSettingHandler.getLoginPhone();
+    resourceHandler.updatePersonalRssFeeds(phoneNumber);  // do not delete
     resourceHandler.updatePersonalArticles(phoneNumber);
   }
 
