@@ -6,7 +6,6 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -46,18 +45,14 @@ import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.Para;
 import com.example.icecream.utils.ResourceHandler;
+import com.example.icecream.utils.UserSettingHandler;
 import com.freedom.lauzy.playpauseviewlib.PlayPauseView;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +82,8 @@ public class ReadFragment extends Fragment {
    * all the paragraphs of the given.
    */
   private List<Paragraph> paragraphList = new ArrayList<>();
+
+  private List<Article> favoriteArticles = new ArrayList<>();
 
   private ListView paragraphs;
 
@@ -159,6 +156,16 @@ public class ReadFragment extends Fragment {
    */
 //  private PlayPauseButton playPauseButton;
   private PlayPauseView playPauseButton;
+
+  private ShineButton shineButton;
+
+  /** to get the uer setting information. */
+  private UserSettingHandler userSettingHandler;
+
+  /** to handler the resource update. */
+  private ResourceHandler resourceHandler;
+
+  private String phone;
 
   /**
    * Receive notification event.
@@ -252,12 +259,33 @@ public class ReadFragment extends Fragment {
     }
   }
 
+  private void initFavorite(){
+    HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    // 用户设置读取
+    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+
+    phone = userSettingHandler.getLoginPhone();
+
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+
+    if (phone != null) {
+      viewModel.getStarArticles().observe(this, this::setFavoriteArticles);
+    } else {
+      favorite = false;
+      shineButton.setClickable(false);
+    }
+  }
+
+  public void setFavoriteArticles(List<Article> articles) {
+    favoriteArticles = articles;
+  }
+
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
 
-    ShineButton shineButton;
     /* initial the favorite button */
     shineButton = view.findViewById(R.id.read_sb_favorite);
     shineButton.init(getActivity());
@@ -280,6 +308,7 @@ public class ReadFragment extends Fragment {
     httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
     initParagraphs();
+    initFavorite();
 
     sbProgress = view.findViewById(R.id.read_pb_progress);
     sbProgress.getConfigBuilder().max(100).sectionCount(paraNum).build();
@@ -443,14 +472,12 @@ public class ReadFragment extends Fragment {
     PendingIntent intentPrev =
         PendingIntent.getBroadcast(getActivity(), 1, prv, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_prev, intentPrev);
-    Log.i("Notify", "Success4");
 
     Intent next = new Intent();
     next.setAction(ACTION_NEXT);
     PendingIntent intentNext =
         PendingIntent.getBroadcast(getActivity(), 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_next, intentNext);
-    Log.i("Notify", "Success5");
 
     if (speakerService.isPlaying()) {
       Intent playorpause = new Intent();
@@ -467,16 +494,13 @@ public class ReadFragment extends Fragment {
               getActivity(), 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
       remoteViews.setOnClickPendingIntent(R.id.widget_play, intentPlay);
     }
-    Log.i("Notify", "Success6");
 
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
-    Log.i("Notify", "Success7");
     Notification notify = builder.build();
     notify.contentView = remoteViews; // 设置下拉图标
     notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
     notify.flags = Notification.FLAG_ONGOING_EVENT;
     notify.icon = R.drawable.logo;
-    Log.i("Notify", "Success8");
     musicBarManage.notify(1, notify); // id 代表通知的id，可以在后续通过id关闭
 
     broadcastReceiver = new ReadFragment.NotificationClickReceiver();
@@ -490,7 +514,6 @@ public class ReadFragment extends Fragment {
     // register the receiver
     waitingMusicList.add("result.mp3");
     getActivity().registerReceiver(broadcastReceiver, filter);
-    Log.i("Notify", "Success9");
   }
 
   /**

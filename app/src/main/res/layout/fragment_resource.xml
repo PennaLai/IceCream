@@ -16,16 +16,6 @@
       android:layout_height="wrap_content"
       app:layout_constraintTop_toTopOf="parent">
 
-        <!--<com.example.icecream.search.SimpleToolbar-->
-        <!--android:id="@+id/toolbar"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="35dp"-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_margin="@dimen/toolbarMargin"-->
-        <!--android:background="@drawable/coners_bg"-->
-        <!--android:elevation="8dp"-->
-        <!--app:titleTextAppearance="@style/Toolbar.TitleText"-->
-        <!--/>-->
         <android.support.v7.widget.Toolbar
           android:id="@+id/toolbar"
           android:layout_width="match_parent"
@@ -104,11 +94,4 @@
           android:layout_height="wrap_content"/>
     </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
-    <!--<com.cunoraz.gifview.library.GifView-->
-      <!--android:id="@+id/gif"-->
-      <!--app:layout_constraintTop_toTopOf="parent"-->
-      <!--cent-->
-      <!--android:layout_width="wrap_content"-->
-      <!--android:layout_height="wrap_content"-->
-      <!--custom:gif="@mipmap/gif1" />-->
 </android.support.constraint.ConstraintLayout>
