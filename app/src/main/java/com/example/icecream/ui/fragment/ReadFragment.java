@@ -218,7 +218,7 @@ public class ReadFragment extends Fragment {
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
-    playPauseButton.setOnClickListener(v -> {
+    playPauseButton.setOnControlStatusChangeListener((v,state) -> {
       playBackgroundMusic();
     });
 
