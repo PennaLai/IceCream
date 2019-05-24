@@ -125,7 +125,7 @@ public class ResourceHandler {
   }
 
   /**
-   * Star article
+   * Star article.
    *
    * @param phone   phone.
    * @param article article.
@@ -136,6 +136,12 @@ public class ResourceHandler {
     ));
   }
 
+  /**
+   * Unstar article.
+   *
+   * @param phone   phone.
+   * @param article article.
+   */
   public void unstar(String phone, Article article) {
     new UnStarAsyncTask(this).execute(new ParamPhoneArticle(
         phone, article
@@ -416,7 +422,7 @@ public class ResourceHandler {
       article = params[1].article;
       HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
       if (responseState == HttpHandler.ResponseState.Valid) {
-        responseState = httpHandler.getStarResponseState(phone, article.getId());
+        responseState = httpHandler.getUnStarResponseState(phone, article.getId());
       }
       return responseState;
     }
