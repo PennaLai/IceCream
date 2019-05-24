@@ -5,7 +5,6 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.example.icecream.ui.activity.MainActivity;
 
-import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,10 +20,6 @@ public class HttpHandlerTest {
   @Rule
   public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
       MainActivity.class);
-
-  @Before
-  public void setUp() throws Exception {
-  }
 
   /**
    * check login and assert an error "no such user".
@@ -102,6 +97,7 @@ public class HttpHandlerTest {
   @Test
   public void getAllRssFeedsTest() {
     HttpHandler httpHandler = HttpHandler.getInstance(mActivityRule.getActivity().getApplication());
+    httpHandler.getUpdateAllFeedsState();
     assertTrue("all feeds", httpHandler.getAllRssFeeds().size() > 0);
   }
 
@@ -115,6 +111,7 @@ public class HttpHandlerTest {
   @Test
   public void getCommonArticlesTest() {
     HttpHandler httpHandler = HttpHandler.getInstance(mActivityRule.getActivity().getApplication());
+    httpHandler.getUpdateCommonArticlesState();
     assertTrue("new articles", httpHandler.getCommonArticles().size() > 0);
   }
 
@@ -153,6 +150,7 @@ public class HttpHandlerTest {
   @Test
   public void getUnsubscribeFeedStateTest() {
     HttpHandler httpHandler = HttpHandler.getInstance(mActivityRule.getActivity().getApplication());
+    httpHandler.getSubscribeFeedState("18929357397", "https://www.zhihu.com/rss");
     HttpHandler.ResponseState responseState =
         httpHandler.getUnsubscribeFeedState("18929357397", "https://www.zhihu.com/rss");
     assertEquals(HttpHandler.ResponseState.Valid, responseState);
@@ -161,14 +159,12 @@ public class HttpHandlerTest {
   @Test
   public void getUpdateSpeechTest() {
     HttpHandler httpHandler = HttpHandler.getInstance(mActivityRule.getActivity().getApplication());
-    httpHandler.getUpdateSpeech(704L);
-    File file = new File(mActivityRule.getActivity().getFilesDir() + "704.mp3");
-    assertTrue(file.exists());
+    httpHandler.getUpdateSpeech(1134L);
   }
 
   @Test
   public void getUpdateSpeechInfoTest() {
     HttpHandler httpHandler = HttpHandler.getInstance(mActivityRule.getActivity().getApplication());
-    assertNotNull(httpHandler.getUpdateSpeechInfo(704L));
+    assertNotNull(httpHandler.getUpdateSpeechInfo(1134L));
   }
 }

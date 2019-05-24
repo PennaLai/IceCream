@@ -87,6 +87,15 @@ public final class ResourceHandler {
   }
 
   /**
+   * Updates the starred articles.
+   *
+   * @param phone user phone.
+   */
+  public void updateStarArticles(final String phone) {
+    new UpdateStarAsyncTask(this).execute(phone);
+  }
+
+  /**
    * Subscribes the feed.
    *
    * @param phoneNumber user phone.
@@ -252,6 +261,44 @@ public final class ResourceHandler {
     }
   }
 
+  private static class UpdateStarAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+    private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+    private String phone;
+
+    UpdateStarAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(String... params) {
+      phone = params[0];
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        responseState = httpHandler.getUpdateStarState(phone);
+      }
+      return responseState;
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      switch (responseState) {
+        case Valid:
+          viewModel.setStarArticles(httpHandler.getStarArticles());
+          break;
+        case InvalidToken:
+          // TODO back to login
+          break;
+        case NoSuchUser:
+          // TODO back to login
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
   private static class SubscribeAsyncTask
       extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private String phone;
@@ -325,30 +372,6 @@ public final class ResourceHandler {
         default:
           break;
       }
-    }
-  }
-
-  private static class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, String> {
-    private HttpHandler httpHandler;
-    private AppViewModel viewModel;
-    private Long id;
-
-    UpdateSpeechAsyncTask(ResourceHandler resourceHandler) {
-      httpHandler = resourceHandler.httpHandler;
-      viewModel = resourceHandler.viewModel;
-    }
-
-    @Override
-    protected String doInBackground(Long... params) {
-      id = params[0];
-      httpHandler.getUpdateSpeech(id);
-//      return httpHandler.getUpdateSpeechInfo(id);
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(String result) {
-      viewModel.updateArticleParagraph(id, result);
     }
   }
 
@@ -445,4 +468,6 @@ public final class ResourceHandler {
       }
     }
   }
+
+
 }

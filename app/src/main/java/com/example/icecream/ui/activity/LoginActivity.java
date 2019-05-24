@@ -32,19 +32,29 @@ import java.lang.ref.WeakReference;
  */
 public class LoginActivity extends AppCompatActivity {
 
-  /** A tool instance of HttpHandler to handle the http */
+  /**
+   * A tool instance of HttpHandler to handle the http
+   */
   private HttpHandler httpHandler;
 
-  /** A instance of ResourceHandler to handle the recourse change */
+  /**
+   * A instance of ResourceHandler to handle the recourse change
+   */
   private ResourceHandler resourceHandler;
 
-  /** A instance of UserSettingHandler to handle the user settings */
+  /**
+   * A instance of UserSettingHandler to handle the user settings
+   */
   private UserSettingHandler userSettingHandler;
 
-  /** The input EditText view to enter phone number */
+  /**
+   * The input EditText view to enter phone number
+   */
   private MaterialEditText phoneEdit;
 
-  /** The input EditText view to enter password */
+  /**
+   * The input EditText view to enter password
+   */
   private MaterialEditText passwordEdit;
 
   @Override
@@ -184,6 +194,7 @@ public class LoginActivity extends AppCompatActivity {
     if (phone != null) {
       resourceHandler.updateAllRssFeeds();
       resourceHandler.updatePersonalResources(phone);
+      resourceHandler.updateStarArticles(phone);
     }
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
@@ -288,10 +299,14 @@ public class LoginActivity extends AppCompatActivity {
   private static class AutoLoginAsyncTask extends AsyncTask<String, Void,
       HttpHandler.ResponseState> {
 
-    /** A weak reference of LoginActivity */
+    /**
+     * A weak reference of LoginActivity
+     */
     private WeakReference<LoginActivity> activityReference;
 
-    /** The phone number of the user */
+    /**
+     * The phone number of the user
+     */
     private String phone;
 
     /**
