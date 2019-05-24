@@ -45,6 +45,7 @@
 
     <activity android:name=".ui.activity.SubscribeActivity"/>
     <activity android:name=".ui.activity.SettingActivity"/>
+    <activity android:name=".ui.activity.StarActivity"/>
 
     <receiver
       android:enabled="true"

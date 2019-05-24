@@ -139,7 +139,7 @@ public final class ResourceHandler {
    * @param phone   phone.
    * @param article article.
    */
-  private void star(String phone, Article article) {
+  public void star(String phone, Article article) {
     new StarAsyncTask(this).execute(new ParamPhoneArticle(
         phone, article
     ));

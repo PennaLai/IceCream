@@ -107,7 +107,7 @@ public class ReadFragment extends Fragment {
   /**
    * whether is this article favorite.
    */
-  private boolean favorite = true;
+  private boolean favorite = false;
 
   /**
    * view model.
@@ -252,9 +252,6 @@ public class ReadFragment extends Fragment {
 
     if (phone != null) {
       viewModel.getStarArticles().observe(this, this::setFavoriteArticles);
-    } else {
-      favorite = false;
-      shineButton.setClickable(false);
     }
   }
 
@@ -273,7 +270,21 @@ public class ReadFragment extends Fragment {
     // TODO: initial the shineButton to checked state if already favorited
     shineButton.setChecked(favorite);
     shineButton.setOnCheckStateChangeListener(
-        (view14, checked) -> favorite = checked);
+      (view14, checked) -> {
+        favorite = checked;
+        if (phone != null && playIndex != -1) {
+          Log.i("Article", "Not null");
+          if (checked) {
+            resourceHandler.star(phone, waitingMusicList.get(playIndex));
+          } else {
+            resourceHandler.unstar(phone, waitingMusicList.get(playIndex));
+          }
+        } else {
+          Log.i("Article", "NULL");
+          shineButton.setChecked(!checked);
+          Toast.makeText(getContext(), "收藏失败，未登录或者当前没有正在播放的文章哦", Toast.LENGTH_LONG).show();
+        }
+      });
 
     downloadIndicator = view.findViewById(R.id.ld_download);
     downloadIndicator.hide();
@@ -442,6 +453,12 @@ public class ReadFragment extends Fragment {
       paragraphList.add(new Paragraph(article.getPublishTime(), 2));
       for (int i = 0; i < para.getParaNums(); i++) {
         paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
+      }
+      for (Article a:favoriteArticles) {
+        if (a.getId().equals(article.getId())) {
+          favorite = true;
+          shineButton.setChecked(true);
+        }
       }
       sbProgress.getConfigBuilder().max(100).sectionCount(para.getParaNums()).build();
 

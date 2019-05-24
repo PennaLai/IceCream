@@ -53,6 +53,8 @@ public class MainActivity extends AppCompatActivity
     DrawerAdapter.OnItemSelectedListener,
     ResourceFragment.MusicConnector {
 
+  public static MainActivity context;
+
   /** The positions for Drawer Item. */
   private static final int POS_DASHBOARD = 0;
   private static final int POS_FEED = 1;
@@ -85,6 +87,7 @@ public class MainActivity extends AppCompatActivity
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+    context = this;
     // 定义数据
     data.put(0, ResourceFragment.newInstance());
     data.put(1, ReadFragment.newInstance());
@@ -177,9 +180,11 @@ public class MainActivity extends AppCompatActivity
       adapter.setSelected(POS_DASHBOARD);
       slidingRootNav.closeMenu();
     } else if (position == POS_STAR) {
-      String repairing = "抱歉，这个功能正在装修中";
-      Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
+//      String repairing = "抱歉，这个功能正在装修中";
+//      Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
+      goToActivity(StarActivity.class);
       adapter.setSelected(POS_DASHBOARD);
+      slidingRootNav.closeMenu();
     } else if (position == POS_SETTING) {
       goToActivity(SettingActivity.class);
       adapter.setSelected(POS_DASHBOARD);
@@ -267,6 +272,11 @@ public class MainActivity extends AppCompatActivity
     readFragment.startDownloadArticle(article);
   }
 
+  @Override
+  public void onProfileClicked() {
+    slidingRootNav.openMenu();
+  }
+
   /**
    * Switch view to Resource Fragment.
    */
@@ -283,7 +293,11 @@ public class MainActivity extends AppCompatActivity
 
   @Override
   public void onBackPressed() {
-    super.onBackPressed();
+//    super.onBackPressed();
+    toResourceFragment();
   }
 
+  public static MainActivity getContext() {
+    return context;
+  }
 }
