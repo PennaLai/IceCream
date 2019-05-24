@@ -85,9 +85,6 @@ public class ReadFragment extends Fragment {
   /** to count the song number we has played now. */
   private int playSongCount = 0;
 
-  /** the check whether the download is succeed. */
-  private boolean downloadSucceed;
-
   /** whether is this article favorite. */
   private boolean favorite = true;
 
@@ -218,13 +215,12 @@ public class ReadFragment extends Fragment {
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
-    playPauseButton.setOnControlStatusChangeListener((v,state) -> {
+    playPauseButton.setOnControlStatusChangeListener((View v, boolean state) -> {
       playBackgroundMusic();
     });
 
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    // observe the download state.
-    viewModel.getDownloadComplete().observe(this, isSucceed -> downloadSucceed = isSucceed);
+    // observe the download state
 
     initParagraphs();
 
