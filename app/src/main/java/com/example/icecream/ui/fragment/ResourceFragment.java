@@ -22,13 +22,9 @@ import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
-import com.example.icecream.utils.MyLock;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
-import com.scwang.smartrefresh.layout.header.ClassicsHeader;
-import com.scwang.smartrefresh.layout.listener.OnLoadMoreListener;
-import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 
 
 import java.util.Objects;
