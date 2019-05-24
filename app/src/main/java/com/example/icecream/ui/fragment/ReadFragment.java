@@ -177,10 +177,10 @@ public class ReadFragment extends Fragment {
 //    iVBack = view.findViewById(R.id.read_iv_back);
 //    iVBack.setOnClickListener(v -> backToResource());
     downloadIndicator = view.findViewById(R.id.ld_download);
-    ImageView btPlay = view.findViewById(R.id.read_iv_play);
+//    ImageView btPlay = view.findViewById(R.id.read_iv_play);
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     sbProgress = view.findViewById(R.id.read_pb_progress);
-    btPlay.setOnClickListener(v -> playBackgroundMusic());
+//    btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> startNextArticle());
 
 
