@@ -45,7 +45,6 @@ public class Repository {
   private MutableLiveData<Boolean> downloadComplete = new MutableLiveData<>();
 
   private MutableLiveData<User> userSearchResult = new MutableLiveData<>();
-  private MutableLiveData<List<RssFeed>> feedSearchResults = new MutableLiveData<>();
   private MutableLiveData<Article> articleSearchResults = new MutableLiveData<>();
   private MutableLiveData<List<RssFeed>> personalRssFeeds = new MutableLiveData<>();
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();

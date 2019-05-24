@@ -19,7 +19,7 @@ public class ResourceHandler {
 
   private AppViewModel viewModel;
   private HttpHandler httpHandler;
-  private static String TAG = "Resource Handler: ";
+  private static final String TAG = "Resource Handler: ";
 
   /**
    * Constructor.

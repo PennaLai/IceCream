@@ -257,7 +257,7 @@ public class HttpHandler {
         }
       }
     } catch (IOException e) {
-      e.printStackTrace();
+      Log.e(TAG, "download file IO exception");
     }
   }
 
@@ -441,7 +441,7 @@ public class HttpHandler {
             break;
         }
       } catch (Exception e) {
-        Log.e(TAG, "getCheckToken: ", e);
+        Log.e(TAG, e.getMessage());
       }
     }
     return responseState;
@@ -473,7 +473,7 @@ public class HttpHandler {
           allRssFeeds.add(rssFeed);
         }
       } catch (JSONException e) {
-        e.printStackTrace();
+        Log.e(TAG, e.getMessage());
       }
     }
     return responseState;
@@ -521,7 +521,7 @@ public class HttpHandler {
           commonArticles.add(article);
         }
       } catch (JSONException e) {
-        e.printStackTrace();
+        Log.e(TAG, e.getMessage());
       }
     }
     return responseState;
