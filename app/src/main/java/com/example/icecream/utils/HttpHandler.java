@@ -243,21 +243,27 @@ public class HttpHandler {
     try {
       Response response = okHttpClient.newCall(request).execute();
       if (response.body() != null) {
-        File file = new File(application.getFilesDir() + fileName);
-        if (!file.exists()) {
-          if (file.mkdirs() && file.createNewFile()) {
+        String parentDir = application.getFilesDir() + "/speech/";
+        File dir = new File(parentDir);
+        File file = new File(parentDir + fileName);
+        if (!dir.exists()) {
+          if (dir.mkdirs()) {
+            if (file.createNewFile()) {
+              BufferedSink sink = Okio.buffer(Okio.sink(file));
+              sink.writeAll(response.body().source());
+              sink.close();
+            }
+          }
+        } else {
+          if (file.createNewFile()) {
             BufferedSink sink = Okio.buffer(Okio.sink(file));
             sink.writeAll(response.body().source());
             sink.close();
           }
-        } else {
-          BufferedSink sink = Okio.buffer(Okio.sink(file));
-          sink.writeAll(response.body().source());
-          sink.close();
         }
       }
     } catch (IOException e) {
-      Log.e(TAG, "download file IO exception");
+      Log.e(TAG, e.getMessage());
     }
   }
 
@@ -778,7 +784,7 @@ public class HttpHandler {
   public void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
     Log.i(TAG, url);
-    getHttpResponseFile(url, "speech/" + id + ".mp3");
+    getHttpResponseFile(url, id + ".mp3");
   }
 
   public String getUpdateSpeechInfo(@NonNull final Long id) {
