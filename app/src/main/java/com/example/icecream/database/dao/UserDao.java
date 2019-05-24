@@ -18,8 +18,8 @@ import java.util.List;
 @Dao
 public interface UserDao {
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
-  void insert(User... user);
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
+  long insert(User user);
 
   @Update
   void update(User... user);

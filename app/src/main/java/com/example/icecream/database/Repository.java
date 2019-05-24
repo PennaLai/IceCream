@@ -132,10 +132,12 @@ public class Repository {
   /**
    * Synchronously insert user(s).
    *
-   * @param users input users.
+   * @param user input user.
    */
-  public void insertUserSync(User... users) {
-    userDao.insert(users);
+  public void insertUserSync(User user) {
+    if (userDao.insert(user) == -1) {
+      userDao.update(user);
+    }
   }
 
   /**
@@ -143,7 +145,7 @@ public class Repository {
    *
    * @param user the input user.
    */
-  public void insertUser(User... user) {
+  public void insertUser(User user) {
     new UserInsertAsyncTask(userDao).execute(user);
   }
 
@@ -423,7 +425,9 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final User... params) {
-      userDao.insert(params);
+      if (userDao.insert(params[0]) == -1) {
+        userDao.update(params);
+      }
       return null;
     }
   }
@@ -605,7 +609,6 @@ public class Repository {
       return result;
     }
 
-
     @Override
     protected void onPostExecute(List<RssFeed> result) {
       delegate.setPersonalRssFeeds(result);
@@ -767,11 +770,9 @@ public class Repository {
       List<RssFeed> rssFeeds = params[0].rssFeeds;
       List<Article> articles = params[0].articles;
       for (RssFeed rssFeed : rssFeeds) {
-        Log.i(TAG, "insert: " + rssFeed.getUrl());
         rssFeedDao.insert(rssFeed);
       }
       for (Article article : articles) {
-        Log.i(TAG, "insert: " + article.getTitle());
         articleDao.insert(article);
       }
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
