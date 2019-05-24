@@ -1,6 +1,7 @@
 package com.example.icecream.utils;
 
 import android.app.Application;
+import android.os.Environment;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
@@ -239,6 +240,8 @@ public final class HttpHandler {
    * @param fileName download file name.
    */
   private void getHttpResponseFile(final String url, String fileName) {
+    String state = Environment.getExternalStorageState();
+//    if (Environment.)
     Request request = new Request.Builder().url(url).build();
     try {
       Response response = okHttpClient.newCall(request).execute();

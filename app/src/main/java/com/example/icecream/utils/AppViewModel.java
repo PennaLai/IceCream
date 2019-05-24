@@ -298,4 +298,14 @@ public class AppViewModel extends AndroidViewModel {
     repository.findArticleById(id);
   }
 
+  /**
+   * Find user by phone.
+   *
+   * @param phone phone.
+   */
+  public void findUserByPhone(String phone) {
+    repository.findUserByPhone(phone);
+  }
+
+
 }

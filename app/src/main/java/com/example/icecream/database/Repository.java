@@ -53,10 +53,6 @@ public class Repository {
 
   private final static String TAG = "Repository: ";
 
-  private void setUser(User user) {
-    userSearchResult.setValue(user);
-  }
-
   public void setPersonalRssFeeds(List<RssFeed> feeds) {
     personalRssFeeds.setValue(feeds);
   }
@@ -224,6 +220,9 @@ public class Repository {
     new ArticleTitleQueryAsyncTask(articleDao, this).execute(title);
   }
 
+  public void findUserByPhone(String phone) {
+    new UserQueryAsyncTask(userDao,this).execute(phone);
+  }
   /**
    * Insert user rss feed join.
    *
@@ -417,10 +416,11 @@ public class Repository {
 
   private static class UserQueryAsyncTask extends AsyncTask<String, Void, User> {
     private UserDao userDao;
-    private Repository delegate = null;
+    private Repository delegate;
 
-    UserQueryAsyncTask(UserDao dao) {
+    UserQueryAsyncTask(UserDao dao, Repository repository) {
       userDao = dao;
+      delegate = repository;
     }
 
     @Override
@@ -430,7 +430,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(User result) {
-      delegate.setUser(result);
+      delegate.userSearchResult.setValue(result);
     }
   }
 
