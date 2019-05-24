@@ -48,7 +48,6 @@ import java.util.List;
 
 public class ReadFragment extends Fragment {
 
-  private static final String TAG = PlayFragment.class.getName();
   private static final String TAG = ReadFragment.class.getName();
 
   /** background player service. */
@@ -309,6 +308,8 @@ public class ReadFragment extends Fragment {
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
+    Log.i("Notify", "Success1");
+
     NotificationCompat.Builder builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
@@ -317,20 +318,26 @@ public class ReadFragment extends Fragment {
         PendingIntent.getActivity(getActivity(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
 
+    Log.i("Notify", "Success2");
+//    PendingIntent intent_close =
+//        PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+//    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
+
+    Log.i("Notify", "Success3");
     // 设置上一曲
     Intent prv = new Intent();
     prv.setAction(ACTION_PRE);
     PendingIntent intent_prev =
         PendingIntent.getBroadcast(getActivity(), 1, prv, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
-
+    Log.i("Notify", "Success4");
     // 下一曲
     Intent next = new Intent();
     next.setAction(ACTION_NEXT);
     PendingIntent intent_next =
         PendingIntent.getBroadcast(getActivity(), 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
-
+    Log.i("Notify", "Success5");
     // 设置播放
 
     if (speakerService.isPlaying()) {
@@ -348,7 +355,7 @@ public class ReadFragment extends Fragment {
               getActivity(), 6, playorpause, PendingIntent.FLAG_UPDATE_CURRENT);
       remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
     }
-
+    Log.i("Notify", "Success6");
     // 设置收藏, 未来做的事情
     //    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
     //        PendingIntent.FLAG_UPDATE_CURRENT);
@@ -356,13 +363,13 @@ public class ReadFragment extends Fragment {
     //
 
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
-
+    Log.i("Notify", "Success7");
     Notification notify = builder.build();
     notify.contentView = remoteViews; // 设置下拉图标
     notify.bigContentView = remoteViews; // 防止显示不完全,需要添加apisupport
     notify.flags = Notification.FLAG_ONGOING_EVENT;
     notify.icon = R.drawable.logo;
-
+    Log.i("Notify", "Success8");
     musicBarManage.notify(1, notify); // id 代表通知的id，可以在后续通过id关闭
 
     broadcastReceiver = new ReadFragment.NotificationClickReceiver();
@@ -375,6 +382,7 @@ public class ReadFragment extends Fragment {
     filter.addAction(ACTION_PAUSE);
     // register the receiver
     getActivity().registerReceiver(broadcastReceiver, filter);
+    Log.i("Notify", "Success9");
   }
 
   /** Receiver click event from notification bar. */

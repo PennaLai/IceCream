@@ -9,7 +9,7 @@ import android.media.MediaPlayer.OnPreparedListener;
 import android.os.Binder;
 import android.os.IBinder;
 import android.util.Log;
-import com.example.icecream.ui.fragment.ReadFragment.OnPlayerUiListener;
+import com.example.icecream.ui.fragment.PlayFragment.OnPlayerUiListener;
 import java.io.IOException;
 
 /**

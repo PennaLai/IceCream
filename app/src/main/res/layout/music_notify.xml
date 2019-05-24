@@ -8,30 +8,40 @@
 
   <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="10dp">
-    <TextView
-      android:id="@+id/notify_title"
-      android:layout_width="match_parent"
-      android:layout_height="24dp"
-      android:text="@string/title"
-      android:textColor="@color/black"
-      android:textSize="18sp"/>
-    <TextView
-      android:id="@+id/notify_time"
-      android:layout_width="wrap_content"
-      android:layout_height="wrap_content"
-      android:text="@string/time"/>
+    android:layout_height="100dp"
+    android:orientation="vertical">
+
     <LinearLayout
       android:layout_width="match_parent"
-      android:layout_height="50dp"
+      android:layout_height="60dp"
+      android:orientation="vertical"
+      android:padding="10dp">
+      <TextView
+        android:id="@+id/notify_title"
+        android:layout_width="match_parent"
+        android:layout_height="24dp"
+        android:text="@string/title"
+        android:textColor="@color/black"
+        android:textSize="18sp"/>
+      <TextView
+        android:id="@+id/notify_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/time"
+        android:textColor="@color/artist"
+        android:typeface="normal"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="40dp"
       android:gravity="center"
       android:orientation="horizontal" >
 
-      <Space
+      <LinearLayout
         android:layout_width="280dp"
-        android:layout_height="wrap_content"/>
+        android:layout_height="match_parent"/>
 
       <ImageView
         android:id="@+id/widget_prev"
@@ -56,9 +66,8 @@
         android:layout_weight="1"
         android:src="@drawable/ic_next_article" />
 
+
     </LinearLayout>
+
   </LinearLayout>
-
-
-
 </LinearLayout>
