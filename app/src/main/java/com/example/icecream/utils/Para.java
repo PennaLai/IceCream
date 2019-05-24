@@ -4,9 +4,16 @@ import java.util.ArrayList;
 
 public class Para {
 
-  int paraNums;
-  EachPara [] paras;
+  /** the number of paragraph numbers*/
+  private int paraNums;
 
+  /** store all the paragraph. */
+  private EachPara [] paras;
+
+  /**
+   *
+   * @param paraNums the number of paragraph.
+   */
   public Para(int paraNums) {
     this.paraNums = paraNums;
     paras = new EachPara[paraNums];
@@ -59,11 +66,16 @@ public class Para {
     return paras;
   }
 
-
+  /**
+   * each paragraph information.
+   */
   public class EachPara {
 
-    String content;
-    int startTime;
+    /** the paragraph content. */
+    private String content;
+
+    /** this paragraph start time. */
+    private int startTime;
 
     private EachPara(String content, int startTime) {
       this.content = content;
