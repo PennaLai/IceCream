@@ -111,6 +111,7 @@ public class ReadFragment extends Fragment {
   /** remote view for notification. */
   private RemoteViews remoteViews;
 
+  /** play pause button. */
   private PlayPauseButton playPauseButton;
 
   /** Receive notification event. */
@@ -118,7 +119,6 @@ public class ReadFragment extends Fragment {
 
   /** for action for the player button. */
   private static final String ACTION_PRE = "ACTION_PRE";
-
   private static final String ACTION_NEXT = "ACTION_NEXT";
   private static final String ACTION_PLAY = "ACTION_PLAY";
   private static final String ACTION_PAUSE = "ACTION_PAUSE";
@@ -341,6 +341,8 @@ public class ReadFragment extends Fragment {
    */
   public void setArticle() {
     downloadIndicator.smoothToHide();
+    // TODO: load data.
+    // update the article ui.
     paragraphList.add(new Paragraph(getResources().getString(R.string.title), 0));
     paragraphList.add(new Paragraph(getResources().getString(R.string.time), 2));
     for (int i = 0; i < paraNum; i++) {
