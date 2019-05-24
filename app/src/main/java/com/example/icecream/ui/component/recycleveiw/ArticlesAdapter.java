@@ -76,8 +76,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     View view = inflater.inflate(layoutIdForListItem, viewGroup, false);
     ArticlesViewHolder viewHolder = new ArticlesViewHolder(view);
 
-    viewHolder.viewHolderIndex.setText("ViewHolder index: " + viewHolderCount);
-
     viewHolderCount++;
     Log.d(TAG, "onCreateViewHolder: number of ViewHolders created: " + viewHolderCount);
     return viewHolder;
@@ -154,8 +152,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     /** articles public time. */
     TextView publicTime;
 
-    /** delete later. */
-    TextView viewHolderIndex;
 
     /** article content. */
     Article article;
@@ -174,7 +170,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
       publicTime = itemView.findViewById(R.id.tv_publish_time);
       title = itemView.findViewById(R.id.tv_item_title);
       content = itemView.findViewById(R.id.tv_item_content);
-      viewHolderIndex = itemView.findViewById(R.id.tv_view_holder_instance);
 
       itemView.setOnClickListener(this);
     }
