@@ -46,7 +46,7 @@ public class LoginActivity extends AppCompatActivity {
     // if the user has already login and the token is not expired, no need to login
     userSettingHandler = UserSettingHandler.getInstance(getApplication());
     String phoneNumber = userSettingHandler.getLoginPhone();
-    if (phoneNumber != null && UserSettingHandler.autoLoginFlag) {
+    if (phoneNumber != null) {
       goToMainPage();
     }
     phoneEdit = findViewById(R.id.phone);

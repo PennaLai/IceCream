@@ -10,8 +10,6 @@ import android.content.SharedPreferences;
  */
 public class UserSettingHandler {
 
-  public static boolean autoLoginFlag = true;
-
   private static volatile UserSettingHandler instance;
   private SharedPreferences settings;
   private String loginPhone;
@@ -57,6 +55,5 @@ public class UserSettingHandler {
     editor.putString(CURRENT_LOGIN_PHONE, phone);
     editor.apply();
     loginPhone = phone;
-    autoLoginFlag = true;
   }
 }
