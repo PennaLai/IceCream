@@ -36,7 +36,6 @@ import android.widget.Toast;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
-import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.component.paragraph.Paragraph;
 import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
@@ -45,16 +44,13 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.Para;
 import com.example.icecream.utils.ResourceHandler;
 import com.sackcentury.shinebuttonlib.ShineButton;
-import com.sackcentury.shinebuttonlib.ShineButton.OnCheckedChangeListener;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
-import jp.co.recruit_lifestyle.android.widget.PlayPauseButton.OnControlStatusChangeListener;
 
 /**
  * The read fragment.
@@ -372,7 +368,8 @@ public class ReadFragment extends Fragment {
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
-    NotificationCompat.Builder builder = new Builder(getActivity());
+    NotificationCompat.Builder builder;
+    builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
 

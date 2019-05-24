@@ -33,3 +33,17 @@ ext {
 task clean(type: Delete) {
     delete rootProject.buildDir
 }
+
+apply plugin: "findbugs"
+
+task findbugs(type: FindBugs) {
+    classes = fileTree('build/intermediates/classes/debug')
+    source = fileTree('src/main/java/')
+    classpath = files()
+    effort = 'max'
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.stylesheet resources.text.fromFile('findbugs-template.xsl')
+    }
+}

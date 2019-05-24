@@ -2,12 +2,10 @@ package com.example.icecream.ui.component.menu;
 
 import android.graphics.drawable.Drawable;
 import android.support.annotation.NonNull;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
-import com.example.icecream.R;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,8 +77,8 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
   /**
    * Update the DrawItem in given position by passing icon and text.
    * @param position : The position of the DrawItem
-   * @param icon :
-   * @param text
+   * @param icon : The new icon of the DrawItem
+   * @param text : The new text of the DrawItem
    */
   public void updateItem(int position, Drawable icon, String text){
     SimpleItem updateItem = (SimpleItem) items.get(position);
@@ -112,6 +110,10 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
     }
   }
 
+  /**
+   * Set the OnItemSelectedListener for the Drawer
+   * @param listener : The OnItemSelectedListener for the Drawer.
+   */
   public void setListener(OnItemSelectedListener listener) {
     this.listener = listener;
   }

@@ -179,6 +179,7 @@ public class MainActivity extends AppCompatActivity
     } else if (position == POS_STAR || position == POS_SETTING) {
       String repairing = "抱歉，这个功能正在装修中";
       Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
+      adapter.setSelected(POS_DASHBOARD);
     }
   }
 
