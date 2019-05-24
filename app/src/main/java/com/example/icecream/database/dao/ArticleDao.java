@@ -18,7 +18,7 @@ import java.util.List;
 @Dao
 public interface ArticleDao {
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
   void insert(Article... article);
 
   @Update

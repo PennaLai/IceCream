@@ -3,7 +3,6 @@ package com.example.icecream.database;
 import android.app.Application;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.content.Context;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
 import android.util.Log;
@@ -16,6 +15,7 @@ import com.example.icecream.database.dao.UserRssFeedJoinDao;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
+import com.example.icecream.database.entity.UserArticleJoin;
 import com.example.icecream.database.entity.UserRssFeedJoin;
 
 import java.text.ParseException;
@@ -132,10 +132,12 @@ public class Repository {
   /**
    * Synchronously insert user(s).
    *
-   * @param users input users.
+   * @param user input user.
    */
-  public void insertUserSync(User... users) {
-    userDao.insert(users);
+  public void insertUserSync(User user) {
+    if (userDao.insert(user) == -1) {
+      userDao.update(user);
+    }
   }
 
   /**
@@ -143,7 +145,7 @@ public class Repository {
    *
    * @param user the input user.
    */
-  public void insertUser(User... user) {
+  public void insertUser(User user) {
     new UserInsertAsyncTask(userDao).execute(user);
   }
 
@@ -161,15 +163,23 @@ public class Repository {
   }
 
   /**
-   * Insert RSS feed(s) into database.
+   * Insert RSS feed(s) and articles into database.
    *
    * @param phone    user phone.
-   * @param rssFeeds the input RSS feeds.
+   * @param rssFeeds input RSS feeds.
+   * @param articles input articles.
    */
-  public void insertUserRssFeeds(String phone, List<RssFeed> rssFeeds) {
-    new InsertUserRssFeedsAsyncTask(
-        userRssFeedJoinDao, userDao, rssFeedDao
-    ).execute(new ParamPhoneFeedList(phone, rssFeeds));
+  public void insertUserRssFeedsArticles(
+      String phone,
+      List<RssFeed> rssFeeds,
+      List<Article> articles) {
+    new InsertUserRssFeedsArticleAsyncTask(
+        userDao,
+        userRssFeedJoinDao,
+        rssFeedDao,
+        userArticleJoinDao,
+        articleDao
+    ).execute(new ParamPhoneFeedArticleList(phone, rssFeeds, articles));
   }
 
   /**
@@ -415,7 +425,9 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final User... params) {
-      userDao.insert(params);
+      if (userDao.insert(params[0]) == -1) {
+        userDao.update(params);
+      }
       return null;
     }
   }
@@ -597,7 +609,6 @@ public class Repository {
       return result;
     }
 
-
     @Override
     protected void onPostExecute(List<RssFeed> result) {
       delegate.setPersonalRssFeeds(result);
@@ -724,42 +735,56 @@ public class Repository {
     }
   }
 
-  private class ParamPhoneFeedList {
+  private class ParamPhoneFeedArticleList {
     String phone;
     List<RssFeed> rssFeeds;
+    List<Article> articles;
 
-    ParamPhoneFeedList(String phone, List<RssFeed> rssFeeds) {
+    ParamPhoneFeedArticleList(String phone, List<RssFeed> rssFeeds, List<Article> articles) {
       this.phone = phone;
       this.rssFeeds = rssFeeds;
+      this.articles = articles;
     }
   }
 
 
-  private static class InsertUserRssFeedsAsyncTask extends AsyncTask<ParamPhoneFeedList, Void, Void> {
-    private UserRssFeedJoinDao userRssFeedJoinDao;
+  private static class InsertUserRssFeedsArticleAsyncTask extends AsyncTask<ParamPhoneFeedArticleList, Void, Void> {
     private UserDao userDao;
+    private UserRssFeedJoinDao userRssFeedJoinDao;
     private RssFeedDao rssFeedDao;
+    private UserArticleJoinDao userArticleJoinDao;
+    private ArticleDao articleDao;
 
-    InsertUserRssFeedsAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
-                                UserDao userDao,
-                                RssFeedDao rssFeedDao) {
-      this.userRssFeedJoinDao = userRssFeedJoinDao;
+    public InsertUserRssFeedsArticleAsyncTask(
+        UserDao userDao, UserRssFeedJoinDao userRssFeedJoinDao, RssFeedDao rssFeedDao,
+        UserArticleJoinDao userArticleJoinDao, ArticleDao articleDao) {
       this.userDao = userDao;
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
       this.rssFeedDao = rssFeedDao;
+      this.userArticleJoinDao = userArticleJoinDao;
+      this.articleDao = articleDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamPhoneFeedList... params) {
+    protected Void doInBackground(final ParamPhoneFeedArticleList... params) {
       List<RssFeed> rssFeeds = params[0].rssFeeds;
+      List<Article> articles = params[0].articles;
       for (RssFeed rssFeed : rssFeeds) {
-        Log.i(TAG, "insert: " + rssFeed.getUrl());
         rssFeedDao.insert(rssFeed);
+      }
+      for (Article article : articles) {
+        articleDao.insert(article);
       }
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
       for (RssFeed rssFeed : rssFeeds) {
         userRssFeedJoinDao.insert(new UserRssFeedJoin(
             userId, rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getId())
         );
+      }
+      for (Article article : articles) {
+        userArticleJoinDao.insert(new UserArticleJoin(
+            userId, article.getId()
+        ));
       }
       return null;
     }

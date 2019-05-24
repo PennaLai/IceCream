@@ -15,7 +15,7 @@ import java.util.List;
 @Dao
 public interface RssFeedDao {
 
-  @Insert(onConflict = OnConflictStrategy.REPLACE)
+  @Insert(onConflict = OnConflictStrategy.IGNORE)
   void insert(RssFeed... rssFeed);
 
   @Delete

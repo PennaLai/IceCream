@@ -6,7 +6,6 @@ import android.util.Log;
 
 import com.example.icecream.database.entity.RssFeed;
 
-import java.io.InputStream;
 import java.util.List;
 
 import static android.content.ContentValues.TAG;
@@ -84,32 +83,13 @@ public class ResourceHandler {
     return application.getFilesDir() + "speech/" + id + ".mp3";
   }
 
-
   /**
-   * Update personal resources.
+   * Update user subscribed RSS feeds and articles.
    *
-   * @param phoneNumber user phone.
+   * @param phone user phone.
    */
-  public void updatePersonalFeedsAndArticles(final String phoneNumber) {
-    new UpdatePersonalFeedsArticlesAsyncTask(this).execute(phoneNumber);
-  }
-
-  /**
-   * Updates the subscribed feeds.
-   *
-   * @param phoneNumber user phone.
-   */
-  public void updatePersonalRssFeeds(final String phoneNumber) {
-    new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
-  }
-
-  /**
-   * Updates the subscribes articles.
-   *
-   * @param phoneNumber user phone.
-   */
-  public void updatePersonalArticles(final String phoneNumber) {
-    new UpdateArticlesAsyncTask(this).execute(phoneNumber);
+  public void updatePersonalResources(final String phone) {
+    new UpdatePersonalResourcesAsyncTask(this).execute(phone);
   }
 
   /**
@@ -179,12 +159,12 @@ public class ResourceHandler {
     }
   }
 
-  private static class UpdatePersonalFeedsAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class UpdatePersonalResourcesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private AppViewModel viewModel;
     private HttpHandler httpHandler;
     private String phone;
 
-    UpdatePersonalFeedsAsyncTask(ResourceHandler resourceHandler) {
+    UpdatePersonalResourcesAsyncTask(ResourceHandler resourceHandler) {
       viewModel = resourceHandler.viewModel;
       httpHandler = resourceHandler.httpHandler;
     }
@@ -192,57 +172,26 @@ public class ResourceHandler {
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       phone = params[0];
-      return httpHandler.getUpdateRSSFeedsState(phone);
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      switch (responseState) {
-        case Valid:
-          // get those feeds successfully
-          Log.i(TAG, "get rss feeds");
-          viewModel.setPersonalRssFeeds(httpHandler.getPersonalRssFeeds());
-          // store
-          viewModel.insertPersonalRssFeeds(phone, httpHandler.getPersonalRssFeeds());
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRSSFeedsState(phone);
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        httpHandler.getUpdateArticlesState(phone);
       }
-    }
-  }
-
-  private static class UpdateArticlesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-    private AppViewModel viewModel;
-
-    private HttpHandler httpHandler;
-
-    UpdateArticlesAsyncTask(ResourceHandler resourceHandler) {
-      viewModel = resourceHandler.viewModel;
-      httpHandler = resourceHandler.httpHandler;
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      return httpHandler.getUpdateArticlesState(params[0]);
+      return responseState;
     }
 
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       switch (responseState) {
         case Valid:
-          // get those articles successfully
+          Log.i(TAG, "successfully gets personal rss feeds and articles");
+          viewModel.setPersonalRssFeeds(httpHandler.getPersonalRssFeeds());
           viewModel.setPersonalArticles(httpHandler.getPersonalArticles());
           // store
-          viewModel.insertArticles(httpHandler.getPersonalArticles());
-          Log.i(TAG, "insert articles succeed");
+          viewModel.insertPersonalRssFeedsArticles(
+              phone,
+              httpHandler.getPersonalRssFeeds(),
+              httpHandler.getPersonalArticles()
+          );
           break;
         case InvalidToken:
           // TODO back to login
@@ -321,53 +270,6 @@ public class ResourceHandler {
         case Valid:
           viewModel.unsubscribe(phone, rssFeedUrl);
           Log.i(TAG, "unsubscribe succeed");
-          break;
-        case InvalidToken:
-          // TODO back to login
-//          activity.login();
-          break;
-        case NoSuchUser:
-          // TODO back to login
-//          activity.login();
-          break;
-        default:
-          break;
-      }
-    }
-  }
-
-
-  private static class UpdatePersonalFeedsArticlesAsyncTask
-      extends AsyncTask<String, Void, HttpHandler.ResponseState> {
-    private AppViewModel viewModel;
-    private HttpHandler httpHandler;
-    private String phone;
-
-    UpdatePersonalFeedsArticlesAsyncTask(ResourceHandler resourceHandler) {
-      viewModel = resourceHandler.viewModel;
-      httpHandler = resourceHandler.httpHandler;
-    }
-
-    @Override
-    protected HttpHandler.ResponseState doInBackground(String... params) {
-      phone = params[0];
-      HttpHandler.ResponseState responseState = httpHandler.getUpdateRSSFeedsState(phone);
-      if (responseState != HttpHandler.ResponseState.Valid) {
-        return responseState;
-      }
-      viewModel.insertPersonalRssFeeds(phone, httpHandler.getPersonalRssFeeds());
-      httpHandler.getUpdateArticlesState(phone);
-      return responseState;
-    }
-
-    @Override
-    protected void onPostExecute(HttpHandler.ResponseState responseState) {
-      switch (responseState) {
-        case Valid:
-          viewModel.setPersonalRssFeeds(httpHandler.getPersonalRssFeeds());
-          viewModel.setPersonalArticles(httpHandler.getPersonalArticles());
-          viewModel.insertArticles(httpHandler.getPersonalArticles());
-          Log.i(TAG, "insert articles succeed");
           break;
         case InvalidToken:
           // TODO back to login
