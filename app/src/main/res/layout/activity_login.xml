@@ -11,12 +11,12 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
       android:id="@+id/phone"
-      android:layout_width="375dp"
+      android:layout_width="match_parent"
       android:layout_height="45dp"
       android:layout_marginTop="8dp"
       android:layout_marginBottom="8dp"
-      android:layout_marginLeft="10dp"
-      android:layout_marginRight="10dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
       android:hint="Phone"
       android:textSize="14sp"
       android:typeface="sans"
@@ -27,12 +27,12 @@
 
     <com.rengwuxian.materialedittext.MaterialEditText
       android:id="@+id/password"
-      android:layout_width="375dp"
+      android:layout_width="match_parent"
       android:layout_height="45dp"
       android:layout_marginTop="8dp"
       android:layout_marginBottom="8dp"
-      android:layout_marginLeft="10dp"
-      android:layout_marginRight="10dp"
+      android:layout_marginLeft="16dp"
+      android:layout_marginRight="16dp"
       android:hint="Password"
       android:inputType="textPassword"
       android:textSize="14sp"

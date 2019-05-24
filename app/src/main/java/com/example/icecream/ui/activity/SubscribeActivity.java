@@ -1,6 +1,5 @@
 package com.example.icecream.ui.activity;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,6 +18,12 @@ import com.example.icecream.utils.UserSettingHandler;
 import com.robertlevonyan.views.chip.Chip;
 import java.util.List;
 
+/**
+ * The Subscribe Activity.
+ *
+ * @author aaron penna
+ * @version V1.0
+ */
 public class SubscribeActivity extends AppCompatActivity {
 
   /**

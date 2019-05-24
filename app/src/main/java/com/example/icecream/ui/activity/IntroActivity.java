@@ -1,20 +1,8 @@
 package com.example.icecream.ui.activity;
 
-//import agency.tango.materialintroscreen.MessageButtonBehaviour;
-//import agency.tango.materialintroscreen.SlideFragmentBuilder;
-//import agency.tango.materialintroscreen.animations.IViewTranslation;
-import android.Manifest;
 import android.arch.lifecycle.ViewModelProviders;
-import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.FloatRange;
-import android.support.design.button.MaterialButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.widget.Button;
-import android.widget.TextView;
 import com.codemybrainsout.onboarder.AhoyOnboarderActivity;
 import com.codemybrainsout.onboarder.AhoyOnboarderCard;
 import com.example.icecream.R;
@@ -27,6 +15,7 @@ import java.util.List;
 
 public class IntroActivity extends AhoyOnboarderActivity {
 
+  /** A List to store all the introduction pages */
   List<AhoyOnboarderCard> pages = new ArrayList<>();
 
   @Override
@@ -35,17 +24,25 @@ public class IntroActivity extends AhoyOnboarderActivity {
     initIntroCards();
     setOnboardPages(pages);
     setColorBackground(R.color.light_blue);
+    setFinishButtonTitle("开始探索吧");
 
     loadData();
   }
 
+  /**
+   * Initialize the introduction pages.
+   */
   private void initIntroCards() {
-    AhoyOnboarderCard card1 = new AhoyOnboarderCard("实时资讯",
-        "轻松下滑就能从你的订阅源中获取最新咨询", R.drawable.logo);
-    AhoyOnboarderCard card2 = new AhoyOnboarderCard("后台播放",
-        "反正就能后台播放", R.drawable.profile);
+    AhoyOnboarderCard card1 = new AhoyOnboarderCard("个人定制",
+        "一键订阅，众多话题任由你来选择", R.drawable.one);
+    AhoyOnboarderCard card2 = new AhoyOnboarderCard("实时资讯",
+        "轻松下滑，足不出户便知天下之事", R.drawable.two);
+
+    AhoyOnboarderCard card3 = new AhoyOnboarderCard("语音播放",
+        "后台播放，时时刻刻可享阅读乐趣", R.drawable.three);
     pages.add(card1);
     pages.add(card2);
+    pages.add(card3);
   }
 
   @Override
@@ -53,6 +50,9 @@ public class IntroActivity extends AhoyOnboarderActivity {
     go();
   }
 
+  /**
+   * Load data for the main thread.
+   */
   private void loadData() {
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
@@ -66,6 +66,9 @@ public class IntroActivity extends AhoyOnboarderActivity {
   }
 
 
+  /**
+   * Verify login state and switch to the corresponding activity.
+   */
   private void go() {
     UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
     String phoneNumber = userSettingHandler.getLoginPhone();

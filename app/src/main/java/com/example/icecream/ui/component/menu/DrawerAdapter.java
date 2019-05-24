@@ -1,6 +1,7 @@
 package com.example.icecream.ui.component.menu;
 
 import android.graphics.drawable.Drawable;
+import android.support.annotation.NonNull;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
@@ -11,16 +12,23 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-/** Created by yarolegovich on 25.03.2017. */
+/**
+ * The DrawerAdapter to control the Drawer.
+ * Refer from yarolegovich
+ */
 public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
 
+  /** The List for DrawerItems */
   private List<DrawerItem> items;
+
+  /** The Map to store the type of DrawerItems */
   private Map<Class<? extends DrawerItem>, Integer> viewTypes;
+
+
   private SparseArray<DrawerItem> holderFactories;
 
   private OnItemSelectedListener listener;
 
-  private View.OnClickListener listener_test;
 
   public DrawerAdapter(List<DrawerItem> items) {
     this.items = items;
@@ -31,7 +39,8 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
   }
 
   @Override
-  public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+  @NonNull
+  public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
     ViewHolder holder = holderFactories.get(viewType).createViewHolder(parent);
     holder.adapter = this;
     return holder;
@@ -39,7 +48,7 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
 
   @Override
   @SuppressWarnings("unchecked")
-  public void onBindViewHolder(ViewHolder holder, int position) {
+  public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
     items.get(position).bindViewHolder(holder);
   }
 
@@ -50,9 +59,11 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
 
   @Override
   public int getItemViewType(int position) {
-    return viewTypes.get(items.get(position).getClass());
+    Class<? extends DrawerItem> clz = items.get(position).getClass();
+    return viewTypes.get(clz);
   }
 
+  /** process the ViewType of DrawItems */
   private void processViewTypes() {
     int type = 0;
     for (DrawerItem item : items) {
@@ -64,6 +75,13 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
     }
   }
 
+
+  /**
+   * Update the DrawItem in given position by passing icon and text.
+   * @param position : The position of the DrawItem
+   * @param icon :
+   * @param text
+   */
   public void updateItem(int position, Drawable icon, String text){
     SimpleItem updateItem = (SimpleItem) items.get(position);
     updateItem.setIcon(icon);

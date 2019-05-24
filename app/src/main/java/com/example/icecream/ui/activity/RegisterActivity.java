@@ -315,8 +315,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
   }
 
   /**
-   * This method is to go to the login page.
-   * TODO: Avoid creating new page for login
+   * This method is to go to the login page
    */
   private void goToLoginPage() {
     final Context context = this;
@@ -375,6 +374,9 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     }
   }
 
+  /**
+   * A inner class to store user information.
+   */
   private class ParamsPhoneNamePassword {
     String phone;
     String username;
