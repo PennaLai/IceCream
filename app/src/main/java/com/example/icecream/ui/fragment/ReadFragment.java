@@ -273,6 +273,9 @@ public class ReadFragment extends Fragment {
           return false;
         });
 
+    paragraphs.setOnItemClickListener(
+        (parent, view1, position, id) -> scrollToParagraph(position));
+
     paragraphs.setOnScrollListener(new OnScrollListener() {
       @Override
       public void onScrollStateChanged(AbsListView view, int scrollState) {
@@ -289,13 +292,10 @@ public class ReadFragment extends Fragment {
         }
       }
 
-    paragraphs.setOnItemClickListener(
-        (parent, view1, position, id) -> scrollToParagraph(position));
-
-          @Override
-          public void onScroll(
-              AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
-        });
+      @Override
+      public void onScroll(
+          AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(
