@@ -180,7 +180,7 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
     // view model
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     // 用户设置读取
     userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
 

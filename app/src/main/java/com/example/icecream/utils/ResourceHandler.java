@@ -19,8 +19,6 @@ public class ResourceHandler {
 
   private AppViewModel viewModel;
   private HttpHandler httpHandler;
-  private Application application;
-
   private static String TAG = "Resource Handler: ";
 
   /**
@@ -30,11 +28,9 @@ public class ResourceHandler {
    * @param viewModel   view model.
    */
   private ResourceHandler(HttpHandler httpHandler,
-                          AppViewModel viewModel,
-                          Application application) {
+                          AppViewModel viewModel) {
     this.viewModel = viewModel;
     this.httpHandler = httpHandler;
-    this.application = application;
   }
 
   /**
@@ -42,16 +38,14 @@ public class ResourceHandler {
    *
    * @param httpHandler http handler.
    * @param viewModel   app view model.
-   * @param application application.
    * @return instance.
    */
   public static ResourceHandler getInstance(final HttpHandler httpHandler,
-                                            final AppViewModel viewModel,
-                                            final Application application) {
+                                            final AppViewModel viewModel) {
     if (instance == null) {
       synchronized (ResourceHandler.class) {
         if (instance == null) {
-          instance = new ResourceHandler(httpHandler, viewModel, application);
+          instance = new ResourceHandler(httpHandler, viewModel);
         }
       }
     }

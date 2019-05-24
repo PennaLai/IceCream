@@ -339,7 +339,7 @@ public class ReadFragment extends Fragment {
     // TODO: download.
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.show();
     while (!downloadSucceed) {

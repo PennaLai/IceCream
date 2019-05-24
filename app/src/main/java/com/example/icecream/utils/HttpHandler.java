@@ -51,18 +51,18 @@ public class HttpHandler {
   private static final String LOGIN_URL = MAIN_URL + "signin";
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
-  private static final String CHECK_TOKEN_URL = MAIN_URL + "checkToken";
-  private static final String USER_SETTING_URL = MAIN_URL + "userSetting";
+  private static final String CHECK_TOKEN_URL = MAIN_URL + "checkToken?token=";
+  private static final String USER_SETTING_URL = MAIN_URL + "userSetting?token=";
 
   /**
    * User feeds and articles urls.
    */
   private static final String ALL_RSS_FEEDS_URL = MAIN_URL + "list/all/feeds";
   private static final String ALL_ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
-  private static final String PERSONAL_RSS_FEEDS_URL = MAIN_URL + "list/feeds";
-  private static final String PERSONAL_ARTICLES_URL = MAIN_URL + "list/user/all/articles";
-  private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel";
-  private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel";
+  private static final String PERSONAL_RSS_FEEDS_URL = MAIN_URL + "list/feeds?token=";
+  private static final String PERSONAL_ARTICLES_URL = MAIN_URL + "list/user/all/articles?token=";
+  private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel?token=";
+  private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel?token=";
 
   /**
    * Record urls.
@@ -161,7 +161,7 @@ public class HttpHandler {
   }
 
   private String getUpdateSetting(@NonNull String token) {
-    String url = USER_SETTING_URL + "?token=" + token;
+    String url = USER_SETTING_URL + token;
     String responseString = getHttpResponseString(url);
     if (responseString != null) {
       Log.i(TAG, responseString);
@@ -198,10 +198,8 @@ public class HttpHandler {
     String result = null;
     try {
       Response response = okHttpClient.newCall(request).execute();
-      if (response.isSuccessful()) {
-        if (response.body() != null) {
-          result = response.body().string();
-        }
+      if (response.isSuccessful() && response.body() != null) {
+        result = response.body().string();
       }
     } catch (IOException e) {
       Log.e(TAG, "getHttpResponseString: ", e);
@@ -225,10 +223,8 @@ public class HttpHandler {
     String result = null;
     try {
       Response response = okHttpClient.newCall(request).execute();
-      if (response.isSuccessful()) {
-        if (response.body() != null) {
-          result = response.body().string();
-        }
+      if (response.isSuccessful() && response.body() != null) {
+        result = response.body().string();
       }
     } catch (IOException e) {
       Log.e(TAG, "postHttpResponseString: ", e);
@@ -420,7 +416,7 @@ public class HttpHandler {
       return ResponseState.InvalidToken;
     }
     String token = user.getAuthToken();
-    String responseString = getHttpResponseString(CHECK_TOKEN_URL + "?token=" + token);
+    String responseString = getHttpResponseString(CHECK_TOKEN_URL + token);
     ResponseState responseState;
     if (responseString == null) {
       responseState = ResponseState.ServerWrong;
@@ -551,7 +547,7 @@ public class HttpHandler {
   ResponseState getUpdateRssFeedsState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = PERSONAL_RSS_FEEDS_URL + "?token=" + token;
+    String url = PERSONAL_RSS_FEEDS_URL + token;
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {
@@ -618,7 +614,7 @@ public class HttpHandler {
   ResponseState getUpdateArticlesState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = PERSONAL_ARTICLES_URL + "?token=" + token;
+    String url = PERSONAL_ARTICLES_URL + token;
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {
@@ -689,7 +685,7 @@ public class HttpHandler {
   ResponseState getSubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = SUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
+    String url = SUBSCRIBE_URL + token + "&url=" + rssFeedUrl;
     Log.i(TAG, "Subscribe request: " + url);
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
@@ -740,7 +736,7 @@ public class HttpHandler {
                                         String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = UNSUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
+    String url = UNSUBSCRIBE_URL + token + "&url=" + rssFeedUrl;
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {
