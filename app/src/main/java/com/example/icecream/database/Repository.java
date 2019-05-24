@@ -396,10 +396,20 @@ public class Repository {
    * @param id   article id.
    * @param para paragraph.
    */
-  public void updateArticleParagraph(Long id, String para) {
-    UpdateSpeechAsyncTask task = new UpdateSpeechAsyncTask(articleDao);
-    task.delegate = this;
-    task.execute(new ParamSpeech(id, para));
+  public void updateArticleParagraphSync(Long id, String para) {
+    Article article = articleDao.getArticleById(id);
+    article.setParagraph(para);
+    articleDao.update(article);
+  }
+
+  /**
+   * Star article.
+   *
+   * @param phone   user phone.
+   * @param article article.
+   */
+  public void starArticleByPhone(String phone, Article article) {
+    new StarAsyncTask(this).execute(new ParamPhoneArticle(phone, article));
   }
 
 
@@ -769,38 +779,33 @@ public class Repository {
     }
   }
 
-  private static class ParamSpeech {
-    Long id;
-    String paragraph;
+  private static class ParamPhoneArticle{
+    String phone;
+    Article article;
 
-    ParamSpeech(Long id, String paragraph) {
-      this.id = id;
-      this.paragraph = paragraph;
+    public ParamPhoneArticle(String phone, Article article) {
+      this.phone = phone;
+      this.article = article;
     }
   }
 
+  private static class StarAsyncTask extends AsyncTask<ParamPhoneArticle, Void, Void> {
 
-  private static class UpdateSpeechAsyncTask extends AsyncTask<ParamSpeech, Void, Void> {
-    private ArticleDao articleDao;
-    private Repository delegate;
+    private UserDao userDao;
+    private UserArticleJoinDao userArticleJoinDao;
 
-    UpdateSpeechAsyncTask(ArticleDao articleDao) {
-      this.articleDao = articleDao;
+    StarAsyncTask (Repository repository) {
+      userDao = repository.userDao;
+      userArticleJoinDao = repository.userArticleJoinDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamSpeech... params) {
-      Article article = articleDao.getArticleById(params[0].id);
-      article.setParagraph(params[0].paragraph);
-      articleDao.update(article);
+    protected Void doInBackground(final ParamPhoneArticle... params){
+      Long userId = userDao.getUserByPhone(params[0].phone).getId();
+      UserArticleJoin userArticleJoin = new UserArticleJoin(userId, params[0].article.getId());
+      userArticleJoinDao.insert(userArticleJoin);
       return null;
     }
-
-    @Override
-    protected void onPostExecute(Void result) {
-      delegate.downloadComplete.setValue(true);
-    }
-
   }
 
 }

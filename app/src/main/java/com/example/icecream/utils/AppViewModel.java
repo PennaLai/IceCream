@@ -90,7 +90,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param id article id.
    */
   public void updateArticleParagraph(Long id, String paragraph) {
-    repository.updateArticleParagraph(id, paragraph);
+    repository.updateArticleParagraphSync(id, paragraph);
   }
 
   /**
@@ -170,7 +170,7 @@ public class AppViewModel extends AndroidViewModel {
    *
    * @param feeds feeds
    */
-  public void setPersonalRssFeeds(List<RssFeed> feeds) {
+  void setPersonalRssFeeds(List<RssFeed> feeds) {
     personalRssFeeds.setValue(feeds);
   }
 
@@ -179,7 +179,7 @@ public class AppViewModel extends AndroidViewModel {
    *
    * @param articles articles.
    */
-  public void setPersonalArticles(List<Article> articles) {
+  void setPersonalArticles(List<Article> articles) {
     personalArticles.setValue(articles);
   }
 
@@ -188,7 +188,7 @@ public class AppViewModel extends AndroidViewModel {
    *
    * @param articles articles.
    */
-  public void setCommonArticles(List<Article> articles) {
+  void setCommonArticles(List<Article> articles) {
     commonArticles.setValue(articles);
   }
 
@@ -198,7 +198,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param phone phone.
    * @param url   feed url.
    */
-  public void subscribe(String phone, String url) {
+  void subscribe(String phone, String url) {
     repository.insertUserRssFeedByPhoneUrl(phone, url);
   }
 
@@ -208,18 +208,18 @@ public class AppViewModel extends AndroidViewModel {
    * @param phone phone.
    * @param url   feed url.
    */
-  public void unsubscribe(String phone, String url) {
+  void unsubscribe(String phone, String url) {
     repository.deleteUserRssFeedByPhoneUrl(phone, url);
   }
 
   /**
    * Star the article.
    *
-   * @param phone user phone.
-   * @param url   article url.
+   * @param phone   user phone.
+   * @param article article.
    */
-  public void star(String phone, String url) {
-
+  void star(String phone, Article article) {
+    repository.starArticleByPhone(phone, article);
   }
 
   /**
@@ -237,7 +237,7 @@ public class AppViewModel extends AndroidViewModel {
    *
    * @param phone phone.
    */
-  public void loadRssFeedsByPhone(String phone) {
+  void loadRssFeedsByPhone(String phone) {
     repository.findRssFeedsByPhone(phone);
   }
 
@@ -246,7 +246,7 @@ public class AppViewModel extends AndroidViewModel {
    *
    * @param phone user phone.
    */
-  public void loadArticlesByPhone(String phone) {
+  void loadArticlesByPhone(String phone) {
     repository.findPersonalArticlesByPhone(phone);
   }
 
@@ -275,7 +275,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param rssFeeds rss feed list.
    * @param articles article list.
    */
-  public void insertPersonalRssFeedsArticles(
+  void insertPersonalRssFeedsArticles(
       String phone, List<RssFeed> rssFeeds, List<Article> articles) {
     repository.insertUserRssFeedsArticles(phone, rssFeeds, articles);
   }
