@@ -174,8 +174,8 @@ public class ReadFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
-    iVBack = view.findViewById(R.id.read_iv_back);
-    iVBack.setOnClickListener(v -> backToResource());
+//    iVBack = view.findViewById(R.id.read_iv_back);
+//    iVBack.setOnClickListener(v -> backToResource());
     downloadIndicator = view.findViewById(R.id.ld_download);
     ImageView btPlay = view.findViewById(R.id.read_iv_play);
     ImageView btNext = view.findViewById(R.id.read_iv_next);

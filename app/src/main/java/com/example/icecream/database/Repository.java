@@ -221,7 +221,7 @@ public class Repository {
    *
    * @param article the input article.
    */
-  public void updateArticle(Article... article) {
+  public void updateArticles(Article... article) {
     new ArticleUpdateAsyncTask(articleDao).execute(article);
   }
 
@@ -407,6 +407,17 @@ public class Repository {
   public List<RssFeed> getRssFeedsByNameSync(String name) {
     return rssFeedDao.getRssFeedByName(name);
   }
+
+  /**
+   * Update paragraph.
+   *
+   * @param id   article id.
+   * @param para paragraph.
+   */
+  public void updateArticleParagraph(Long id, String para) {
+    new UpdateSpeechAsyncTask(articleDao).execute(new ParamSpeech(id, para));
+  }
+
 
   /**
    * Synchronously get RSS feeds by url.
@@ -778,7 +789,7 @@ public class Repository {
     private UserArticleJoinDao userArticleJoinDao;
     private ArticleDao articleDao;
 
-    public InsertUserRssFeedsArticleAsyncTask(
+    InsertUserRssFeedsArticleAsyncTask(
         UserDao userDao, UserRssFeedJoinDao userRssFeedJoinDao, RssFeedDao rssFeedDao,
         UserArticleJoinDao userArticleJoinDao, ArticleDao articleDao) {
       this.userDao = userDao;
@@ -811,6 +822,34 @@ public class Repository {
       }
       return null;
     }
+  }
+
+  private static class ParamSpeech {
+    Long id;
+    String paragraph;
+
+    ParamSpeech(Long id, String paragraph) {
+      this.id = id;
+      this.paragraph = paragraph;
+    }
+  }
+
+
+  private static class UpdateSpeechAsyncTask extends AsyncTask<ParamSpeech, Void, Void> {
+    private ArticleDao articleDao;
+
+    UpdateSpeechAsyncTask(ArticleDao articleDao) {
+      this.articleDao = articleDao;
+    }
+
+    @Override
+    protected Void doInBackground(final ParamSpeech... params) {
+      Article article = articleDao.getArticleById(params[0].id);
+      article.setParagraph(params[0].paragraph);
+      articleDao.update(article);
+      return null;
+    }
+
   }
 
 
