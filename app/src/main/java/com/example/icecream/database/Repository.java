@@ -43,13 +43,12 @@ public class Repository {
   private UserArticleJoinDao userArticleJoinDao;
   private LiveData<List<User>> allUsers;
   private LiveData<List<RssFeed>> allRssFeeds;
-  private LiveData<List<Article>> allArticles;
 
   private MutableLiveData<Boolean> downloadComplete = new MutableLiveData<>();
 
   private MutableLiveData<User> userSearchResult = new MutableLiveData<>();
   private MutableLiveData<List<RssFeed>> feedSearchResults = new MutableLiveData<>();
-  private MutableLiveData<List<Article>> articleSearchResults = new MutableLiveData<>();
+  private MutableLiveData<Article> articleSearchResults = new MutableLiveData<>();
   private MutableLiveData<List<RssFeed>> personalRssFeeds = new MutableLiveData<>();
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();
   private MutableLiveData<List<Article>> starArticles = new MutableLiveData<>();
@@ -59,32 +58,24 @@ public class Repository {
     userSearchResult.setValue(user);
   }
 
-  private void setRssFeeds(List<RssFeed> feeds) {
-    feedSearchResults.setValue(feeds);
-  }
-
-  private void setArticles(List<Article> articles) {
-    articleSearchResults.setValue(articles);
-  }
-
   public void setPersonalRssFeeds(List<RssFeed> feeds) {
     personalRssFeeds.setValue(feeds);
   }
 
-  public void setPersonalArticles(List<Article> articles) {
+  private void setPersonalArticles(List<Article> articles) {
     personalArticles.setValue(articles);
   }
 
-  public void setStarArticles(List<Article> articles) {
+  private void setStarArticles(List<Article> articles) {
     starArticles.setValue(articles);
-  }
-
-  public void setDownloadComplete(Boolean flag) {
-    downloadComplete.setValue(flag);
   }
 
   public void setCommonArticles(List<Article> articles) {
     commonArticles.setValue(articles);
+  }
+
+  private void setArticleSearchResults(Article article) {
+    articleSearchResults.setValue(article);
   }
 
   /**
@@ -102,7 +93,6 @@ public class Repository {
     userArticleJoinDao = db.userArticleJoinDao();
     allUsers = userDao.getAllUsers();
     allRssFeeds = rssFeedDao.getAllFeeds();
-    allArticles = articleDao.getAllArticles();
   }
 
   /**
@@ -223,21 +213,16 @@ public class Repository {
   }
 
   /**
-   * Update article(s) if its primary key exists.
+   * Find article.
    *
-   * @param article the input article.
+   * @param id article id.
    */
-  public void updateArticles(Article... article) {
-    new ArticleUpdateAsyncTask(articleDao).execute(article);
+  public void findArticleById(Long id) {
+    new ArticleIdQueryAsyncTask(articleDao, this).execute(id);
   }
 
-  /**
-   * Delete article(s) from database.
-   *
-   * @param article the input article.
-   */
-  public void deleteArticle(Article... article) {
-    new ArticleDeleteAsyncTask(articleDao).execute(article);
+  public void findArticleByTitle(String title) {
+    new ArticleTitleQueryAsyncTask(articleDao, this).execute(title);
   }
 
   /**
@@ -265,17 +250,6 @@ public class Repository {
         userRssFeedJoinDao,
         userDao,
         rssFeedDao).execute(phone, url);
-  }
-
-  /**
-   * Find the user by phone number from database.
-   *
-   * @param phone the input user's phone number.
-   */
-  public void findUserByPhone(String phone) {
-    UserQueryAsyncTask task = new UserQueryAsyncTask(userDao);
-    task.delegate = this;
-    task.execute(phone);
   }
 
   /**
@@ -320,20 +294,11 @@ public class Repository {
   }
 
   /**
-   * Get the result of searching RSS feed(s) by its channel name.
-   *
-   * @return the result RSS feed(s)
-   */
-  public MutableLiveData<List<RssFeed>> getFeedSearchResults() {
-    return feedSearchResults;
-  }
-
-  /**
    * Get the result of searching article(s) by its title.
    *
    * @return the result article(s)
    */
-  public MutableLiveData<List<Article>> getArticleSearchResults() {
+  public MutableLiveData<Article> getArticleSearchResults() {
     return articleSearchResults;
   }
 
@@ -497,42 +462,6 @@ public class Repository {
     }
   }
 
-
-  private static class UserDeleteAsyncTask extends AsyncTask<User, Void, Void> {
-    private UserDao userDao;
-
-    UserDeleteAsyncTask(UserDao dao) {
-      userDao = dao;
-    }
-
-    @Override
-    protected Void doInBackground(final User... params) {
-      userDao.delete(params);
-      return null;
-    }
-  }
-
-
-  private static class RssFeedQueryAsyncTask extends AsyncTask<String, Void, List<RssFeed>> {
-    private RssFeedDao rssFeedDao;
-    private Repository delegate = null;
-
-    RssFeedQueryAsyncTask(RssFeedDao dao) {
-      rssFeedDao = dao;
-    }
-
-    @Override
-    protected List<RssFeed> doInBackground(final String... params) {
-      return rssFeedDao.getRssFeedByName(params[0]);
-    }
-
-    @Override
-    protected void onPostExecute(List<RssFeed> result) {
-      delegate.setRssFeeds(result);
-    }
-  }
-
-
   private static class RssFeedInsertAsyncTask extends AsyncTask<RssFeed, Void, Void> {
     private RssFeedDao rssFeedDao;
 
@@ -576,13 +505,33 @@ public class Repository {
     }
   }
 
-
-  private static class ArticleQueryAsyncTask extends AsyncTask<String, Void, List<Article>> {
+  private static class ArticleIdQueryAsyncTask extends AsyncTask<Long, Void, Article> {
     private ArticleDao articleDao;
-    private Repository delegate = null;
+    private Repository delegate;
 
-    ArticleQueryAsyncTask(ArticleDao dao) {
+    ArticleIdQueryAsyncTask(ArticleDao dao, Repository repository) {
       articleDao = dao;
+      delegate = repository;
+    }
+
+    @Override
+    protected Article doInBackground(final Long... params) {
+      return articleDao.getArticleById(params[0]);
+    }
+
+    @Override
+    protected void onPostExecute(Article result) {
+      delegate.setArticleSearchResults(result);
+    }
+  }
+
+  private static class ArticleTitleQueryAsyncTask extends AsyncTask<String, Void, List<Article>> {
+    private ArticleDao articleDao;
+    private Repository delegate;
+
+    ArticleTitleQueryAsyncTask(ArticleDao dao, Repository repository) {
+      articleDao = dao;
+      delegate = repository;
     }
 
     @Override
@@ -592,7 +541,11 @@ public class Repository {
 
     @Override
     protected void onPostExecute(List<Article> result) {
-      delegate.setArticles(result);
+      if (result.size() > 0) {
+        delegate.setArticleSearchResults(result.get(0));
+      } else {
+        delegate.setArticleSearchResults(null);
+      }
     }
   }
 
@@ -607,35 +560,6 @@ public class Repository {
     @Override
     protected Void doInBackground(final Article... params) {
       articleDao.insert(params);
-      return null;
-    }
-  }
-
-  private static class ArticleUpdateAsyncTask extends AsyncTask<Article, Void, Void> {
-    private ArticleDao articleDao;
-
-    ArticleUpdateAsyncTask(ArticleDao dao) {
-      articleDao = dao;
-    }
-
-    @Override
-    protected Void doInBackground(final Article... params) {
-      articleDao.update(params);
-      return null;
-    }
-  }
-
-
-  private static class ArticleDeleteAsyncTask extends AsyncTask<Article, Void, Void> {
-    private ArticleDao articleDao;
-
-    ArticleDeleteAsyncTask(ArticleDao dao) {
-      articleDao = dao;
-    }
-
-    @Override
-    protected Void doInBackground(final Article... params) {
-      articleDao.delete(params);
       return null;
     }
   }
@@ -870,7 +794,7 @@ public class Repository {
 
     @Override
     protected void onPostExecute(Void result) {
-      delegate.setDownloadComplete(true);
+      delegate.downloadComplete.setValue(true);
     }
 
   }

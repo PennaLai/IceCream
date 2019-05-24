@@ -52,6 +52,7 @@ public class AppViewModel extends AndroidViewModel {
     allUsers = repository.getAllUsers();
     allRssFeeds = repository.getAllRssFeeds();
     userSearchResult = repository.getUserSearchResult();
+    articleSearchResult = repository.getArticleSearchResults();
     personalRssFeeds = repository.getPersonalRssFeeds();
     personalArticles = repository.getPersonalArticles();
     starArticles = repository.getStarArticles();
@@ -173,7 +174,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param feeds feeds
    */
   public void setPersonalRssFeeds(List<RssFeed> feeds) {
-    repository.setPersonalRssFeeds(feeds);
+    personalRssFeeds.setValue(feeds);
   }
 
   /**
@@ -182,7 +183,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param articles articles.
    */
   public void setPersonalArticles(List<Article> articles) {
-    repository.setPersonalArticles(articles);
+    personalArticles.setValue(articles);
   }
 
   /**
@@ -191,7 +192,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param articles articles.
    */
   public void setCommonArticles(List<Article> articles) {
-    repository.setCommonArticles(articles);
+    commonArticles.setValue(articles);
   }
 
   /**
@@ -280,6 +281,24 @@ public class AppViewModel extends AndroidViewModel {
   public void insertPersonalRssFeedsArticles(
       String phone, List<RssFeed> rssFeeds, List<Article> articles) {
     repository.insertUserRssFeedsArticles(phone, rssFeeds, articles);
+  }
+
+  /**
+   * Finds article by title.
+   *
+   * @param title
+   */
+  public void findArticleByTitle(String title) {
+    repository.findArticleByTitle(title);
+  }
+
+  /**
+   * Finds article by id.
+   *
+   * @param id
+   */
+  public void findArticleById(Long id) {
+    repository.findArticleById(id);
   }
 
 }
