@@ -13,13 +13,12 @@ import com.example.icecream.ui.fragment.ReadFragment.OnPlayerUiListener;
 import java.io.IOException;
 
 /**
- * Use service to play our resource in the background, for save the resource prepare time in
- * the media player, we use on prepared listener to set the other thread to prepare it but not
- * the ui thread.
- * Reference website: https://juejin.im/post/5bdab2495188257f863d19fb
- *                    https://blog.csdn.net/qq_37077360/article/details/80570684
- *                    https://www.jianshu.com/p/f65e35fc089d
- *                    https://blog.csdn.net/u014365133/article/details/53330776
+ * Use service to play our resource in the background, for save the resource prepare time in the
+ * media player, we use on prepared listener to set the other thread to prepare it but not the ui
+ * thread. Reference website: https://juejin.im/post/5bdab2495188257f863d19fb
+ * https://blog.csdn.net/qq_37077360/article/details/80570684 https://www.jianshu.com/p/f65e35fc089d
+ * https://blog.csdn.net/u014365133/article/details/53330776
+ *
  * @author Penna.
  */
 public class SpeakerService extends Service implements OnPreparedListener, OnCompletionListener {
@@ -33,12 +32,9 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
   private SpeakerBinder speakerBinder = new SpeakerBinder();
 
   /** used to change the ui layer of player fragment. */
-  private OnPlayerUiListener onPlayerUIListener;
+  private OnPlayerUiListener onPlayerUiListener;
 
-
-  /**
-   * create this service.
-   */
+  /** create this service. */
   @Override
   public void onCreate() {
     initMediaPlayer();
@@ -58,25 +54,32 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
     return speakerBinder;
   }
 
+  /**
+   * Unbind the connector and allocate the resource.
+   *
+   * @param intent the intent.
+   * @return true
+   */
   @Override
   public boolean onUnbind(Intent intent) {
     destroyMediaPlayer();
     return super.onUnbind(intent);
   }
 
-
   /**
    * after prepared, call back and start to play music.
+   *
    * @param mp media player
    */
   @Override
   public void onPrepared(MediaPlayer mp) {
     mp.start();
-    onPlayerUIListener.updateNewSongUi(); // update the ui in play fragment
+    onPlayerUiListener.updateNewSongUi(); // update the ui in play fragment
   }
 
   /**
    * after one song finish, call back this function to do something, like looping.
+   *
    * @param mp media player
    */
   @Override
@@ -88,6 +91,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
 
   /**
    * This class is a binder class that help activity to control the music player service.
+   *
    * @author Penna
    */
   public class SpeakerBinder extends Binder {
@@ -96,9 +100,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
     }
   }
 
-  /**
-   * when destroy this service, we should release all resource.
-   */
+  /** when destroy this service, we should release all resource. */
   @Override
   public void onDestroy() {
     destroyMediaPlayer();
@@ -107,71 +109,70 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
 
   /**
    * register the ui listener.
-   * @param onPlayerUIListener used to update the ui
+   *
+   * @param onPlayerUiListener used to update the ui.
    */
-  public void setOnPlayerUIListener(OnPlayerUiListener onPlayerUIListener) {
-    this.onPlayerUIListener = onPlayerUIListener;
+  public void setOnPlayerUiListener(OnPlayerUiListener onPlayerUiListener) {
+    this.onPlayerUiListener = onPlayerUiListener;
   }
 
-
-  /**
-   * initialize the media player.
-   */
+  /** initialize the media player. */
   private void initMediaPlayer() {
     speakerPlayer = new MediaPlayer();
     speakerPlayer.setOnPreparedListener(this);
     speakerPlayer.setOnCompletionListener(this);
   }
 
-
+  /**
+   * to know the media player is playing or not.
+   *
+   * @return is playing.
+   */
   public boolean isPlaying() {
-    if (speakerPlayer == null)
+    if (speakerPlayer == null) {
       return false;
+    }
     return speakerPlayer.isPlaying();
   }
 
-  /**
-   * play the music.
-   */
+  /** play the music. */
   public void startMusic() {
-    if(!isPlaying()) {
+    if (!isPlaying()) {
       speakerPlayer.start();
     }
   }
 
-
-  /**
-   * pause the music.
-   */
+  /** pause the music. */
   public void pauseMusic() {
-    if(isPlaying()) {
+    if (isPlaying()) {
       speakerPlayer.pause();
     }
   }
 
   /**
    * to stop the previous song and start the new player resource.
+   *
    * @param url music url.
    */
   public void startNewSong(String url) {
     if (isPlaying()) {
       speakerPlayer.stop();
-      }
+    }
     AssetFileDescriptor fd;
     try {
-      Log.i(TAG, "startNewSong: "+ url);
+      Log.i(TAG, "startNewSong: " + url);
       speakerPlayer.reset();
       fd = getAssets().openFd(url);
       speakerPlayer.setDataSource(fd);
       speakerPlayer.prepareAsync();
-      } catch (IOException e) {
+    } catch (IOException e) {
       Log.e(TAG, "startNewSong: ", e);
     }
   }
 
-
   /**
    * Get the file duration time.
+   *
    * @return current music progress.
    */
   public int getDuration() {
@@ -180,26 +181,25 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
 
   /**
    * get the percentage progress.
+   *
    * @return percentage progress of current song
    */
   public Double getProgress() {
     int position = speakerPlayer.getCurrentPosition();
     int time = getDuration();
-    return (double) position/(double) time;
+    return (double) position / (double) time;
   }
-
 
   /**
    * Set the current music file progress.
+   *
    * @param mesc time with millisecond
    */
   public void seeTo(int mesc) {
     speakerPlayer.seekTo(mesc);
   }
 
-  /**
-   * to release the media player resource.
-   */
+  /** to release the media player resource. */
   public void destroyMediaPlayer() {
     if (speakerPlayer != null) {
       speakerPlayer.stop();
@@ -207,6 +207,4 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
       speakerPlayer = null;
     }
   }
-
-
 }
