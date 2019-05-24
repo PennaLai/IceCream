@@ -53,7 +53,7 @@ public class Repository {
 
   private final static String TAG = "Repository: ";
 
-  public void setPersonalRssFeeds(List<RssFeed> feeds) {
+  private void setPersonalRssFeeds(List<RssFeed> feeds) {
     personalRssFeeds.setValue(feeds);
   }
 
@@ -63,10 +63,6 @@ public class Repository {
 
   private void setStarArticles(List<Article> articles) {
     starArticles.setValue(articles);
-  }
-
-  public void setCommonArticles(List<Article> articles) {
-    commonArticles.setValue(articles);
   }
 
   private void setArticleSearchResults(Article article) {
@@ -281,7 +277,7 @@ public class Repository {
    * @param phone user phone.
    */
   public void findStarArticlesByPhone(String phone) {
-    StarArticlesAsyncTask task = new StarArticlesAsyncTask(userDao, userArticleJoinDao);
+    StarArticlesQueryAsyncTask task = new StarArticlesQueryAsyncTask(userDao, userArticleJoinDao);
     task.delegate = this;
     task.execute(phone);
   }
@@ -652,12 +648,12 @@ public class Repository {
   }
 
 
-  private static class StarArticlesAsyncTask extends AsyncTask<String, Void, List<Article>> {
+  private static class StarArticlesQueryAsyncTask extends AsyncTask<String, Void, List<Article>> {
     private UserDao userDao;
     private UserArticleJoinDao userArticleJoinDao;
     private Repository delegate = null;
 
-    StarArticlesAsyncTask(UserDao userDao, UserArticleJoinDao dao) {
+    StarArticlesQueryAsyncTask(UserDao userDao, UserArticleJoinDao dao) {
       this.userDao = userDao;
       userArticleJoinDao = dao;
     }
