@@ -25,8 +25,6 @@ public class AppViewModel extends AndroidViewModel {
 
   private LiveData<List<User>> allUsers;
 
-  private LiveData<List<RssFeed>> allRssFeeds;
-
   private MutableLiveData<User> userSearchResult;
 
   private MutableLiveData<Article> articleSearchResult;
@@ -50,7 +48,6 @@ public class AppViewModel extends AndroidViewModel {
     super(application);
     repository = Repository.getInstance(application);
     allUsers = repository.getAllUsers();
-    allRssFeeds = repository.getAllRssFeeds();
     userSearchResult = repository.getUserSearchResult();
     articleSearchResult = repository.getArticleSearchResults();
     personalRssFeeds = repository.getPersonalRssFeeds();

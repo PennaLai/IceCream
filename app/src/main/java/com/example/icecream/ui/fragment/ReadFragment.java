@@ -358,7 +358,7 @@ public class ReadFragment extends Fragment {
   public void setArticle(Article article) {
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.show();
     while (!downloadSucceed) {
