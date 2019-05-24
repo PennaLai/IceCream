@@ -77,13 +77,13 @@ public class Para {
   }
 
   public EachPara[] getParas() {
-    return paras;
+    return paras.clone();
   }
 
   /**
    * each paragraph information.
    */
-  public class EachPara {
+  public static class EachPara {
 
     /** the paragraph content. */
     private String content;

@@ -26,6 +26,8 @@ android {
 // 短信验证mod插件
 apply plugin: 'com.mob.sdk'
 
+apply plugin: 'findbugs'
+
 MobSDK {
     appKey "2ad39f750df28"
     appSecret "bc0b5900c6ee2fdcbf8440386af41652"
@@ -65,7 +67,7 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     androidTestImplementation "android.arch.persistence.room:testing:1.1.1"
 //    implementation "com.github.zhengken:LyricViewDemo:v1.2"
-
+//    implementation 'com.github.Cutta:GifView:1.4'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-26'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-26'
 
@@ -79,4 +81,16 @@ dependencies {
     androidTestImplementation "com.android.support.test.espresso:espresso-contrib:3.0.2"
     androidTestImplementation "com.android.support.test.espresso:espresso-intents:3.0.2"
 //    testImplementation files('libs/json.jar')
+}
+task findbugs(type: FindBugs) {
+    //excludeFilter file('findbugs-filter.xml')
+    classes = fileTree('/Users/aaron/Documents/GitHub/IceCream/app/build/intermediates/classes/debug')
+    source = fileTree('/Users/aaron/Documents/GitHub/IceCream/app/src/main/java')
+    classpath = files()
+    effort = 'max'
+    reports {
+        xml.enabled false
+        html.enabled true
+        html.stylesheet resources.text.fromFile('findbugs-template.xsl')
+    }
 }

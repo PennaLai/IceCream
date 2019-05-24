@@ -85,9 +85,6 @@ public class ReadFragment extends Fragment {
   /** to count the song number we has played now. */
   private int playSongCount = 0;
 
-  /** the check whether the download is succeed. */
-  private boolean downloadSucceed;
-
   /** whether is this article favorite. */
   private boolean favorite = true;
 
@@ -116,6 +113,8 @@ public class ReadFragment extends Fragment {
 
   /** remote view for notification. */
   private RemoteViews remoteViews;
+
+  private PlayPauseButton playPauseButton;
 
   /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
@@ -215,14 +214,14 @@ public class ReadFragment extends Fragment {
     downloadIndicator.hide();
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
-    PlayPauseButton playPauseButton;
+
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
-    playPauseButton.setOnControlStatusChangeListener(
-        (view13, state) -> playBackgroundMusic());
-    httpHandler =  HttpHandler.getInstance(getActivity().getApplication());
+    playPauseButton.setOnControlStatusChangeListener((View v, boolean state) -> {
+      playBackgroundMusic();
+    });
+
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    // observe the download state.
-    viewModel.getDownloadComplete().observe(this, isSucceed -> downloadSucceed = isSucceed);
+    // observe the download state
 
     initParagraphs();
 
@@ -277,27 +276,26 @@ public class ReadFragment extends Fragment {
     paragraphs.setOnItemClickListener(
         (parent, view1, position, id) -> scrollToParagraph(position));
 
-    paragraphs.setOnScrollListener(
-        new OnScrollListener() {
-          @Override
-          public void onScrollStateChanged(AbsListView view, int scrollState) {
-            switch (scrollState) {
-              case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                isPlaying = false;
-                break;
-              case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                // TODO: stop for 2 seconds.
-                isPlaying = true;
-                break;
-              default:
-                break;
-            }
-          }
+    paragraphs.setOnScrollListener(new OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch (scrollState) {
+          default:
+            break;
+          case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+            isPlaying = false;
+            break;
+          case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+            isPlaying = true;
+            break;
 
-          @Override
-          public void onScroll(
-              AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
-        });
+        }
+      }
+
+      @Override
+      public void onScroll(
+          AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+    });
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(
@@ -332,7 +330,6 @@ public class ReadFragment extends Fragment {
    * @param article te article that resource fragment send.
    */
   public void startDownloadArticle(Article article) {
-
 //    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
 //    resourceHandler.downloadSpeech(article.getId());
 //    downloadIndicator.smoothToShow();
@@ -356,7 +353,8 @@ public class ReadFragment extends Fragment {
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
-    NotificationCompat.Builder builder = new Builder(getActivity());
+    NotificationCompat.Builder builder;
+    builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
 
@@ -451,11 +449,14 @@ public class ReadFragment extends Fragment {
     }
     if (playSongCount == 0) {
       startNextArticle();
+      playPauseButton.setPlayed(true);
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
+        playPauseButton.setPlayed(true);
       } else {
         speakerService.pauseMusic();
+        playPauseButton.setPlayed(false);
       }
     }
   }

@@ -35,6 +35,9 @@ public class ForgetPasswordActivity extends AppCompatActivity implements View.On
     }
   }
 
+  /**
+   * Switch to the login page.
+   */
   private void goToLoginPage() {
     Intent intent = new Intent(ForgetPasswordActivity.this, LoginActivity.class);
     startActivity(intent);
