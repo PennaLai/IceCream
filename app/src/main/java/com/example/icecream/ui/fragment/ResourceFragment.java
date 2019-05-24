@@ -12,6 +12,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -93,8 +94,10 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     if (getActivity() != null) {
       ((MainActivity) getActivity()).setUpToolbar(toolbar);
     }
-    ImageView imageView = view.findViewById(R.id.action_search);
-    imageView.setOnClickListener(v -> goToSearch());
+//    ImageView imageView = view.findViewById(R.id.action_search);
+//    imageView.setOnClickListener(v -> goToSearch());
+    EditText editText = view.findViewById(R.id.action_search);
+    editText.setOnClickListener(v->goToSearch());
 
     /*
      * Generate article list using recycleView.

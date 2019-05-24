@@ -63,11 +63,30 @@
                       <!--android:text="一口闰心"-->
                       <!--android:textColor="@color/black"/>-->
                 </FrameLayout>
-                <ImageView
-                  android:id="@+id/action_search"
+                <!--<ImageView-->
+                  <!--android:id="@+id/action_search"-->
+                  <!--android:layout_width="match_parent"-->
+                  <!--android:layout_height="wrap_content"-->
+                  <!--android:src="@drawable/search_bar_raw"/>-->
+                <FrameLayout
                   android:layout_width="match_parent"
                   android:layout_height="wrap_content"
-                  android:src="@drawable/search_bar_raw"/>
+                  android:padding="5dp">
+                    <EditText
+                      android:id="@+id/action_search"
+                      android:background="@drawable/shape_search_bar"
+                      android:hint="搜索"
+                      android:paddingLeft="10dp"
+                      android:textColor="@color/gray"
+                      android:drawablePadding="8dp"
+                      android:layout_gravity="center"
+                      android:drawableLeft="@drawable/icons8_search_tiny"
+                      android:textSize="15sp"
+                      android:layout_width="match_parent"
+                      android:inputType="none"
+                      android:layout_height="35dp" />
+                </FrameLayout>
+
                 <!--<RelativeLayout-->
                   <!--android:layout_width="match_parent"-->
                   <!--android:layout_height="wrap_content">-->
@@ -82,7 +101,7 @@
     <Space
       android:id="@+id/toolbar_space"
       android:layout_width="match_parent"
-      android:layout_height="120dp"
+      android:layout_height="119dp"
       app:layout_constraintTop_toTopOf="parent"
       />
     <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
