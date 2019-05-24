@@ -210,8 +210,6 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
 
-
-
     return view;
   }
 
@@ -251,6 +249,7 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
 
   private void onBackPressed() {
     if (getActivity() != null) {
+
       getActivity().onBackPressed();
     }
   }

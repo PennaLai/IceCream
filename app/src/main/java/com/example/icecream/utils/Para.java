@@ -76,8 +76,8 @@ public class Para {
         String content = eachPara.getString("content");
         int time = eachPara.getInt("time");
         para.insertEachPara(content, time, i);
-        return para;
       }
+      return para;
     } catch (JSONException e) {
       e.printStackTrace();
     }

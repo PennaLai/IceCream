@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
@@ -39,7 +40,10 @@ import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.component.paragraph.Paragraph;
 import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
+import com.example.icecream.utils.AppViewModel;
+import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.Para;
+import com.example.icecream.utils.ResourceHandler;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
@@ -73,11 +77,14 @@ public class ReadFragment extends Fragment {
   /** to count the song number we has played now. */
   private int playSongCount = 0;
 
+  /** the check whether the download is succeed. */
+  private boolean downloadSucceed;
+
   /** the article we are reading now. */
   private Article article;
 
   /** para num*/
-  private int paraNum;
+  private int paraNum = 0;
 
   /** all para information. */
   private Para para;
@@ -85,7 +92,6 @@ public class ReadFragment extends Fragment {
   /** to update the ui progress thread. */
   Thread progressUpdateThread;
 
-//  private ProgressBar sbProgress;
   private BubbleSeekBar sbProgress;
 
   private NotificationManager musicBarManage;
@@ -103,8 +109,6 @@ public class ReadFragment extends Fragment {
   /** record play music index right now. */
   private int playIndex = 0;
 
-  private ImageView iVBack;
-
   public static ReadFragment newInstance() {
     return new ReadFragment();
   }
@@ -112,15 +116,11 @@ public class ReadFragment extends Fragment {
   /** use to update the ui while playing music. */
   private final ReadFragment.MusicHandler uiUpdateHandle = new ReadFragment.MusicHandler(this);
 
-  /** used for callback to update the UI. */
-  public interface OnPlayerUiListener {
-    void updateNewSongUi();
-  }
 
   /**
    * Handler to update the ui while playing music.
    *
-   * @author Penna
+   * @author Penna.
    */
   private static class MusicHandler extends Handler {
     private final WeakReference<ReadFragment> readFragmentWeakReference;
@@ -160,14 +160,14 @@ public class ReadFragment extends Fragment {
   }
 
   private void initParagraphs() {
-    paraNum = 17;
-    para = new Para(17);
-    paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
-    paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
-    // TODO: Initial the paragraphs
-    for (int i = 0; i < paraNum; i++) {
-      paragraphList.add(new Paragraph(para.getParas()[i].getContent(),1));
-    }
+//    paraNum = 17;
+//    para = new Para(17);
+//    paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
+//    paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
+//    // TODO: Initial the paragraphs
+//    for (int i = 0; i < paraNum; i++) {
+//      paragraphList.add(new Paragraph(para.getParas()[i].getContent(),1));
+//    }
   }
 
   @Override
@@ -184,7 +184,7 @@ public class ReadFragment extends Fragment {
     btNext.setOnClickListener(v -> startNextArticle());
 
 
-    initParagraphs();
+//    initParagraphs();
     sbProgress.getConfigBuilder()
         .max(100)
         .sectionCount(paraNum)
@@ -276,7 +276,6 @@ public class ReadFragment extends Fragment {
     progressUpdateThread.start(); // TODO: 之后不应该在这里开始start线程, 不然会造成资源浪费
     // use for test
     waitingMusicList.add("music/result.mp3");
-    downloadIndicator.show();
     return view;
   }
 
@@ -302,6 +301,12 @@ public class ReadFragment extends Fragment {
    * @param article
    */
   public void setArticle(Article article) {
+    // TODO: download.
+    HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
+    resourceHandler.downloadSpeech(article.getId());
+    downloadIndicator.show();
     this.article = article;
     startNextArticle();
   }
