@@ -722,7 +722,7 @@ public class Repository {
     }
   }
 
-  private class ParamPhoneFeedArticleList {
+  private static class ParamPhoneFeedArticleList {
     String phone;
     List<RssFeed> rssFeeds;
     List<Article> articles;
