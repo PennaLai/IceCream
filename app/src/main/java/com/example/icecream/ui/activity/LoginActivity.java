@@ -1,5 +1,6 @@
 package com.example.icecream.ui.activity;
 
+import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
@@ -10,6 +11,8 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.example.icecream.R;
+import com.example.icecream.utils.AppViewModel;
+import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
@@ -30,6 +33,7 @@ import java.lang.ref.WeakReference;
 public class LoginActivity extends AppCompatActivity {
 
   private HttpHandler httpHandler;
+  ResourceHandler resourceHandler;
   private UserSettingHandler userSettingHandler;
   private MaterialEditText phoneEdit;
   private MaterialEditText passwordEdit;
@@ -48,6 +52,10 @@ public class LoginActivity extends AppCompatActivity {
     phoneEdit = findViewById(R.id.phone);
     passwordEdit = findViewById(R.id.password);
     httpHandler = HttpHandler.getInstance(getApplication());
+    // view model
+    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getApplication());
 
 //    if (UserSettingHandler.autoLoginFlag) {
 //      autoLogin();
@@ -162,6 +170,7 @@ public class LoginActivity extends AppCompatActivity {
    * Jump to the MainPage.
    */
   public void goToMainPage() {
+    resourceHandler.updateCommonArticles(); // 随便看看
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
     // need to clear current activity stack.

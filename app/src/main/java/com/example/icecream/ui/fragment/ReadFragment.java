@@ -31,9 +31,11 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RemoteViews;
+import android.widget.Toast;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
+import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.component.paragraph.Paragraph;
 import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
@@ -427,7 +429,10 @@ public class ReadFragment extends Fragment {
 
   /** start New Song. */
   private void startNewArticle() {
-    if (article == null) return;
+    if (article == null) {
+      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
+      return;
+    }
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
     playSongCount++;
