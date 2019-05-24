@@ -162,8 +162,7 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
     try {
       Log.i(TAG, "startNewSong: " + url);
       speakerPlayer.reset();
-      fd = getAssets().openFd(url);
-      speakerPlayer.setDataSource(fd);
+      speakerPlayer.setDataSource(url);
       speakerPlayer.prepareAsync();
     } catch (IOException e) {
       Log.e(TAG, "startNewSong: ", e);
