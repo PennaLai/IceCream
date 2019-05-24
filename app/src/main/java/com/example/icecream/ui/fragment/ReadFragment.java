@@ -143,9 +143,8 @@ public class ReadFragment extends Fragment {
             int position = (int) (max * progress);
             readFragment.sbProgress.setProgress(position);
             double timeNow = progress * readFragment.speakerService.getDuration();
-//            int i = readFragment.paragraphs.getFirstVisiblePosition();
             int i = 0;
-            for (; i < readFragment.paraNum; i++) {
+            for (; i < readFragment.paraNum-1; i++) {
               if (readFragment.para.getParas()[i].getStartTime()
                   > timeNow) break;
             }
@@ -188,29 +187,31 @@ public class ReadFragment extends Fragment {
         .max(100)
         .sectionCount(paraNum)
         .build();
-    sbProgress.setOnProgressChangedListener(new OnProgressChangedListener() {
-      @Override
-      public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat,
-          boolean fromUser) {
-        if (fromUser) {
-          int position = (progress/(100/paraNum))+2;
-          Log.i("Seek", position+"");
-          scrollToParagraph(position);
-        }
-      }
+    sbProgress.setOnProgressChangedListener(
+        new OnProgressChangedListener() {
+          @Override
+          public void onProgressChanged(
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+            if (fromUser) {
+              double timeNow = ((double) progress / 100) * speakerService.getDuration();
+              Log.i(TAG, "onProgressChanged: timeNow " + timeNow);
+              int i = 0;
+              for (; i < paraNum-1; i++) {
+                if (para.getParas()[i].getStartTime() >= timeNow) break;
+              }
+              Log.i(TAG, "onProgressChanged: index" +i);
+              scrollToParagraph(i + 2);
+            }
+          }
 
-      @Override
-      public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress,
-          float progressFloat) {
+          @Override
+          public void getProgressOnActionUp(
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {}
 
-      }
-
-      @Override
-      public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress,
-          float progressFloat, boolean fromUser) {
-
-      }
-    });
+          @Override
+          public void getProgressOnFinally(
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
+        });
     // TODO: reuse the seekbar
 //        sbProgress.setProgress(new VolumeListener());
 //         bind speaker service
@@ -248,7 +249,7 @@ public class ReadFragment extends Fragment {
             break;
           // crollState =SCROLL_STATE_IDLE(0) ：表示屏幕已停止。屏幕停止滚动时为0。
           case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-            // 暂停两秒时间
+            // TODO: stop for 2 seconds.
             isPlaying = true;
             break;
         }
@@ -288,7 +289,8 @@ public class ReadFragment extends Fragment {
 
   private void scrollToParagraph(int position) {
     paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
-    speakerService.seeTo(para.getParas()[position-2].getStartTime());
+    if (speakerService.isPlaying())
+      speakerService.seeTo(para.getParas()[position-2].getStartTime());
   }
 
   /**
