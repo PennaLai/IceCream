@@ -15,6 +15,7 @@ import com.example.icecream.database.dao.UserRssFeedJoinDao;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
+import com.example.icecream.database.entity.UserArticleJoin;
 import com.example.icecream.database.entity.UserRssFeedJoin;
 
 import java.text.ParseException;
@@ -176,7 +177,7 @@ public class Repository {
         rssFeedDao,
         userArticleJoinDao,
         articleDao
-    ).execute(new ParamPhoneFeedArticleList(phone, rssFeeds));
+    ).execute(new ParamPhoneFeedArticleList(phone, rssFeeds, articles));
   }
 
   /**
@@ -745,30 +746,44 @@ public class Repository {
 
 
   private static class InsertUserRssFeedsArticleAsyncTask extends AsyncTask<ParamPhoneFeedArticleList, Void, Void> {
-    private UserRssFeedJoinDao userRssFeedJoinDao;
     private UserDao userDao;
+    private UserRssFeedJoinDao userRssFeedJoinDao;
     private RssFeedDao rssFeedDao;
+    private UserArticleJoinDao userArticleJoinDao;
+    private ArticleDao articleDao;
 
-    InsertUserRssFeedsArticleAsyncTask(UserRssFeedJoinDao userRssFeedJoinDao,
-                                       UserDao userDao,
-                                       RssFeedDao rssFeedDao) {
-      this.userRssFeedJoinDao = userRssFeedJoinDao;
+    public InsertUserRssFeedsArticleAsyncTask(
+        UserDao userDao, UserRssFeedJoinDao userRssFeedJoinDao, RssFeedDao rssFeedDao,
+        UserArticleJoinDao userArticleJoinDao, ArticleDao articleDao) {
       this.userDao = userDao;
+      this.userRssFeedJoinDao = userRssFeedJoinDao;
       this.rssFeedDao = rssFeedDao;
+      this.userArticleJoinDao = userArticleJoinDao;
+      this.articleDao = articleDao;
     }
 
     @Override
     protected Void doInBackground(final ParamPhoneFeedArticleList... params) {
       List<RssFeed> rssFeeds = params[0].rssFeeds;
+      List<Article> articles = params[0].articles;
       for (RssFeed rssFeed : rssFeeds) {
         Log.i(TAG, "insert: " + rssFeed.getUrl());
         rssFeedDao.insert(rssFeed);
+      }
+      for (Article article : articles) {
+        Log.i(TAG, "insert: " + article.getTitle());
+        articleDao.insert(article);
       }
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
       for (RssFeed rssFeed : rssFeeds) {
         userRssFeedJoinDao.insert(new UserRssFeedJoin(
             userId, rssFeedDao.getRssFeedByUrl(rssFeed.getUrl()).getId())
         );
+      }
+      for (Article article : articles) {
+        userArticleJoinDao.insert(new UserArticleJoin(
+            userId, article.getId()
+        ));
       }
       return null;
     }

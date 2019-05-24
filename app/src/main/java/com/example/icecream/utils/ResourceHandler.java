@@ -83,26 +83,13 @@ public class ResourceHandler {
     return application.getFilesDir() + "speech/" + id + ".mp3";
   }
 
+  /**
+   * Update user subscribed RSS feeds and articles.
+   *
+   * @param phone user phone.
+   */
   public void updatePersonalResources(final String phone) {
-
-  }
-
-  /**
-   * Updates the subscribed feeds.
-   *
-   * @param phoneNumber user phone.
-   */
-  public void updatePersonalRssFeeds(final String phoneNumber) {
-    new UpdatePersonalFeedsAsyncTask(this).execute(phoneNumber);
-  }
-
-  /**
-   * Updates the subscribes articles.
-   *
-   * @param phoneNumber user phone.
-   */
-  public void updatePersonalArticles(final String phoneNumber) {
-    new UpdateArticlesAsyncTask(this).execute(phoneNumber);
+    new UpdatePersonalResourcesAsyncTask(this).execute(phone);
   }
 
   /**

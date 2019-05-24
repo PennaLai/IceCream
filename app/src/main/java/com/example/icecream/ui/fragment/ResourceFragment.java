@@ -164,9 +164,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
    * To refresh resource.
    */
   private void refreshResource() {
-    String phoneNumber = userSettingHandler.getLoginPhone();
-    resourceHandler.updatePersonalRssFeeds(phoneNumber);  // do not delete
-    resourceHandler.updatePersonalArticles(phoneNumber);
+    resourceHandler.updatePersonalResources(userSettingHandler.getLoginPhone());
   }
 
 
