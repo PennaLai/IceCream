@@ -425,7 +425,7 @@ public class ReadFragment extends Fragment {
 
   /** start New Song. */
   private void startNewArticle() {
-//    if (article == null) return;  TODO: 记得解开注释
+    if (article == null) return;
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
     playSongCount++;

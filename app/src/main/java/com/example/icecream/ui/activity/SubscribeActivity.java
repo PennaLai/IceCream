@@ -123,11 +123,15 @@ public class SubscribeActivity extends AppCompatActivity {
             this,
             rssFeeds -> {
               allSubscribes = rssFeeds;
+              // unsubscribe first.
+              for (int i = 0; i < SUBSCRIBE_NUM; i++) {
+                chips[i].setSubscribe(false);
+              }
               for (RssFeed rssFeed : allSubscribes) {
                 int id = new Long(rssFeed.getId()).intValue();
                 if (id >= 0 && id < SUBSCRIBE_NUM) {
                   Log.i("sss", "onCreate: "+rssFeed.getChannelName()+"id"+rssFeed.getId());
-                  chips[id].setSubscribe(true); // TODO : 更改黄最新接口
+                  chips[id].setSubscribe(true);
                 }
               }
             });
@@ -178,9 +182,12 @@ public class SubscribeActivity extends AppCompatActivity {
       if (element.isHasSubscribe()) {
         resourceHandler.subscribe(phoneNumber,
             element.getSubScribeUrl());
+        Log.i("SUB", "confirmSubscribe: subscribe"+element.getSubScribeUrl());
       } else {
         resourceHandler.unsubscribe(phoneNumber,
             element.getSubScribeUrl());
+        Log.i("UNSUB", "confirmSubscribe: subscribe"+element.getSubScribeUrl());
+
       }
     }
   }
