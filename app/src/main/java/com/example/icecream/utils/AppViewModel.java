@@ -210,7 +210,8 @@ public class AppViewModel extends AndroidViewModel {
    * @param phone    user phone.
    * @param rssFeeds rss feed list.
    */
-  public void insertPersonalRssFeeds(String phone, List<RssFeed> rssFeeds) {
+  public void insertPersonalRssFeedsArticles(
+      String phone, List<RssFeed> rssFeeds, List<Article> articles) {
     repository.insertUserRssFeeds(phone, rssFeeds);
   }
 
