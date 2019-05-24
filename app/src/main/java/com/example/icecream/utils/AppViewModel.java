@@ -90,7 +90,7 @@ public class AppViewModel extends AndroidViewModel {
    * @param id article id.
    */
   public void updateArticleParagraph(Long id, String paragraph) {
-    repository.updateArticleParagraph(id, paragraph);
+    repository.updateArticleParagraphSync(id, paragraph);
   }
 
   /**
