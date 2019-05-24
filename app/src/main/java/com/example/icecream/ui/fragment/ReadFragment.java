@@ -117,6 +117,8 @@ public class ReadFragment extends Fragment {
   /** remote view for notification. */
   private RemoteViews remoteViews;
 
+  private PlayPauseButton playPauseButton;
+
   /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
 
@@ -215,11 +217,11 @@ public class ReadFragment extends Fragment {
     downloadIndicator.hide();
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
-    PlayPauseButton playPauseButton;
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
-    playPauseButton.setOnControlStatusChangeListener(
-        (view13, state) -> playBackgroundMusic());
-    httpHandler =  HttpHandler.getInstance(getActivity().getApplication());
+    playPauseButton.setOnClickListener(v -> {
+      playBackgroundMusic();
+    });
+
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     // observe the download state.
     viewModel.getDownloadComplete().observe(this, isSucceed -> downloadSucceed = isSucceed);
@@ -451,11 +453,14 @@ public class ReadFragment extends Fragment {
     }
     if (playSongCount == 0) {
       startNextArticle();
+      playPauseButton.setPlayed(true);
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
+        playPauseButton.setPlayed(true);
       } else {
         speakerService.pauseMusic();
+        playPauseButton.setPlayed(false);
       }
     }
   }
