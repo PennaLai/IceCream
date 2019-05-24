@@ -240,7 +240,7 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  private void initFavorite(){
+  private void initFavorite() {
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     // 用户设置读取
@@ -449,6 +449,7 @@ public class ReadFragment extends Fragment {
     try {
       Para para = Para.loadToPara(article.getParagraph());
       this.para = para;
+      paragraphList.clear();
       paragraphList.add(new Paragraph(article.getTitle(), 0));
       paragraphList.add(new Paragraph(article.getPublishTime(), 2));
       for (int i = 0; i < para.getParaNums(); i++) {
