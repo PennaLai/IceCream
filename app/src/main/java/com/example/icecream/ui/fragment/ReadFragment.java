@@ -56,6 +56,13 @@ import java.util.List;
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton.OnControlStatusChangeListener;
 
+/**
+ * The read fragment.
+ * The fragment displays and controls everything in reading service.
+ *
+ * @author Aaron Penna
+ * @version V1.0
+ */
 public class ReadFragment extends Fragment {
 
   private static final String TAG = ReadFragment.class.getName();
@@ -66,6 +73,7 @@ public class ReadFragment extends Fragment {
   /** all the music that waiting for play. */
   private List<String> waitingMusicList = new ArrayList<>();
 
+  /** all the paragraphs of the given*/
   private List<Paragraph> paragraphList = new ArrayList<>();
 
   private ListView paragraphs;
@@ -191,6 +199,7 @@ public class ReadFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
 
+    /* initial the favorite button */
     shineButton = view.findViewById(R.id.read_sb_favorite);
     shineButton.init(getActivity());
     // TODO: initial the shineButton to checked state if already favorited
@@ -204,7 +213,7 @@ public class ReadFragment extends Fragment {
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
 
-    sbProgress = view.findViewById(R.id.read_pb_progress);
+
 
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
     playPauseButton.setOnControlStatusChangeListener((view13, state) -> {
@@ -216,6 +225,9 @@ public class ReadFragment extends Fragment {
     viewModel.getDownloadComplete().observe(this, isSucceed->downloadSucceed=isSucceed);
 
 //    initParagraphs();
+
+
+    sbProgress = view.findViewById(R.id.read_pb_progress);
     sbProgress.getConfigBuilder()
         .max(100)
         .sectionCount(paraNum)
@@ -261,10 +273,12 @@ public class ReadFragment extends Fragment {
 
       }
     });
+
     paragraphs.setOnItemLongClickListener((parent, view12, position, id) -> {
       scrollToParagraph(position);
       return false;
     });
+
     paragraphs.setOnItemClickListener((parent, view1, position, id) -> {
         scrollToParagraph(position);
     });
@@ -273,11 +287,11 @@ public class ReadFragment extends Fragment {
       @Override
       public void onScrollStateChanged(AbsListView view, int scrollState) {
         switch (scrollState) {
-          // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;// 手指接触状态
+          // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
           case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
             isPlaying = false;
             break;
-          // crollState =SCROLL_STATE_IDLE(0) ：表示屏幕已停止。屏幕停止滚动时为0。
+          // crollState =SCROLL_STATE_IDLE(0)
           case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
             // TODO: stop for 2 seconds.
             isPlaying = true;
@@ -351,37 +365,27 @@ public class ReadFragment extends Fragment {
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
-    Log.i("Notify", "Success1");
-
     NotificationCompat.Builder builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
-    // 点击跳转到主界面
+
     PendingIntent intent_go =
         PendingIntent.getActivity(getActivity(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
 
-    Log.i("Notify", "Success2");
-//    PendingIntent intent_close =
-//        PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-//    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
-
-    Log.i("Notify", "Success3");
-    // 设置上一曲
     Intent prv = new Intent();
     prv.setAction(ACTION_PRE);
     PendingIntent intent_prev =
         PendingIntent.getBroadcast(getActivity(), 1, prv, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_prev, intent_prev);
     Log.i("Notify", "Success4");
-    // 下一曲
+
     Intent next = new Intent();
     next.setAction(ACTION_NEXT);
     PendingIntent intent_next =
         PendingIntent.getBroadcast(getActivity(), 3, next, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.widget_next, intent_next);
     Log.i("Notify", "Success5");
-    // 设置播放
 
     if (speakerService.isPlaying()) {
       Intent playorpause = new Intent();
@@ -399,11 +403,6 @@ public class ReadFragment extends Fragment {
       remoteViews.setOnClickPendingIntent(R.id.widget_play, intent_play);
     }
     Log.i("Notify", "Success6");
-    // 设置收藏, 未来做的事情
-    //    PendingIntent intent_fav = PendingIntent.getBroadcast(this, 4, intent,
-    //        PendingIntent.FLAG_UPDATE_CURRENT);
-    //    remoteViews.setOnClickPendingIntent(R.id.widget_fav, intent_fav);
-    //
 
     builder.setSmallIcon(R.drawable.logo); // 设置顶部图标
     Log.i("Notify", "Success7");
