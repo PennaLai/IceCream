@@ -23,17 +23,17 @@ public class SearchActivity extends AppCompatActivity {
 
 
   //    @BindView(R.id.search_iv_back)
-  private ImageView mIvBack;
+//  private ImageView mIvBack;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    setContentView(R.layout.activity_search);
-    Log.i("TAG", "" + getClass());
-    mIvBack = findViewById(R.id.search_iv_back);
-    mIvBack.setOnClickListener(
-        (v) -> onBackPressed()
-    );
+    setContentView(R.layout.activity_search_new);
+//    Log.i("TAG", "" + getClass());
+//    mIvBack = findViewById(R.id.search_iv_back);
+//    mIvBack.setOnClickListener(
+//        (v) -> onBackPressed()
+//    );
   }
 
   @Override

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto">
+
+  <com.mancj.materialsearchbar.MaterialSearchBar
+    style="@style/MaterialSearchBarLight"
+    app:mt_speechMode="true"
+    app:mt_hint="Custom hint"
+    app:mt_maxSuggestionsCount="10"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    app:layout_constraintTop_toTopOf="parent"
+    android:layout_marginTop="0dp"
+    android:id="@+id/searchBar" />
+
+</android.support.constraint.ConstraintLayout>
