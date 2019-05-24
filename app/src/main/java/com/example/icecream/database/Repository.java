@@ -113,15 +113,6 @@ public class Repository {
   }
 
   /**
-   * Get all RSS feeds from local database.
-   *
-   * @return all feeds.
-   */
-  public LiveData<List<RssFeed>> getAllRssFeeds() {
-    return allRssFeeds;
-  }
-
-  /**
    * Synchronously insert user(s).
    *
    * @param user input user.
@@ -175,26 +166,6 @@ public class Repository {
   }
 
   /**
-   * Update RSS feed(s) if its primary key exists.
-   *
-   * @param rssFeed the input RSS feed.
-   */
-  public void updateRssFeed(RssFeed... rssFeed) {
-    RssFeedUpdateAsyncTask task = new RssFeedUpdateAsyncTask(rssFeedDao);
-    task.execute(rssFeed);
-  }
-
-  /**
-   * Delete RSS feed(s) from database.
-   *
-   * @param rssFeed the input RSS feed.
-   */
-  public void deleteRssFeed(RssFeed... rssFeed) {
-    RssFeedDeleteAsyncTask task = new RssFeedDeleteAsyncTask(rssFeedDao);
-    task.execute(rssFeed);
-  }
-
-  /**
    * Insert article(s) to database.
    *
    * @param article the input article.
@@ -217,8 +188,9 @@ public class Repository {
   }
 
   public void findUserByPhone(String phone) {
-    new UserQueryAsyncTask(userDao,this).execute(phone);
+    new UserQueryAsyncTask(userDao, this).execute(phone);
   }
+
   /**
    * Insert user rss feed join.
    *
@@ -367,26 +339,6 @@ public class Repository {
   }
 
   /**
-   * Synchronously get articles by title.
-   *
-   * @param title input title.
-   * @return target articles.
-   */
-  public List<Article> getArticlesByTitleSync(String title) {
-    return articleDao.getArticlesByTitle(title);
-  }
-
-  /**
-   * Synchronously get RSS feeds by name.
-   *
-   * @param name input name.
-   * @return target feeds.
-   */
-  public List<RssFeed> getRssFeedsByNameSync(String name) {
-    return rssFeedDao.getRssFeedByName(name);
-  }
-
-  /**
    * Update paragraph.
    *
    * @param id   article id.
@@ -412,16 +364,6 @@ public class Repository {
     new UnStarAsyncTask(this).execute(new ParamPhoneArticle(phone, article));
 
   }
-  /**
-   * Synchronously get RSS feeds by url.
-   *
-   * @param url input url.
-   * @return target feed.
-   */
-  public RssFeed getRssFeedByUrlSync(String url) {
-    return rssFeedDao.getRssFeedByUrl(url);
-  }
-
 
   private static class UserQueryAsyncTask extends AsyncTask<String, Void, User> {
     private UserDao userDao;
@@ -484,35 +426,6 @@ public class Repository {
     @Override
     protected Void doInBackground(final RssFeed... params) {
       rssFeedDao.insert(params);
-      return null;
-    }
-  }
-
-  private static class RssFeedUpdateAsyncTask extends AsyncTask<RssFeed, Void, Void> {
-    private RssFeedDao rssFeedDao;
-
-    RssFeedUpdateAsyncTask(RssFeedDao dao) {
-      rssFeedDao = dao;
-    }
-
-    @Override
-    protected Void doInBackground(final RssFeed... params) {
-      rssFeedDao.update(params);
-      return null;
-    }
-  }
-
-
-  private static class RssFeedDeleteAsyncTask extends AsyncTask<RssFeed, Void, Void> {
-    private RssFeedDao rssFeedDao;
-
-    RssFeedDeleteAsyncTask(RssFeedDao dao) {
-      rssFeedDao = dao;
-    }
-
-    @Override
-    protected Void doInBackground(final RssFeed... params) {
-      rssFeedDao.delete(params);
       return null;
     }
   }
@@ -778,7 +691,7 @@ public class Repository {
     }
   }
 
-  private static class ParamPhoneArticle{
+  private static class ParamPhoneArticle {
     String phone;
     Article article;
 
@@ -793,13 +706,13 @@ public class Repository {
     private UserDao userDao;
     private UserArticleJoinDao userArticleJoinDao;
 
-    StarAsyncTask (Repository repository) {
+    StarAsyncTask(Repository repository) {
       userDao = repository.userDao;
       userArticleJoinDao = repository.userArticleJoinDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamPhoneArticle... params){
+    protected Void doInBackground(final ParamPhoneArticle... params) {
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
       UserArticleJoin userArticleJoin = new UserArticleJoin(userId, params[0].article.getId());
       userArticleJoinDao.insert(userArticleJoin);
@@ -812,13 +725,13 @@ public class Repository {
     private UserDao userDao;
     private UserArticleJoinDao userArticleJoinDao;
 
-    UnStarAsyncTask (Repository repository) {
+    UnStarAsyncTask(Repository repository) {
       userDao = repository.userDao;
       userArticleJoinDao = repository.userArticleJoinDao;
     }
 
     @Override
-    protected Void doInBackground(final ParamPhoneArticle... params){
+    protected Void doInBackground(final ParamPhoneArticle... params) {
       Long userId = userDao.getUserByPhone(params[0].phone).getId();
       UserArticleJoin userArticleJoin = new UserArticleJoin(userId, params[0].article.getId());
       userArticleJoinDao.delete(userArticleJoin);
