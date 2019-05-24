@@ -249,12 +249,10 @@ public final class HttpHandler {
         File dir = new File(parentDir);
         File file = new File(parentDir + fileName);
         if (!dir.exists()) {
-          if (dir.mkdirs()) {
-            if (file.createNewFile()) {
-              BufferedSink sink = Okio.buffer(Okio.sink(file));
-              sink.writeAll(response.body().source());
-              sink.close();
-            }
+          if (dir.mkdirs() && file.createNewFile()) {
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            sink.writeAll(response.body().source());
+            sink.close();
           }
         } else {
           if (file.createNewFile()) {
@@ -850,7 +848,7 @@ public final class HttpHandler {
   }
 
   ResponseState getUnStarResponseState(@NonNull String phoneNumber,
-                                     @NonNull Long id) {
+                                       @NonNull Long id) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = UNSTAR_URL + id + "?token=" + token;

@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
   private HttpHandler httpHandler;
 
   /** A instance of ResourceHandler to handle the recourse change */
-  ResourceHandler resourceHandler;
+  private ResourceHandler resourceHandler;
 
   /** A instance of UserSettingHandler to handle the user settings */
   private UserSettingHandler userSettingHandler;
@@ -297,7 +297,7 @@ public class LoginActivity extends AppCompatActivity {
     /**
      * Only retain a weak reference to the activity
      */
-    AutoLoginAsyncTask(LoginActivity context) {
+    private AutoLoginAsyncTask(LoginActivity context) {
       activityReference = new WeakReference<>(context);
     }
 

@@ -8,7 +8,7 @@ import android.content.SharedPreferences;
  *
  * @author Kemo
  */
-public class UserSettingHandler {
+public final class UserSettingHandler {
 
   private static volatile UserSettingHandler instance;
   private SharedPreferences settings;

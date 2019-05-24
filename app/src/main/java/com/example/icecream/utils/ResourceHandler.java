@@ -14,7 +14,7 @@ import java.util.List;
  *
  * @author Kemo
  */
-public class ResourceHandler {
+public final class ResourceHandler {
 
   private static volatile ResourceHandler instance;
 
@@ -352,7 +352,7 @@ public class ResourceHandler {
     }
   }
 
-  private class ParamPhoneArticle {
+  private static class ParamPhoneArticle {
     private String phone;
     private Article article;
 

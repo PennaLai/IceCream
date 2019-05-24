@@ -31,6 +31,7 @@ public class ResourceHandlerTest {
 
   @Test
   public void updateAllRssFeeds() {
+
   }
 
   @Test
