@@ -1,9 +1,12 @@
 package com.example.icecream.ui.component.menu;
 
+import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.RecyclerView;
 import android.util.SparseArray;
 import android.view.View;
 import android.view.ViewGroup;
+import com.example.icecream.R;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,6 +62,13 @@ public class DrawerAdapter extends RecyclerView.Adapter<DrawerAdapter.ViewHolder
         type++;
       }
     }
+  }
+
+  public void updateItem(int position, Drawable icon, String text){
+    SimpleItem updateItem = (SimpleItem) items.get(position);
+    updateItem.setIcon(icon);
+    updateItem.setTitle(text);
+    notifyItemChanged(position);
   }
 
   public void setSelected(int position) {

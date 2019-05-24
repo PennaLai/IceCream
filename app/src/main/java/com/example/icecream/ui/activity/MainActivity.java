@@ -135,8 +135,14 @@ public class MainActivity extends AppCompatActivity
     draw_list.setLayoutManager(new LinearLayoutManager(this));
     draw_list.setAdapter(adapter);
 
-    adapter.setSelected(POS_DASHBOARD);
+    UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
 
+    if (userSettingHandler.getLoginPhone() != null) {
+      adapter.updateItem(POS_LOGOUT, getResources().getDrawable(R.drawable.icons8_export),
+          getResources().getText(R.string.logout).toString());
+    }
+
+    adapter.setSelected(POS_DASHBOARD);
   }
 
 
@@ -171,7 +177,9 @@ public class MainActivity extends AppCompatActivity
 //      login();
       // set current phone as null.
       UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
-      userSettingHandler.setLoginPhone(null);
+      if (userSettingHandler.getLoginPhone() != null) {
+        userSettingHandler.setLoginPhone(null);
+      }
       goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
 //      finish();
