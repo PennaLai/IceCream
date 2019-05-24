@@ -401,9 +401,7 @@ public final class ResourceHandler {
     protected HttpHandler.ResponseState doInBackground(ParamPhoneArticle... params) {
       phone = params[0].phone;
       article = params[0].article;
-      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
-      responseState = httpHandler.getStarResponseState(phone, article.getId());
-      return responseState;
+      return httpHandler.getStarResponseState(phone, article.getId());
     }
 
     @Override
@@ -441,11 +439,7 @@ public final class ResourceHandler {
     protected HttpHandler.ResponseState doInBackground(ParamPhoneArticle... params) {
       phone = params[0].phone;
       article = params[0].article;
-      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
-      if (responseState == HttpHandler.ResponseState.Valid) {
-        responseState = httpHandler.getUnStarResponseState(phone, article.getId());
-      }
-      return responseState;
+      return httpHandler.getUnStarResponseState(phone, article.getId());
     }
 
     @Override
