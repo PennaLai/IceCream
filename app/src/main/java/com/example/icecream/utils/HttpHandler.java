@@ -500,7 +500,9 @@ public class HttpHandler {
       responseState = ResponseState.Valid;
       Log.i(TAG, responseString);
       try {
-        JSONArray jsonArray = new JSONArray(responseString);
+        JSONObject responseObject = new JSONObject(responseString);
+        String articles = responseObject.getString(MESSAGE_DATA);
+        JSONArray jsonArray = new JSONArray(articles);
         commonArticles.clear();
         for (int i = 0; i < jsonArray.length(); i++) {
           JSONObject jsonobject = jsonArray.getJSONObject(i);
@@ -513,6 +515,7 @@ public class HttpHandler {
               jsonobject.getString("description"),
               jsonobject.getString("publishedTime")
           );
+          Log.i(TAG, article.getTitle());
           commonArticles.add(article);
         }
       } catch (JSONException e) {

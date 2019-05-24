@@ -293,7 +293,6 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       LoginActivity activity = activityReference.get();
-      System.out.println("login: " + phone + "state: " + responseState);
       if (activity != null && responseState == HttpHandler.ResponseState.Valid) {
         activity.goToMainPage();
       }
