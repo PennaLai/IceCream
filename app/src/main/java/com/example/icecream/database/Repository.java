@@ -397,10 +397,10 @@ public class Repository {
    * @param id   article id.
    * @param para paragraph.
    */
-  public void updateArticleParagraph(Long id, String para) {
-    UpdateSpeechAsyncTask task = new UpdateSpeechAsyncTask(articleDao);
-    task.delegate = this;
-    task.execute(new ParamSpeech(id, para));
+  public void updateArticleParagraphSync(Long id, String para) {
+    Article article = articleDao.getArticleById(id);
+    article.setParagraph(para);
+    articleDao.update(article);
   }
 
 
@@ -778,29 +778,4 @@ public class Repository {
       this.paragraph = paragraph;
     }
   }
-
-
-  private static class UpdateSpeechAsyncTask extends AsyncTask<ParamSpeech, Void, Void> {
-    private ArticleDao articleDao;
-    private Repository delegate;
-
-    UpdateSpeechAsyncTask(ArticleDao articleDao) {
-      this.articleDao = articleDao;
-    }
-
-    @Override
-    protected Void doInBackground(final ParamSpeech... params) {
-      Article article = articleDao.getArticleById(params[0].id);
-      article.setParagraph(params[0].paragraph);
-      articleDao.update(article);
-      return null;
-    }
-
-    @Override
-    protected void onPostExecute(Void result) {
-      delegate.downloadComplete.setValue(true);
-    }
-
-  }
-
 }

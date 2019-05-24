@@ -35,6 +35,7 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.RemoteViews;
 import android.widget.Toast;
+
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
@@ -49,10 +50,17 @@ import com.sackcentury.shinebuttonlib.ShineButton;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
+
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
+
 import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 
 /**
@@ -64,83 +72,125 @@ import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
 public class ReadFragment extends Fragment {
 
 
-  /** background player service. */
+  /**
+   * background player service.
+   */
   private SpeakerService speakerService;
 
-  /** all the music that waiting for play. */
+  /**
+   * all the music that waiting for play.
+   */
   private List<String> waitingMusicList = new ArrayList<>();
 
-  /** all the paragraphs of the given. */
+  /**
+   * all the paragraphs of the given.
+   */
   private List<Paragraph> paragraphList = new ArrayList<>();
 
   private ListView paragraphs;
 
   private AVLoadingIndicatorView downloadIndicator;
 
-  /** to control the progress update thread exit. */
+  /**
+   * to control the progress update thread exit.
+   */
   boolean needUpdate;
 
-  /** is there is a song playing now. */
+  /**
+   * is there is a song playing now.
+   */
   boolean isPlaying;
 
-  /** to count the song number we has played now. */
+  /**
+   * to count the song number we has played now.
+   */
   private int playSongCount = 0;
 
-  /** whether is this article favorite. */
+  /**
+   * whether is this article favorite.
+   */
   private boolean favorite = true;
 
-  /** view model. */
+  /**
+   * view model.
+   */
   private AppViewModel viewModel;
 
   private HttpHandler httpHandler;
 
-  /** para num. */
+  /**
+   * para num.
+   */
   private int paraNum = 0;
 
-  /** all para information. */
+  /**
+   * all para information.
+   */
   private Para para;
 
-  /** to update the ui progress thread. */
+  /**
+   * to update the ui progress thread.
+   */
   Thread progressUpdateThread;
 
-  /** to seek the article position. */
+  /**
+   * to seek the article position.
+   */
   private BubbleSeekBar sbProgress;
 
-  /** to manage the notification. */
+  /**
+   * to manage the notification.
+   */
   private NotificationManager musicBarManage;
 
-  /** remote view for notification. */
+  /**
+   * remote view for notification.
+   */
   private RemoteViews remoteViews;
 
-  /** read for play article. */
+  /**
+   * read for play article.
+   */
   private Article article;
 
-  /** play pause button. */
+  /**
+   * play pause button.
+   */
   private PlayPauseButton playPauseButton;
 
-  /** Receive notification event. */
+  /**
+   * Receive notification event.
+   */
   BroadcastReceiver broadcastReceiver;
 
 
-  /** for action for the player button. */
+  /**
+   * for action for the player button.
+   */
   private static final String ACTION_PRE = "ACTION_PRE";
   private static final String ACTION_NEXT = "ACTION_NEXT";
   private static final String ACTION_PLAY = "ACTION_PLAY";
   private static final String ACTION_PAUSE = "ACTION_PAUSE";
 
-  /** record play music index right now. */
+  /**
+   * record play music index right now.
+   */
   private int playIndex = -1;
 
   public static ReadFragment newInstance() {
     return new ReadFragment();
   }
 
-  /** used for callback to update the UI. */
+  /**
+   * used for callback to update the UI.
+   */
   public interface OnPlayerUiListener {
     void updateNewSongUi();
   }
 
-  /** use to update the ui while playing music. */
+  /**
+   * use to update the ui while playing music.
+   */
   private final ReadFragment.MusicHandler uiUpdateHandle = new ReadFragment.MusicHandler(this);
 
   /**
@@ -187,7 +237,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** to show the article that can play. */
+  /**
+   * to show the article that can play.
+   */
   private void initParagraphs() {
     paraNum = 17;
     para = new Para(17);
@@ -248,11 +300,13 @@ public class ReadFragment extends Fragment {
 
           @Override
           public void getProgressOnActionUp(
-              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {}
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat) {
+          }
 
           @Override
           public void getProgressOnFinally(
-              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+          }
         });
 
     ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
@@ -266,7 +320,8 @@ public class ReadFragment extends Fragment {
           }
 
           @Override
-          public void onNothingSelected(AdapterView<?> parent) {}
+          public void onNothingSelected(AdapterView<?> parent) {
+          }
         });
 
     paragraphs.setOnItemLongClickListener(
@@ -296,7 +351,8 @@ public class ReadFragment extends Fragment {
 
       @Override
       public void onScroll(
-          AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {}
+          AbsListView view, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
+      }
     });
     Activity activity = getActivity();
     if (activity != null) {
@@ -316,6 +372,7 @@ public class ReadFragment extends Fragment {
 
   /**
    * use position to scroll to the paragraph.
+   *
    * @param position
    */
   private void scrollToParagraph(int position) {
@@ -333,7 +390,7 @@ public class ReadFragment extends Fragment {
    */
   public void startDownloadArticle(Article article) {
     downloadIndicator.smoothToShow();
-    UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
+    UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask(this);
     asyncTask.execute(article.getId());
     this.article = article; // prepare to play, maybe not.
   }
@@ -344,7 +401,7 @@ public class ReadFragment extends Fragment {
    */
   public void setArticle() {
     downloadIndicator.smoothToHide();
-    String url = ResourceHandler.getSpeechFileUrl(704L , getActivity().getApplication());
+    String url = ResourceHandler.getSpeechFileUrl(704L, getActivity().getApplication());
     Log.i("的", "setArticle: url !!" + url);
     File file = new File(url);
     Log.i("我", "setArticle: file is" + file.exists());
@@ -360,7 +417,9 @@ public class ReadFragment extends Fragment {
     playPauseButton.setPlayed(true);
   }
 
-  /** initialize the notification bar. */
+  /**
+   * initialize the notification bar.
+   */
   private void crateNotification() {
     if (speakerService == null) {
       return;
@@ -432,7 +491,9 @@ public class ReadFragment extends Fragment {
     Log.i("Notify", "Success9");
   }
 
-  /** Receiver click event from notification bar. */
+  /**
+   * Receiver click event from notification bar.
+   */
   public class NotificationClickReceiver extends BroadcastReceiver {
 
     @Override
@@ -450,14 +511,18 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** To destroy the music bar notification. */
+  /**
+   * To destroy the music bar notification.
+   */
   private void notificationDestory() {
     if (remoteViews != null) {
       musicBarManage.cancel(1);
     }
   }
 
-  /** Play music or pause music. */
+  /**
+   * Play music or pause music.
+   */
   private void playBackgroundMusic() {
     if (playSongCount == 0) {
       startNextArticle();
@@ -476,7 +541,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** start New Song. */
+  /**
+   * start New Song.
+   */
   private boolean startNewArticle() {
     if (waitingMusicList.size() <= 0) {
       Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
@@ -489,7 +556,9 @@ public class ReadFragment extends Fragment {
     return true;
   }
 
-  /** Start the next song. */
+  /**
+   * Start the next song.
+   */
   private boolean startNextArticle() {
     playIndexIncrease();
     if (!startNewArticle()) {
@@ -499,7 +568,9 @@ public class ReadFragment extends Fragment {
     return true;
   }
 
-  /** Back to the last song. */
+  /**
+   * Back to the last song.
+   */
   private boolean startPreArticle() {
     playIndexIncrease();
     if (!startNewArticle()) {
@@ -528,7 +599,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** decrease the play waiting list to last one. */
+  /**
+   * decrease the play waiting list to last one.
+   */
   private void playIndexDecrease() {
     playIndex--;
     if (playIndex < 0) {
@@ -536,7 +609,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** Use to connected and disconnected the service. */
+  /**
+   * Use to connected and disconnected the service.
+   */
   private ServiceConnection speakConnection =
       new ServiceConnection() {
         @Override
@@ -566,7 +641,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  /** update the progress ui thread. */
+  /**
+   * update the progress ui thread.
+   */
   public class ProgressUpdateThread implements Runnable {
 
     @Override
@@ -591,20 +668,26 @@ public class ReadFragment extends Fragment {
   }
 
 
-  private class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, String> {
+  private static class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, Void> {
     private Long id;
+    private ReadFragment readFragment;
 
-    @Override
-    protected String doInBackground(Long... params) {
-      id = params[0];
-      httpHandler.getUpdateSpeech(id);
-      return httpHandler.getUpdateSpeechInfo(id);
+    UpdateSpeechAsyncTask(ReadFragment readFragment) {
+      this.readFragment = readFragment;
     }
 
     @Override
-    protected void onPostExecute(String result) {
-      viewModel.updateArticleParagraph(id, result);
-      setArticle();
+    protected Void doInBackground(Long... params) {
+      id = params[0];
+      readFragment.httpHandler.getUpdateSpeech(id);
+      String paragraph = readFragment.httpHandler.getUpdateSpeechInfo(id);
+      readFragment.viewModel.updateArticleParagraph(id, paragraph);
+      return null;
+    }
+
+    @Override
+    protected void onPostExecute(Void result) {
+      readFragment.setArticle();
     }
   }
 }
