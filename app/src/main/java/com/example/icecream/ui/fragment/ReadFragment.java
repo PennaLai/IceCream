@@ -92,17 +92,16 @@ public class ReadFragment extends Fragment {
   /** the check whether the download is succeed. */
   private boolean downloadSucceed;
 
-
+  /** whether is this article favorite. */
   private boolean favorite = true;
 
   /** view model. */
   private AppViewModel viewModel;
 
-
   /** the article we are reading now. */
   private Article article;
 
-  /** para num*/
+  /** para num. */
   private int paraNum = 0;
 
   /** all para information. */
@@ -114,24 +113,29 @@ public class ReadFragment extends Fragment {
   /** The play and pause button */
   private PlayPauseButton playPauseButton;
 
+  /** to seek the article position. */
   private BubbleSeekBar sbProgress;
 
   private NotificationManager musicBarManage;
 
+  /** remote view for notification. */
   private RemoteViews remoteViews;
 
+  /** the button used for collection. */
   private ShineButton shineButton;
 
   /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
 
+  /** for action for the player button. */
   private static final String ACTION_PRE = "ACTION_PRE";
   private static final String ACTION_NEXT = "ACTION_NEXT";
   private static final String ACTION_PLAY = "ACTION_PLAY";
   private static final String ACTION_PAUSE = "ACTION_PAUSE";
 
   /** record play music index right now. */
-  private int playIndex = 0;
+  private int playIndex = -1;
+
 
   public static ReadFragment newInstance() {
     return new ReadFragment();
@@ -190,15 +194,17 @@ public class ReadFragment extends Fragment {
     }
   }
 
+  /**
+   *  to show the article that can play.
+   */
   private void initParagraphs() {
-//    paraNum = 17;
-//    para = new Para(17);
-//    paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
-//    paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
-//    // TODO: Initial the paragraphs
-//    for (int i = 0; i < paraNum; i++) {
-//      paragraphList.add(new Paragraph(para.getParas()[i].getContent(),1));
-//    }
+    paraNum = 17;
+    para = new Para(17);
+    paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
+    paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
+    for (int i = 0; i < paraNum; i++) {
+      paragraphList.add(new Paragraph(para.getParas()[i].getContent(),1));
+    }
   }
 
   @Override
@@ -350,7 +356,6 @@ public class ReadFragment extends Fragment {
    * @param article
    */
   public void setArticle(Article article) {
-    // TODO: download.
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
     ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
