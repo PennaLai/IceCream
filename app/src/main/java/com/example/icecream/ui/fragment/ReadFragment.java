@@ -277,7 +277,8 @@ public class ReadFragment extends Fragment {
           if (checked) {
             resourceHandler.star(phone, waitingMusicList.get(playIndex));
           } else {
-            resourceHandler.unstar(phone, waitingMusicList.get(playIndex));
+            // No unstar
+            // resourceHandler.unstar(phone, waitingMusicList.get(playIndex));
           }
         } else {
           Log.i("Article", "NULL");
@@ -447,6 +448,14 @@ public class ReadFragment extends Fragment {
 
   private void updateNewArticleUi(Article article) {
     try {
+      favorite = false;
+      shineButton.setChecked(false);
+      for (Article a:favoriteArticles) {
+        if (a.getId().equals(article.getId())) {
+          favorite = true;
+          shineButton.setChecked(true);
+        }
+      }
       Para para = Para.loadToPara(article.getParagraph());
       this.para = para;
       paragraphList.clear();

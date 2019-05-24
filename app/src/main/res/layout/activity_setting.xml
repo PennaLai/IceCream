@@ -35,7 +35,7 @@
 
   <de.hdodenhof.circleimageview.CircleImageView
     android:id="@+id/setting_choose_profile"
-    android:src="@drawable/profile"
+    android:src="@drawable/cat"
     android:layout_width="100dp"
     android:layout_height="100dp"
     android:layout_marginTop="8dp"

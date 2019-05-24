@@ -81,7 +81,7 @@ public class SettingActivity extends AppCompatActivity {
   private void setConfirmButton() {
     confirmButton.setOnClickListener(v -> {
 //      Toast.makeText(SettingActivity.this, selectedUri.toString(), Toast.LENGTH_SHORT).show();
-      
+
       onBackPressed();
     });
   }
