@@ -332,7 +332,6 @@ public class ReadFragment extends Fragment {
     downloadIndicator.smoothToShow();
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
     asyncTask.execute(article.getId());
-    startNextArticle();
   }
 
 
