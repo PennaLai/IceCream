@@ -438,7 +438,7 @@ public final class ResourceHandler {
     @Override
     protected HttpHandler.ResponseState doInBackground(ParamPhoneArticle... params) {
       phone = params[0].phone;
-      article = params[1].article;
+      article = params[0].article;
       HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
       if (responseState == HttpHandler.ResponseState.Valid) {
         responseState = httpHandler.getUnStarResponseState(phone, article.getId());
