@@ -51,6 +51,16 @@ public class ResourceHandler {
   }
 
   /**
+   * Gets the speech url by article id.
+   *
+   * @param id article id.
+   * @return url.
+   */
+  public static String getSpeechFileUrl(final Long id, Application application) {
+    return application.getFilesDir() + "speech/" + id + ".mp3";
+  }
+
+  /**
    * Updates all the available feeds.
    */
   public void updateAllRssFeeds() {
@@ -71,16 +81,6 @@ public class ResourceHandler {
    */
   public void downloadSpeech(final Long id) {
     new UpdateSpeechAsyncTask(this).execute(id);
-  }
-
-  /**
-   * Gets the speech url by article id.
-   *
-   * @param id article id.
-   * @return url.
-   */
-  public String getSpeechFileUrl(final Long id) {
-    return application.getFilesDir() + "speech/" + id + ".mp3";
   }
 
   /**
@@ -311,17 +311,27 @@ public class ResourceHandler {
     }
   }
 
-  private static class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, Void> {
+  private static class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, String> {
     private HttpHandler httpHandler;
+    private AppViewModel viewModel;
+    private Long id;
 
     UpdateSpeechAsyncTask(ResourceHandler resourceHandler) {
       httpHandler = resourceHandler.httpHandler;
+      viewModel = resourceHandler.viewModel;
     }
 
     @Override
-    protected Void doInBackground(Long... params) {
-      httpHandler.getUpdateSpeech(params[0]);
-      return null;
+    protected String doInBackground(Long... params) {
+      id = params[0];
+      httpHandler.getUpdateSpeech(id);
+      return httpHandler.getUpdateSpeechInfo(id);
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+      viewModel.updateArticleParagraph(id, result);
     }
   }
+
 }

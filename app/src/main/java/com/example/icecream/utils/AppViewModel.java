@@ -82,6 +82,15 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
+   * Update article in database.
+   *
+   * @param id article id.
+   */
+  public void updateArticleParagraph(Long id, String paragraph) {
+    repository.updateArticleParagraph(id, paragraph);
+  }
+
+  /**
    * Insert the RSS feed(s).
    *
    * @param rssFeeds RSS feeds.
