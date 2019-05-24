@@ -129,6 +129,13 @@ public class ReadFragment extends Fragment {
     return new ReadFragment();
   }
 
+  /**
+   * used for callback to update the UI.
+   */
+  public interface OnPlayerUiListener {
+    void updateNewSongUi();
+  }
+
   /** use to update the ui while playing music. */
   private final ReadFragment.MusicHandler uiUpdateHandle = new ReadFragment.MusicHandler(this);
 
