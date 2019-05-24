@@ -805,17 +805,55 @@ public final class HttpHandler {
   }
 
   /**
-   * Star.
+   * Star article.
    *
    * @param phoneNumber phone.
    * @param id          article id.
    * @return response state.
    */
-  public ResponseState getStarResponseState(@NonNull String phoneNumber,
-                                            @NonNull Long id) {
+  ResponseState getStarResponseState(@NonNull String phoneNumber,
+                                     @NonNull Long id) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = STAR_URL + id + "?token=" + token;
+    String responseString = getHttpResponseString(url);
+    ResponseState responseState = null;
+    if (responseString == null) {
+      responseState = ResponseState.ServerWrong;
+    } else {
+      Log.i(TAG, responseString);
+      JSONObject responseJsonObject;
+      try {
+        responseJsonObject = new JSONObject(responseString);
+        switch (responseJsonObject.getString(MESSAGE_CODE)) {
+          case "0":
+            // token is invalid. Needs to re-login.
+            responseState = ResponseState.InvalidToken;
+            break;
+          case "1":
+            // user account may have been deleted. Needs to re-login.
+            responseState = ResponseState.NoSuchUser;
+            break;
+          case "2":
+            // token is valid and refresh local database.
+            responseState = ResponseState.Valid;
+            Log.i(TAG, "Successfully star");
+            break;
+          default:
+            break;
+        }
+      } catch (Exception e) {
+        Log.e(TAG, e.getMessage());
+      }
+    }
+    return responseState;
+  }
+
+  ResponseState getUnStarResponseState(@NonNull String phoneNumber,
+                                     @NonNull Long id) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = UNSTAR_URL + id + "?token=" + token;
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {

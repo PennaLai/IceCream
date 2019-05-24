@@ -76,7 +76,7 @@ public class ReadFragment extends Fragment {
   /**
    * all the music that waiting for play.
    */
-  private List<String> waitingMusicList = new ArrayList<>();
+  private List<Article> waitingMusicList = new ArrayList<>();
 
   /**
    * all the paragraphs of the given.
@@ -115,11 +115,6 @@ public class ReadFragment extends Fragment {
   private AppViewModel viewModel;
 
   private HttpHandler httpHandler;
-
-  /**
-   * para num.
-   */
-  private int paraNum = 0;
 
   /**
    * all para information.
@@ -232,7 +227,7 @@ public class ReadFragment extends Fragment {
             readFragment.sbProgress.setProgress(position);
             double timeNow = progress * readFragment.speakerService.getDuration();
             int i = 0;
-            for (; i < readFragment.paraNum - 1; i++) {
+            for (; i < readFragment.para.getParaNums() - 1; i++) {
               if (readFragment.para.getParas()[i].getStartTime() > timeNow) {
                 break;
               }
@@ -243,19 +238,6 @@ public class ReadFragment extends Fragment {
             break;
         }
       }
-    }
-  }
-
-  /**
-   * to show the article that can play.
-   */
-  private void initParagraphs() {
-    paraNum = 17;
-    para = new Para(17);
-    paragraphList.add(new Paragraph(getResources().getString(R.string.title), 0));
-    paragraphList.add(new Paragraph(getResources().getString(R.string.time), 2));
-    for (int i = 0; i < paraNum; i++) {
-      paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
     }
   }
 
@@ -307,20 +289,24 @@ public class ReadFragment extends Fragment {
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
-    initParagraphs();
     initFavorite();
 
     sbProgress = view.findViewById(R.id.read_pb_progress);
-    sbProgress.getConfigBuilder().max(100).sectionCount(paraNum).build();
+    sbProgress.getConfigBuilder().max(100).sectionCount(1).build();
+
     sbProgress.setOnProgressChangedListener(
         new OnProgressChangedListener() {
           @Override
           public void onProgressChanged(
-              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+            BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
             if (fromUser) {
+              if (playSongCount <= 0) {
+                Toast.makeText(getContext(), "好像没有东西在播放欸", Toast.LENGTH_LONG).show();
+                return;
+              }
               double timeNow = ((double) progress / 100) * speakerService.getDuration();
               int i = 0;
-              for (; i < paraNum - 1; i++) {
+              for (; i < para.getParaNums() - 1; i++) {
                 if (para.getParas()[i].getStartTime() >= timeNow) {
                   break;
                 }
@@ -395,22 +381,23 @@ public class ReadFragment extends Fragment {
     // start to update progress
     progressUpdateThread = new Thread(new ProgressUpdateThread());
     needUpdate = true;
-    progressUpdateThread.start(); // TODO: 之后不应该在这里开始start线程, 不然会造成资源浪费
-    // use for test
-    waitingMusicList.add("music/result.mp3");
+    progressUpdateThread.start(); // TODO 换个地方开始
     return view;
   }
 
   /**
    * use position to scroll to the paragraph.
    *
-   * @param position
+   * @param position the scroll position.
    */
   private void scrollToParagraph(int position) {
     paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
     if (speakerService != null) {
-      if (speakerService.isPlaying())
-        speakerService.seeTo(para.getParas()[position - 2].getStartTime());
+      if (speakerService.isPlaying()) {
+        if (position >= 2) {
+          speakerService.seeTo(para.getParas()[position - 2].getStartTime());
+        }
+      }
     }
   }
 
@@ -432,20 +419,34 @@ public class ReadFragment extends Fragment {
    */
   public void setArticle() {
     downloadIndicator.smoothToHide();
-    String url = ResourceHandler.getSpeechFileUrl(704L, getActivity().getApplication());
-    Log.i("的", "setArticle: url !!" + url);
+    String url = ResourceHandler.getSpeechFileUrl(article.getId(), getActivity().getApplication());
     File file = new File(url);
-    Log.i("我", "setArticle: file is" + file.exists());
-    Log.i("我", "setArticle: article" + article.getParagraph());
-    // TODO: load data.
-    // update the article ui.
-    paragraphList.add(new Paragraph(getResources().getString(R.string.title), 0));
-    paragraphList.add(new Paragraph(getResources().getString(R.string.time), 2));
-    for (int i = 0; i < paraNum; i++) {
-      paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
+    Log.i("Test", "文件"+file.exists());
+    Log.i("Test", "url"+article.getParagraph());
+    if (article.getParagraph() == null || !file.exists()) {
+      Toast.makeText(this.getContext(), "加载资源失败，等会再来吧", Toast.LENGTH_LONG).show();
+      return;
     }
+    waitingMusicList.add(article);
     startNextArticle();
     playPauseButton.play();
+  }
+
+
+  private void updateNewArticleUi(Article article) {
+    try {
+      Para para = Para.loadToPara(article.getParagraph());
+      this.para = para;
+      paragraphList.add(new Paragraph(article.getTitle(), 0));
+      paragraphList.add(new Paragraph(article.getPublishTime(), 2));
+      for (int i = 0; i < para.getParaNums(); i++) {
+        paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
+      }
+      sbProgress.getConfigBuilder().max(100).sectionCount(para.getParaNums()).build();
+
+    } catch (Exception e) {
+      Toast.makeText(this.getContext(), "出了点小差错，等会再来吧", Toast.LENGTH_LONG).show();
+    }
   }
 
   /**
@@ -512,7 +513,6 @@ public class ReadFragment extends Fragment {
     filter.addAction(ACTION_PLAY);
     filter.addAction(ACTION_PAUSE);
     // register the receiver
-    waitingMusicList.add("result.mp3");
     getActivity().registerReceiver(broadcastReceiver, filter);
   }
 
@@ -575,8 +575,10 @@ public class ReadFragment extends Fragment {
       Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
       return false;
     }
+    Article article = waitingMusicList.get(playIndex);
+    updateNewArticleUi(article);
     isPlaying = false; // stop update the progress
-    String url = ResourceHandler.getSpeechFileUrl(704L, getActivity().getApplication());
+    String url = ResourceHandler.getSpeechFileUrl(article.getId(), getActivity().getApplication());
     speakerService.startNewSong(url);
     playSongCount++;
     return true;

@@ -19,7 +19,7 @@ public class Para {
   public Para(int paraNum) {
     this.paraNums = paraNum;
     paras = new EachPara[paraNum];
-    addData();
+//    addData();
   }
 
   /**

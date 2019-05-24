@@ -412,7 +412,10 @@ public class Repository {
     new StarAsyncTask(this).execute(new ParamPhoneArticle(phone, article));
   }
 
+  public void unstarArticleByPhone(String phone, Article article) {
+    new UnStarAsyncTask(this).execute(new ParamPhoneArticle(phone, article));
 
+  }
   /**
    * Synchronously get RSS feeds by url.
    *
@@ -783,7 +786,7 @@ public class Repository {
     String phone;
     Article article;
 
-    public ParamPhoneArticle(String phone, Article article) {
+    ParamPhoneArticle(String phone, Article article) {
       this.phone = phone;
       this.article = article;
     }
@@ -808,4 +811,22 @@ public class Repository {
     }
   }
 
+  private static class UnStarAsyncTask extends AsyncTask<ParamPhoneArticle, Void, Void> {
+
+    private UserDao userDao;
+    private UserArticleJoinDao userArticleJoinDao;
+
+    UnStarAsyncTask (Repository repository) {
+      userDao = repository.userDao;
+      userArticleJoinDao = repository.userArticleJoinDao;
+    }
+
+    @Override
+    protected Void doInBackground(final ParamPhoneArticle... params){
+      Long userId = userDao.getUserByPhone(params[0].phone).getId();
+      UserArticleJoin userArticleJoin = new UserArticleJoin(userId, params[0].article.getId());
+      userArticleJoinDao.delete(userArticleJoin);
+      return null;
+    }
+  }
 }
