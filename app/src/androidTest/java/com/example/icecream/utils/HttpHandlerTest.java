@@ -3,7 +3,7 @@ package com.example.icecream.utils;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
-import com.example.icecream.ui.activity.LoginActivity;
+import com.example.icecream.ui.activity.MainActivity;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -19,8 +19,8 @@ import static org.junit.Assert.assertTrue;
 @RunWith(AndroidJUnit4.class)
 public class HttpHandlerTest {
   @Rule
-  public ActivityTestRule<LoginActivity> mActivityRule = new ActivityTestRule<>(
-      LoginActivity.class);
+  public ActivityTestRule<MainActivity> mActivityRule = new ActivityTestRule<>(
+      MainActivity.class);
 
   @Before
   public void setUp() throws Exception {

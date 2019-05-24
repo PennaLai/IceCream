@@ -326,7 +326,8 @@ public class ResourceHandler {
     protected String doInBackground(Long... params) {
       id = params[0];
       httpHandler.getUpdateSpeech(id);
-      return httpHandler.getUpdateSpeechInfo(id);
+//      return httpHandler.getUpdateSpeechInfo(id);
+      return null;
     }
 
     @Override
