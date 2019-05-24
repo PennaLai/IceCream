@@ -41,6 +41,7 @@ import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.yarolegovich.slidingrootnav.SlidingRootNav;
 import com.yarolegovich.slidingrootnav.SlidingRootNavBuilder;
+
 import java.util.Arrays;
 
 import java.util.List;
@@ -51,6 +52,7 @@ import java.util.TreeMap;
 /**
  * The main activity.
  * Reference: https://blog.csdn.net/u013926110/article/details/46945199
+ *
  * @author Penna
  * @version V1.0
  */
@@ -167,7 +169,9 @@ public class MainActivity extends AppCompatActivity
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
 //      login();
-      UserSettingHandler.autoLoginFlag = false;
+      // set current phone as null.
+      UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
+      userSettingHandler.setLoginPhone(null);
       goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
 //      finish();
@@ -263,11 +267,12 @@ public class MainActivity extends AppCompatActivity
 
   /**
    * Select the article and go the reading page.
+   *
    * @param article the article
    */
   @Override
   public void onArticleSelect(Article article) {
-    ReadFragment readFragment = ((ReadFragment)data.get(1));
+    ReadFragment readFragment = ((ReadFragment) data.get(1));
     readFragment.setArticle(article);
     toReadFragment();
   }
@@ -290,7 +295,6 @@ public class MainActivity extends AppCompatActivity
   public void onBackPressed() {
     super.onBackPressed();
   }
-
 
 
 }
