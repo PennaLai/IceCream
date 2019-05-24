@@ -39,6 +39,14 @@ public class SimpleItem extends DrawerItem<SimpleItem.ViewHolder> {
    */
   private Drawable icon;
 
+  public void setIcon(Drawable icon) {
+    this.icon = icon;
+  }
+
+  public void setTitle(String title) {
+    this.title = title;
+  }
+
   /*
    * The text.
    */

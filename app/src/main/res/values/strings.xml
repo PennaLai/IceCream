@@ -3,6 +3,9 @@
 
   <string name="subscribe">订阅</string>
 
+  <string name="login">登录</string>
+  <string name="logout">注销</string>
+
   <string name="kr">36氪</string>
   <string name="zhihu">知乎</string>
   <string name="geekpark">极客公园</string>
