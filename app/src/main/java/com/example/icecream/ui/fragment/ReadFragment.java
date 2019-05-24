@@ -40,6 +40,7 @@ import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
 import com.example.icecream.utils.Para;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
+import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -187,6 +188,29 @@ public class ReadFragment extends Fragment {
         .max(100)
         .sectionCount(paraNum)
         .build();
+    sbProgress.setOnProgressChangedListener(new OnProgressChangedListener() {
+      @Override
+      public void onProgressChanged(BubbleSeekBar bubbleSeekBar, int progress, float progressFloat,
+          boolean fromUser) {
+        if (fromUser) {
+          int position = (progress/(100/paraNum))+2;
+          Log.i("Seek", position+"");
+          scrollToParagraph(position);
+        }
+      }
+
+      @Override
+      public void getProgressOnActionUp(BubbleSeekBar bubbleSeekBar, int progress,
+          float progressFloat) {
+
+      }
+
+      @Override
+      public void getProgressOnFinally(BubbleSeekBar bubbleSeekBar, int progress,
+          float progressFloat, boolean fromUser) {
+
+      }
+    });
     // TODO: reuse the seekbar
 //        sbProgress.setProgress(new VolumeListener());
 //         bind speaker service
