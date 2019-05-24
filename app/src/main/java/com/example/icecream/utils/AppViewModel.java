@@ -4,7 +4,6 @@ import android.app.Application;
 import android.arch.lifecycle.AndroidViewModel;
 import android.arch.lifecycle.LiveData;
 import android.arch.lifecycle.MutableLiveData;
-import android.util.Log;
 
 import com.example.icecream.database.Repository;
 import com.example.icecream.database.entity.Article;
@@ -12,8 +11,6 @@ import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * This view model is to provide data to the UI and survive configuration changes. <br/>
@@ -133,6 +130,15 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
+   * Setter for common articles.
+   *
+   * @param articles articles.
+   */
+  public void setCommonArticles(List<Article> articles) {
+    repository.setCommonArticles(articles);
+  }
+
+  /**
    * Subscribe.
    *
    * @param phone phone.
@@ -172,10 +178,14 @@ public class AppViewModel extends AndroidViewModel {
 
   }
 
+  /**
+   * Load the feeds from phone.
+   *
+   * @param phone phone.
+   */
   public void loadRssFeedsByPhone(String phone) {
     repository.findRssFeedsByPhone(phone);
   }
-
 
   /**
    * Load the articles without network.

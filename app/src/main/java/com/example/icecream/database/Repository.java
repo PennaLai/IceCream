@@ -51,6 +51,7 @@ public class Repository {
   private MutableLiveData<List<RssFeed>> personalRssFeeds = new MutableLiveData<>();
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();
   private MutableLiveData<List<Article>> starArticles = new MutableLiveData<>();
+  private MutableLiveData<List<Article>> commonArticles = new MutableLiveData<>();
 
   private void setUser(User user) {
     userSearchResult.setValue(user);
@@ -74,6 +75,10 @@ public class Repository {
 
   public void setStarArticles(List<Article> articles) {
     starArticles.setValue(articles);
+  }
+
+  public void setCommonArticles(List<Article> articles) {
+    commonArticles.setValue(articles);
   }
 
   /**

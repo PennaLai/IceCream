@@ -58,6 +58,7 @@ public class HttpHandler {
    * User feeds and articles urls.
    */
   private static final String ALL_RSS_FEEDS_URL = MAIN_URL + "list/all/feeds";
+  private static final String ALL_ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
   private static final String PERSONAL_RSS_FEEDS_URL = MAIN_URL + "list/feeds";
   private static final String ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
   private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel";
@@ -85,6 +86,7 @@ public class HttpHandler {
   private List<RssFeed> rssFeeds = new ArrayList<>();
   private List<Article> articles = new ArrayList<>();
   private List<RssFeed> allRssFeeds = new ArrayList<>();
+  private List<Article> commonArticles = new ArrayList<>();
 
   /**
    * Constructor for http handler.
@@ -482,6 +484,52 @@ public class HttpHandler {
   public List<RssFeed> getAllRssFeeds() {
     return allRssFeeds;
   }
+
+  /**
+   * Gets all common articles in remote database.
+   *
+   * @return response state.
+   */
+  public ResponseState getUpdateCommonArticlesState() {
+    String responseString = getHttpResponseString(ALL_ARTICLES_URL);
+    ResponseState responseState;
+    if (responseString == null) {
+      responseState = ResponseState.ServerWrong;
+    } else {
+      responseState = ResponseState.Valid;
+      Log.i(TAG, responseString);
+      try {
+        JSONArray jsonArray = new JSONArray(responseString);
+        commonArticles.clear();
+        for (int i = 0; i < jsonArray.length(); i++) {
+          JSONObject jsonobject = jsonArray.getJSONObject(i);
+          JSONObject rssFeed = new JSONObject(jsonobject.getString("rssFeedEntity"));
+          Article article = new Article(
+              jsonobject.getLong("id"),
+              rssFeed.getString("url"),
+              jsonobject.getString("title"),
+              jsonobject.getString("link"),
+              jsonobject.getString("description"),
+              jsonobject.getString("publishedTime")
+          );
+          commonArticles.add(article);
+        }
+      } catch (JSONException e) {
+        e.printStackTrace();
+      }
+    }
+    return responseState;
+  }
+
+  /**
+   * Gets all articles result.
+   *
+   * @return all articles.
+   */
+  public List<Article> getCommonArticles() {
+    return commonArticles;
+  }
+
 
   /**
    * Send get request to refresh personal RSS feeds for local database.

@@ -58,10 +58,10 @@ public class ResourceHandler {
   }
 
   /**
-   * Updates the newest articles.
+   * Updates the newest common articles.
    */
-  private void updateNewArticles() {
-
+  public void updateCommonArticles() {
+    new UpdateCommonArticlesAsyncTask(this).execute();
   }
 
   /**
@@ -158,6 +158,32 @@ public class ResourceHandler {
       }
     }
   }
+
+  private static class UpdateCommonArticlesAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
+
+    private AppViewModel viewModel;
+
+    private HttpHandler httpHandler;
+
+    UpdateCommonArticlesAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(Void... params) {
+      return httpHandler.getUpdateCommonArticlesState();
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        // get those articles successfully
+        viewModel.setCommonArticles(httpHandler.getCommonArticles());
+      }
+    }
+  }
+
 
   private static class UpdatePersonalResourcesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private AppViewModel viewModel;
