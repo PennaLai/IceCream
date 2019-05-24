@@ -149,7 +149,6 @@ public class ReadFragment extends Fragment {
   /**
    * play pause button.
    */
-//  private PlayPauseButton playPauseButton;
   private PlayPauseView playPauseButton;
 
   private ShineButton shineButton;
@@ -293,7 +292,7 @@ public class ReadFragment extends Fragment {
     btNext.setOnClickListener(v -> startNextArticle());
 
     playPauseButton = view.findViewById(R.id.read_play_pause_view);
-    playPauseButton.setOnClickListener( v -> {
+    playPauseButton.setOnClickListener(v -> {
       playBackgroundMusic();
     });
 
@@ -418,7 +417,9 @@ public class ReadFragment extends Fragment {
    * @param article te article that resource fragment send.
    */
   public void startDownloadArticle(Article article) {
-    downloadIndicator.smoothToShow();
+    if (downloadIndicator != null) {
+      downloadIndicator.smoothToShow();
+    }
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask(this);
     asyncTask.execute(article.getId());
     this.article = article; // prepare to play, maybe not.
@@ -567,9 +568,9 @@ public class ReadFragment extends Fragment {
    */
   private void playBackgroundMusic() {
     if (playSongCount == 0) {
-      startNextArticle();
-//      playPauseButton.setPlayed(true);
-      playPauseButton.play();
+      if (startNextArticle()) {
+        playPauseButton.play();
+      }
       if (musicBarManage == null) {
         crateNotification();
       }
@@ -589,7 +590,7 @@ public class ReadFragment extends Fragment {
    */
   private boolean startNewArticle() {
     if (waitingMusicList.size() <= 0) {
-      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
+      Toast.makeText(this.getContext(), "现在没东西放", Toast.LENGTH_LONG).show();
       return false;
     }
     Article article = waitingMusicList.get(playIndex);

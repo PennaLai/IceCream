@@ -1,6 +1,8 @@
 package com.example.icecream.ui.component.recycleveiw;
 
 import android.content.Context;
+import android.graphics.drawable.Drawable;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -12,6 +14,7 @@ import android.widget.TextView;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter.ArticlesViewHolder;
+import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.List;
 
 public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
@@ -31,6 +34,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
   /** Cache copy of article. */
   private List<Article> mArticles;
+
 
   //  private List<String> mFeedNames;
 
@@ -138,6 +142,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     /** article title. */
     TextView title;
 
+    /** article author image. */
+    CircleImageView image;
+
     /** articles author name. */
     TextView author;
 
@@ -163,7 +170,6 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      */
     ArticlesViewHolder(View itemView) {
       super(itemView);
-
       author = itemView.findViewById(R.id.tv_author);
       publicTime = itemView.findViewById(R.id.tv_publish_time);
       title = itemView.findViewById(R.id.tv_item_title);
@@ -187,7 +193,28 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     private void updateContent() {
       if (article == null) return;
       this.title.setText(article.getTitle());
-      this.author.setText("AUTHOR");
+      Log.i("ashdjakshd", article.getFeedUrl());
+      switch (article.getFeedUrl()) {
+        case "https://36kr.com/feed":
+          this.author.setText("36氪");
+          break;
+        case "https://www.ifanr.com/feed":
+          this.author.setText("爱范儿");
+
+          break;
+        case "https://www.feng.com/rss.xml":
+          this.author.setText("威锋网");
+          break;
+        case "https://www.geekpark.net/rss":
+          this.author.setText("极客公园");
+          break;
+        case "https://www.zhihu.com/rss":
+          this.author.setText("知乎");
+          break;
+        default:
+          this.author.setText("赖鹏楠");
+          break;
+      }
       this.content.setText(article.getDescription());
       this.publicTime.setText(article.getPublishTime());
     }

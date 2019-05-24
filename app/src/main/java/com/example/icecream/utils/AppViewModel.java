@@ -193,6 +193,15 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
+   * Setter for star articles.
+   *
+   * @param articles articles.
+   */
+  void setStarArticles(List<Article> articles) {
+    starArticles.setValue(articles);
+  }
+
+  /**
    * Subscribe.
    *
    * @param phone phone.

@@ -65,7 +65,7 @@ public final class HttpHandler {
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel?token=";
   private static final String STAR_URL = MAIN_URL + "like/article/";
   private static final String UNSTAR_URL = MAIN_URL + "unlike/article/";
-
+  private static final String PERSONAL_STAR_URL = MAIN_URL + "list/like/articles?token=";
   /**
    * Record urls.
    */
@@ -89,6 +89,7 @@ public final class HttpHandler {
   private List<Article> articles = new ArrayList<>();
   private List<RssFeed> allRssFeeds = new ArrayList<>();
   private List<Article> commonArticles = new ArrayList<>();
+  private List<Article> starArticles = new ArrayList<>();
 
   /**
    * Constructor for http handler.
@@ -249,12 +250,10 @@ public final class HttpHandler {
         File dir = new File(parentDir);
         File file = new File(parentDir + fileName);
         if (!dir.exists()) {
-          if (dir.mkdirs()) {
-            if (file.createNewFile()) {
-              BufferedSink sink = Okio.buffer(Okio.sink(file));
-              sink.writeAll(response.body().source());
-              sink.close();
-            }
+          if (dir.mkdirs() && file.createNewFile()) {
+            BufferedSink sink = Okio.buffer(Okio.sink(file));
+            sink.writeAll(response.body().source());
+            sink.close();
           }
         } else {
           if (file.createNewFile()) {
@@ -850,7 +849,7 @@ public final class HttpHandler {
   }
 
   ResponseState getUnStarResponseState(@NonNull String phoneNumber,
-                                     @NonNull Long id) {
+                                       @NonNull Long id) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = UNSTAR_URL + id + "?token=" + token;
@@ -887,4 +886,74 @@ public final class HttpHandler {
     return responseState;
   }
 
+  /**
+   * Send get request to refresh star articles for local database.
+   *
+   * @return The response state of token validation.
+   * If InvalidToken, needs to re-login.
+   * If NoSuchUser, needs to re-login.
+   */
+  ResponseState getUpdateStarState(@NonNull final String phoneNumber) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = PERSONAL_STAR_URL + token;
+    String responseString = getHttpResponseString(url);
+    ResponseState responseState = null;
+    if (responseString == null) {
+      responseState = ResponseState.ServerWrong;
+    } else {
+      Log.i(TAG, responseString);
+      JSONObject responseJsonObject;
+      try {
+        responseJsonObject = new JSONObject(responseString);
+        switch (responseJsonObject.getString(MESSAGE_CODE)) {
+          case "0":
+            // token is invalid. Needs to re-login.
+            responseState = ResponseState.InvalidToken;
+            break;
+          case "1":
+            // user account may have been deleted. Needs to re-login.
+            responseState = ResponseState.NoSuchUser;
+            break;
+          case "2":
+            // token is valid and stores data to local database.
+            responseState = ResponseState.Valid;
+            Log.i(TAG, "Successfully get articles");
+            String data = responseJsonObject.getString(MESSAGE_DATA);
+            if (data != null) {
+              JSONArray jsonArray = new JSONArray(data);
+              starArticles.clear();
+              for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject jsonobject = jsonArray.getJSONObject(i);
+                JSONObject rssFeed = new JSONObject(jsonobject.getString("rssFeedEntity"));
+                Article article = new Article(
+                    jsonobject.getLong("id"),
+                    rssFeed.getString("url"),
+                    jsonobject.getString("title"),
+                    jsonobject.getString("link"),
+                    jsonobject.getString("description"),
+                    jsonobject.getString("publishedTime")
+                );
+                starArticles.add(article);
+              }
+            }
+            break;
+          default:
+            break;
+        }
+      } catch (Exception e) {
+        Log.e(TAG, e.getMessage());
+      }
+    }
+    return responseState;
+  }
+
+  /**
+   * Getter for star articles.
+   *
+   * @return list articles.
+   */
+  public List<Article> getStarArticles() {
+    return starArticles;
+  }
 }

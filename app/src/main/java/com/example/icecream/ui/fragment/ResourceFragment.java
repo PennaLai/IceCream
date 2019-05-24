@@ -16,6 +16,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
+
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.activity.MainActivity;
@@ -28,6 +29,7 @@ import com.example.icecream.utils.UserSettingHandler;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,16 +43,24 @@ import java.util.Objects;
 public class ResourceFragment extends Fragment
     implements ListItemClickListener, OnSearchActionListener {
 
-  /** the resource item number. */
+  /**
+   * the resource item number.
+   */
   private static final int NUM_LIST_ITEMS = 0;
 
-  /** use for search. */
+  /**
+   * use for search.
+   */
   private List<String> lastSearches = new ArrayList<>();
 
-  /** search bar used for search. */
+  /**
+   * search bar used for search.
+   */
   private MaterialSearchBar mSearchBar;
 
-  /** to get the uer setting information. */
+  /**
+   * to get the uer setting information.
+   */
   private UserSettingHandler userSettingHandler;
 
   /**
@@ -62,14 +72,19 @@ public class ResourceFragment extends Fragment
     return new ResourceFragment();
   }
 
-  /** use to connect to play fragment through main activity. */
+  /**
+   * use to connect to play fragment through main activity.
+   */
   private MusicConnector musicConnectorCallback;
 
-  /** to handler the resource update. */
+  /**
+   * to handler the resource update.
+   */
   ResourceHandler resourceHandler;
 
   @Override
-  public void onSearchStateChanged(boolean enabled) {}
+  public void onSearchStateChanged(boolean enabled) {
+  }
 
   @Override
   public void onSearchConfirmed(CharSequence text) {
@@ -80,7 +95,8 @@ public class ResourceFragment extends Fragment
   }
 
   @Override
-  public void onButtonClicked(int buttonCode) {}
+  public void onButtonClicked(int buttonCode) {
+  }
 
   /**
    * this interface is use to connect the play fragment, the main activity should implement it.
@@ -89,7 +105,9 @@ public class ResourceFragment extends Fragment
    */
   public interface MusicConnector {
 
-    /** if the article is select, Resource fragment -> Main activity -> Player fragment. */
+    /**
+     * if the article is select, Resource fragment -> Main activity -> Player fragment.
+     */
     void onArticleSelect(Article article);
 
     void onProfileClicked();
@@ -131,7 +149,8 @@ public class ResourceFragment extends Fragment
     mSearchBar.addTextChangeListener(
         new TextWatcher() {
           @Override
-          public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+          public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+          }
 
           @Override
           public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
@@ -139,7 +158,8 @@ public class ResourceFragment extends Fragment
           }
 
           @Override
-          public void afterTextChanged(Editable editable) {}
+          public void afterTextChanged(Editable editable) {
+          }
         });
 
     /*
@@ -203,13 +223,17 @@ public class ResourceFragment extends Fragment
     musicConnectorCallback = (MainActivity) context;
   }
 
-  /** To refresh resource. */
+  /**
+   * To refresh resource.
+   */
   private void refreshResource() {
     resourceHandler.updateAllRssFeeds();
     String phoneNumber = userSettingHandler.getLoginPhone();
-    if (phoneNumber != null) resourceHandler.updatePersonalResources(phoneNumber);
+    if (phoneNumber != null) {
+      resourceHandler.updatePersonalResources(phoneNumber);
+      resourceHandler.updateStarArticles(phoneNumber);
+    }
   }
-
 
 
   /**
