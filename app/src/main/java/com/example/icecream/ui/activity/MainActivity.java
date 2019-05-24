@@ -182,8 +182,6 @@ public class MainActivity extends AppCompatActivity
       adapter.setSelected(POS_DASHBOARD);
     }
     slidingRootNav.closeMenu();
-//    Fragment selectedScreen = CenteredTextFragment.createFor(screenTitles[position]);
-//    showFragment(selectedScreen);
 
     Log.i("Draw", "" + position);
   }

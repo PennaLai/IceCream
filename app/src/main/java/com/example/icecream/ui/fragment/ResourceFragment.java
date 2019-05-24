@@ -3,7 +3,6 @@ package com.example.icecream.ui.fragment;
 
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
-import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,15 +15,11 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
-import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
-import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter.ListItemClickListener;
 import com.example.icecream.utils.AppViewModel;
@@ -33,7 +28,6 @@ import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener;
-import com.sackcentury.shinebuttonlib.ShineButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 
@@ -212,11 +206,6 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
     return view;
   }
 
-  public void goToSearch() {
-    Class<?> activityCls = SearchActivity.class;
-    Intent intent = new Intent(mainAppContext, activityCls);
-    startActivity(intent);
-  }
 
   @Override
   public void onAttach(Context context) {
