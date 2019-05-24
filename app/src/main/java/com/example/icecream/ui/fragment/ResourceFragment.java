@@ -37,7 +37,7 @@ import java.util.Objects;
  */
 public class ResourceFragment extends Fragment implements ArticlesAdapter.ListItemClickListener {
 
-  private static final int NUM_LIST_ITEMS = 100;
+  private static final int NUM_LIST_ITEMS = 0;
 
   private ArticlesAdapter mAdapter;
   private RecyclerView mArticleList;
