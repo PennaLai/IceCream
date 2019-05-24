@@ -127,7 +127,7 @@ public class ReadFragment extends Fragment {
   private static final String ACTION_PAUSE = "ACTION_PAUSE";
 
   /** record play music index right now. */
-  private int playIndex = 0;
+  private int playIndex = -1;
 
   public static ReadFragment newInstance() {
     return new ReadFragment();
@@ -221,7 +221,7 @@ public class ReadFragment extends Fragment {
     });
 
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    // observe the download state
+    httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
     initParagraphs();
 
@@ -330,12 +330,11 @@ public class ReadFragment extends Fragment {
    * @param article te article that resource fragment send.
    */
   public void startDownloadArticle(Article article) {
-//    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-//    resourceHandler.downloadSpeech(article.getId());
-//    downloadIndicator.smoothToShow();
-    // start download.
-    //    UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
-//    asyncTask.doInBackground(article.getId());
+    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    resourceHandler.downloadSpeech(article.getId());
+    downloadIndicator.smoothToShow();
+    UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
+    asyncTask.doInBackground(article.getId());
     this.article = article;
     startNextArticle();
   }
@@ -444,12 +443,12 @@ public class ReadFragment extends Fragment {
 
   /** Play music or pause music. */
   private void playBackgroundMusic() {
-    if (musicBarManage == null) {
-      crateNotification();
-    }
     if (playSongCount == 0) {
       startNextArticle();
       playPauseButton.setPlayed(true);
+      if (musicBarManage == null) {
+        crateNotification();
+      }
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
@@ -462,26 +461,35 @@ public class ReadFragment extends Fragment {
   }
 
   /** start New Song. */
-  private void startNewArticle() {
-//    if (article == null) {
-//      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
-//      return;
-//    }
+  private boolean startNewArticle() {
+    if (waitingMusicList.size() <= 0) {
+      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
+      return false;
+    }
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
     playSongCount++;
+    return true;
   }
 
   /** Start the next song. */
-  private void startNextArticle() {
-    startNewArticle();
+  private boolean startNextArticle() {
     playIndexIncrease();
+    if (!startNewArticle()) {
+      playIndexDecrease();
+      return false;
+    }
+    return true;
   }
 
   /** Back to the last song. */
-  private void startPreArticle() {
-    startNewArticle();
-    playIndexDecrease();
+  private boolean startPreArticle() {
+    playIndexIncrease();
+    if (!startNewArticle()) {
+      playIndexDecrease();
+      return false;
+    }
+    return true;
   }
 
   /**
