@@ -6,6 +6,7 @@ import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.arch.lifecycle.ViewModel;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
@@ -13,6 +14,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.ServiceConnection;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.IBinder;
@@ -92,6 +94,8 @@ public class ReadFragment extends Fragment {
   /** view model. */
   private AppViewModel viewModel;
 
+  private HttpHandler httpHandler;
+
   /** the article we are reading now. */
   private Article article;
 
@@ -124,7 +128,7 @@ public class ReadFragment extends Fragment {
   private static final String ACTION_PAUSE = "ACTION_PAUSE";
 
   /** record play music index right now. */
-  private int playIndex = -1;
+  private int playIndex = 0;
 
   public static ReadFragment newInstance() {
     return new ReadFragment();
@@ -208,19 +212,19 @@ public class ReadFragment extends Fragment {
         (view14, checked) -> favorite = checked);
 
     downloadIndicator = view.findViewById(R.id.ld_download);
-
+    downloadIndicator.hide();
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
     PlayPauseButton playPauseButton;
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
     playPauseButton.setOnControlStatusChangeListener(
         (view13, state) -> playBackgroundMusic());
-
+    httpHandler =  HttpHandler.getInstance(getActivity().getApplication());
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     // observe the download state.
     viewModel.getDownloadComplete().observe(this, isSucceed -> downloadSucceed = isSucceed);
 
-    //    initParagraphs();
+    initParagraphs();
 
     sbProgress = view.findViewById(R.id.read_pb_progress);
     sbProgress.getConfigBuilder().max(100).sectionCount(paraNum).build();
@@ -327,17 +331,20 @@ public class ReadFragment extends Fragment {
    *
    * @param article te article that resource fragment send.
    */
-  public void setArticle(Article article) {
-    HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
+  public void startDownloadArticle(Article article) {
 
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    resourceHandler.downloadSpeech(article.getId());
-    downloadIndicator.show();
-    while (!downloadSucceed) {
-      // do nothing.
-    }
-    viewModel.getDownloadComplete().setValue(false);
+//    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+//    resourceHandler.downloadSpeech(article.getId());
+//    downloadIndicator.smoothToShow();
+    // start download.
+    //    UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
+//    asyncTask.doInBackground(article.getId());
     this.article = article;
+    startNextArticle();
+  }
+
+  public void setArticle() {
+    downloadIndicator.smoothToHide();
     startNextArticle();
   }
 
@@ -407,6 +414,7 @@ public class ReadFragment extends Fragment {
     filter.addAction(ACTION_PLAY);
     filter.addAction(ACTION_PAUSE);
     // register the receiver
+    waitingMusicList.add("result.mp3");
     getActivity().registerReceiver(broadcastReceiver, filter);
     Log.i("Notify", "Success9");
   }
@@ -446,7 +454,6 @@ public class ReadFragment extends Fragment {
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
-        // TODO update button ui
       } else {
         speakerService.pauseMusic();
       }
@@ -455,10 +462,10 @@ public class ReadFragment extends Fragment {
 
   /** start New Song. */
   private void startNewArticle() {
-    if (article == null) {
-      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
-      return;
-    }
+//    if (article == null) {
+//      Toast.makeText(this.getContext(), "当前并没有播放资源", Toast.LENGTH_LONG).show();
+//      return;
+//    }
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
     playSongCount++;
@@ -554,6 +561,24 @@ public class ReadFragment extends Fragment {
         Thread.sleep(1000);
       } catch (InterruptedException e) {
       }
+    }
+  }
+
+
+  private class UpdateSpeechAsyncTask extends AsyncTask<Long, Void, String> {
+    private Long id;
+
+    @Override
+    protected String doInBackground(Long... params) {
+      id = params[0];
+      httpHandler.getUpdateSpeech(id);
+      return httpHandler.getUpdateSpeechInfo(id);
+    }
+
+    @Override
+    protected void onPostExecute(String result) {
+      viewModel.updateArticleParagraph(id, result);
+      setArticle();
     }
   }
 }

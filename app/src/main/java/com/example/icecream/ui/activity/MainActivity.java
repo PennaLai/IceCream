@@ -269,8 +269,8 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onArticleSelect(Article article) {
     ReadFragment readFragment = ((ReadFragment) data.get(1));
-    readFragment.setArticle(article);
     toReadFragment();
+    readFragment.startDownloadArticle(article);
   }
 
   /**
