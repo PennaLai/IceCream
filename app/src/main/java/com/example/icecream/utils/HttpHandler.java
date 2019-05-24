@@ -775,13 +775,13 @@ public class HttpHandler {
   }
 
 
-  void getUpdateSpeech(@NonNull final Long id) {
+  public void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
     Log.i(TAG, url);
     getHttpResponseFile(url, "speech/" + id + ".mp3");
   }
 
-  String getUpdateSpeechInfo(@NonNull final Long id) {
+  public String getUpdateSpeechInfo(@NonNull final Long id) {
     String url = SPEECH_INFO_URL + id;
     Log.i(TAG, url);
     return getHttpResponseString(url);
