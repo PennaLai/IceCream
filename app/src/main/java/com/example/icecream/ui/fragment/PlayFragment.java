@@ -178,11 +178,6 @@ public class PlayFragment extends Fragment {
         PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
 
-    // 4个参数context, requestCode, intent, flags
-    PendingIntent intent_close = PendingIntent.getActivity(getActivity(), 0, intent,
-        PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
-
     // 设置上一曲
     Intent prv = new Intent();
     prv.setAction(ACTION_PRE);
