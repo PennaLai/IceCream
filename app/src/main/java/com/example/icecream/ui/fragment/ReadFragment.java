@@ -93,9 +93,6 @@ public class ReadFragment extends Fragment {
 
   private HttpHandler httpHandler;
 
-  /** the article we are reading now. */
-  private Article article;
-
   /** para num. */
   private int paraNum = 0;
 
@@ -334,14 +331,23 @@ public class ReadFragment extends Fragment {
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.smoothToShow();
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
-    asyncTask.doInBackground(article.getId());
-    this.article = article;
+    asyncTask.execute(article.getId());
     startNextArticle();
   }
 
+
+  /**
+   * after download the resource, call back to this function.
+   */
   public void setArticle() {
     downloadIndicator.smoothToHide();
+    paragraphList.add(new Paragraph(getResources().getString(R.string.title), 0));
+    paragraphList.add(new Paragraph(getResources().getString(R.string.time), 2));
+    for (int i = 0; i < paraNum; i++) {
+      paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
+    }
     startNextArticle();
+    playPauseButton.setPlayed(true);
   }
 
   /** initialize the notification bar. */
