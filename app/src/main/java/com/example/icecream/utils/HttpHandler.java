@@ -241,7 +241,7 @@ public class HttpHandler {
     try {
       Response response = okHttpClient.newCall(request).execute();
       if (response.body() != null) {
-        File file = new File(application.getFilesDir(), fileName);
+        File file = new File(application.getFilesDir() + fileName);
         if (!file.exists()) {
           if (file.mkdirs() && file.createNewFile()) {
             BufferedSink sink = Okio.buffer(Okio.sink(file));
@@ -773,14 +773,14 @@ public class HttpHandler {
 
   public void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
-    getHttpResponseFile(url, "speech/" + id + ".mp3");
     Log.i(TAG, url);
+    getHttpResponseFile(url, "speech/" + id + ".mp3");
   }
 
-  public void getUpdateSpeechInfo(@NonNull final Long id) {
+  public String getUpdateSpeechInfo(@NonNull final Long id) {
     String url = SPEECH_INFO_URL + id;
-    getHttpResponseFile(url, "speech/" + id + ".json");
     Log.i(TAG, url);
+    return getHttpResponseString(url);
   }
 
 }
