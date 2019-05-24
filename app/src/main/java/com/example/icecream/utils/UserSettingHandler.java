@@ -25,6 +25,12 @@ public class UserSettingHandler {
     loginPhone = settings.getString(CURRENT_LOGIN_PHONE, null);
   }
 
+  /**
+   * Get the singleton instance of user setting.
+   *
+   * @param application application.
+   * @return instance.
+   */
   public static UserSettingHandler getInstance(final Application application) {
     if (instance == null) {
       synchronized (UserSettingHandler.class) {

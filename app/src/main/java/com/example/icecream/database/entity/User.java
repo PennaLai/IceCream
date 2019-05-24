@@ -29,7 +29,8 @@ public class User {
    * @param username    The input username.
    * @param password    The input password.
    */
-  public User(@NonNull String phoneNumber, @NonNull String username, String password, String authToken) {
+  public User(@NonNull String phoneNumber, @NonNull String username,
+              String password, String authToken) {
     this.phoneNumber = phoneNumber;
     this.username = username;
     this.password = password;

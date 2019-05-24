@@ -8,8 +8,6 @@ import com.example.icecream.database.entity.RssFeed;
 
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * This class is to handle the resource from server and client.
  *
@@ -22,6 +20,8 @@ public class ResourceHandler {
   private AppViewModel viewModel;
   private HttpHandler httpHandler;
   private Application application;
+
+  private static String TAG = "Resource Handler: ";
 
   /**
    * Constructor.
@@ -37,6 +37,14 @@ public class ResourceHandler {
     this.application = application;
   }
 
+  /**
+   * Gets the singleton instance.
+   *
+   * @param httpHandler http handler.
+   * @param viewModel   app view model.
+   * @param application application.
+   * @return instance.
+   */
   public static ResourceHandler getInstance(final HttpHandler httpHandler,
                                             final AppViewModel viewModel,
                                             final Application application) {
@@ -103,7 +111,7 @@ public class ResourceHandler {
   }
 
   /**
-   * Unsubscribes the feed.
+   * Unsubscribe the feed.
    *
    * @param phoneNumber user phone.
    * @param url         feed url.
@@ -115,7 +123,7 @@ public class ResourceHandler {
   /**
    * Load the RSS feeds.
    *
-   * @param phone
+   * @param phone user phone.
    */
   public void loadRssFeeds(String phone) {
     viewModel.loadRssFeedsByPhone(phone);
@@ -131,7 +139,8 @@ public class ResourceHandler {
   }
 
 
-  private static class UpdateAllFeedsAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
+  private static class UpdateAllFeedsAsyncTask
+      extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
 
     private AppViewModel viewModel;
 
@@ -159,7 +168,8 @@ public class ResourceHandler {
     }
   }
 
-  private static class UpdateCommonArticlesAsyncTask extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
+  private static class UpdateCommonArticlesAsyncTask
+      extends AsyncTask<Void, Void, HttpHandler.ResponseState> {
 
     private AppViewModel viewModel;
 
@@ -185,7 +195,8 @@ public class ResourceHandler {
   }
 
 
-  private static class UpdatePersonalResourcesAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class UpdatePersonalResourcesAsyncTask
+      extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private AppViewModel viewModel;
     private HttpHandler httpHandler;
     private String phone;
@@ -198,9 +209,9 @@ public class ResourceHandler {
     @Override
     protected HttpHandler.ResponseState doInBackground(String... params) {
       phone = params[0];
-      HttpHandler.ResponseState responseState = httpHandler.getUpdateRSSFeedsState(phone);
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
       if (responseState == HttpHandler.ResponseState.Valid) {
-        httpHandler.getUpdateArticlesState(phone);
+        responseState = httpHandler.getUpdateArticlesState(phone);
       }
       return responseState;
     }
@@ -221,11 +232,9 @@ public class ResourceHandler {
           break;
         case InvalidToken:
           // TODO back to login
-//          activity.login();
           break;
         case NoSuchUser:
           // TODO back to login
-//          activity.login();
           break;
         default:
           break;
@@ -233,7 +242,8 @@ public class ResourceHandler {
     }
   }
 
-  private static class SubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class SubscribeAsyncTask
+      extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private String phone;
     private String rssFeedUrl;
     private AppViewModel viewModel;
@@ -260,11 +270,9 @@ public class ResourceHandler {
           break;
         case InvalidToken:
           // TODO back to login
-//          activity.login();
           break;
         case NoSuchUser:
           // TODO back to login
-//          activity.login();
           break;
         default:
           break;
@@ -272,7 +280,8 @@ public class ResourceHandler {
     }
   }
 
-  private static class UnsubscribeAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class UnsubscribeAsyncTask
+      extends AsyncTask<String, Void, HttpHandler.ResponseState> {
     private String phone;
     private String rssFeedUrl;
     private AppViewModel viewModel;
@@ -299,11 +308,9 @@ public class ResourceHandler {
           break;
         case InvalidToken:
           // TODO back to login
-//          activity.login();
           break;
         case NoSuchUser:
           // TODO back to login
-//          activity.login();
           break;
         default:
           break;

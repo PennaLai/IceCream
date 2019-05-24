@@ -14,10 +14,10 @@ import com.example.icecream.R;
 import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
-import com.rengwuxian.materialedittext.MaterialEditText;
-
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.InputStringValidator;
+
+import com.rengwuxian.materialedittext.MaterialEditText;
 
 import java.lang.ref.WeakReference;
 
@@ -115,8 +115,8 @@ public class LoginActivity extends AppCompatActivity {
   }
 
   /**
-   * Invoke the {@link InputStringValidator#validatePassword(String) validatePassword} to jude whether
-   * the password is valid or not.
+   * Invoke the {@link InputStringValidator#validatePassword(String) validatePassword}
+   * to judge whether the password is valid or not.
    *
    * @param password The input password from the password input <em>textview</em>.
    * @return boolean Whether the password is valid or not.
@@ -271,7 +271,8 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
-  private static class AutoLoginAsyncTask extends AsyncTask<String, Void, HttpHandler.ResponseState> {
+  private static class AutoLoginAsyncTask extends AsyncTask<String, Void,
+      HttpHandler.ResponseState> {
     private WeakReference<LoginActivity> activityReference;
     private String phone;
 

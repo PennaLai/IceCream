@@ -9,10 +9,6 @@ import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.database.entity.User;
 
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +21,10 @@ import okhttp3.RequestBody;
 import okhttp3.Response;
 import okio.BufferedSink;
 import okio.Okio;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * A util class to handle the http request and response.<br/>
@@ -98,6 +98,12 @@ public class HttpHandler {
     repository = Repository.getInstance(application);
   }
 
+  /**
+   * Gets the instance of http handler.
+   *
+   * @param application application.
+   * @return instance.
+   */
   public static HttpHandler getInstance(final Application application) {
     if (instance == null) {
       synchronized (HttpHandler.class) {
@@ -450,7 +456,7 @@ public class HttpHandler {
    *
    * @return response state.
    */
-  public ResponseState getUpdateAllFeedsState() {
+  ResponseState getUpdateAllFeedsState() {
     String responseString = getHttpResponseString(ALL_RSS_FEEDS_URL);
     ResponseState responseState;
     if (responseString == null) {
@@ -482,7 +488,7 @@ public class HttpHandler {
    *
    * @return all RSS feeds.
    */
-  public List<RssFeed> getAllRssFeeds() {
+  List<RssFeed> getAllRssFeeds() {
     return allRssFeeds;
   }
 
@@ -491,7 +497,7 @@ public class HttpHandler {
    *
    * @return response state.
    */
-  public ResponseState getUpdateCommonArticlesState() {
+  ResponseState getUpdateCommonArticlesState() {
     String responseString = getHttpResponseString(ALL_ARTICLES_URL);
     ResponseState responseState;
     if (responseString == null) {
@@ -530,7 +536,7 @@ public class HttpHandler {
    *
    * @return all articles.
    */
-  public List<Article> getCommonArticles() {
+  List<Article> getCommonArticles() {
     return commonArticles;
   }
 
@@ -542,7 +548,7 @@ public class HttpHandler {
    * If InvalidToken, needs to re-login.
    * If NoSuchUser, needs to re-login.
    */
-  public ResponseState getUpdateRSSFeedsState(@NonNull final String phoneNumber) {
+  ResponseState getUpdateRssFeedsState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = PERSONAL_RSS_FEEDS_URL + "?token=" + token;
@@ -587,7 +593,7 @@ public class HttpHandler {
             break;
         }
       } catch (Exception e) {
-        Log.e(TAG, "getUpdateRSSFeedsState: ", e);
+        Log.e(TAG, "getUpdateRssFeedsState: ", e);
       }
     }
     return responseState;
@@ -598,7 +604,7 @@ public class HttpHandler {
    *
    * @return RSS feeds of the user.
    */
-  public List<RssFeed> getPersonalRssFeeds() {
+  List<RssFeed> getPersonalRssFeeds() {
     return rssFeeds;
   }
 
@@ -609,7 +615,7 @@ public class HttpHandler {
    * If InvalidToken, needs to re-login.
    * If NoSuchUser, needs to re-login.
    */
-  public ResponseState getUpdateArticlesState(@NonNull final String phoneNumber) {
+  ResponseState getUpdateArticlesState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = PERSONAL_ARTICLES_URL + "?token=" + token;
@@ -658,7 +664,7 @@ public class HttpHandler {
             break;
         }
       } catch (Exception e) {
-        Log.e(TAG, "getUpdateRSSFeedsState: ", e);
+        Log.e(TAG, "getUpdateRssFeedsState: ", e);
       }
     }
     return responseState;
@@ -669,7 +675,7 @@ public class HttpHandler {
    *
    * @return 30 newest articles subscribed by the user.
    */
-  public List<Article> getPersonalArticles() {
+  List<Article> getPersonalArticles() {
     return articles;
   }
 
@@ -680,7 +686,7 @@ public class HttpHandler {
    * If InvalidToken, needs to re-login.
    * If NoSuchUser, needs to re-login.
    */
-  public ResponseState getSubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
+  ResponseState getSubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = SUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
@@ -730,7 +736,8 @@ public class HttpHandler {
    * If InvalidToken, needs to re-login.
    * If NoSuchUser, needs to re-login.
    */
-  public ResponseState getUnsubscribeFeedState(@NonNull final String phoneNumber, String rssFeedUrl) {
+  ResponseState getUnsubscribeFeedState(@NonNull final String phoneNumber,
+                                        String rssFeedUrl) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = UNSUBSCRIBE_URL + "?token=" + token + "&url=" + rssFeedUrl;
@@ -771,13 +778,14 @@ public class HttpHandler {
     return responseState;
   }
 
-  public void getUpdateSpeech(@NonNull final Long id) {
+
+  void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
     Log.i(TAG, url);
     getHttpResponseFile(url, "speech/" + id + ".mp3");
   }
 
-  public String getUpdateSpeechInfo(@NonNull final Long id) {
+  String getUpdateSpeechInfo(@NonNull final Long id) {
     String url = SPEECH_INFO_URL + id;
     Log.i(TAG, url);
     return getHttpResponseString(url);

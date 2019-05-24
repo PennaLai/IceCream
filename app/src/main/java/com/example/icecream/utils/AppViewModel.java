@@ -286,7 +286,7 @@ public class AppViewModel extends AndroidViewModel {
   /**
    * Finds article by title.
    *
-   * @param title
+   * @param title title.
    */
   public void findArticleByTitle(String title) {
     repository.findArticleByTitle(title);
@@ -295,7 +295,7 @@ public class AppViewModel extends AndroidViewModel {
   /**
    * Finds article by id.
    *
-   * @param id
+   * @param id article id.
    */
   public void findArticleById(Long id) {
     repository.findArticleById(id);

@@ -24,8 +24,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import static android.content.ContentValues.TAG;
-
 /**
  * The repository to hold all the data in local database.
  *
@@ -53,6 +51,8 @@ public class Repository {
   private MutableLiveData<List<Article>> personalArticles = new MutableLiveData<>();
   private MutableLiveData<List<Article>> starArticles = new MutableLiveData<>();
   private MutableLiveData<List<Article>> commonArticles = new MutableLiveData<>();
+
+  private final static String TAG = "Repository: ";
 
   private void setUser(User user) {
     userSearchResult.setValue(user);
@@ -264,7 +264,11 @@ public class Repository {
     task.execute(phone);
   }
 
-
+  /**
+   * Find the user articles.
+   *
+   * @param phone user phone.
+   */
   public void findPersonalArticlesByPhone(String phone) {
     PersonalArticlesGetAsyncTask task = new PersonalArticlesGetAsyncTask(
         userDao, userRssFeedJoinDao, articleDao
@@ -723,7 +727,8 @@ public class Repository {
   }
 
 
-  private static class InsertUserRssFeedsArticleAsyncTask extends AsyncTask<ParamPhoneFeedArticleList, Void, Void> {
+  private static class InsertUserRssFeedsArticleAsyncTask
+      extends AsyncTask<ParamPhoneFeedArticleList, Void, Void> {
     private UserDao userDao;
     private UserRssFeedJoinDao userRssFeedJoinDao;
     private RssFeedDao rssFeedDao;
