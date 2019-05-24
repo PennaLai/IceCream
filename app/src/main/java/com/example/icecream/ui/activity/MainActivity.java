@@ -82,12 +82,9 @@ public class MainActivity extends AppCompatActivity
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
-
     // 定义数据
-
     data.put(0, ResourceFragment.newInstance());
     data.put(1, ReadFragment.newInstance());
-
 
     // 找到ViewPager
     viewPager = (ViewPager) findViewById(R.id.view_pager);
@@ -186,7 +183,7 @@ public class MainActivity extends AppCompatActivity
     Log.i("Draw", "" + position);
   }
 
-  private void goToActivity(Class destActivity){
+  private void goToActivity(Class destActivity) {
     final Context context = this;
     final Intent registerIntent = new Intent(context, destActivity);
     startActivity(registerIntent);
