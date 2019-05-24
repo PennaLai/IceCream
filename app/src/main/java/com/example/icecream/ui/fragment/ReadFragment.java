@@ -24,27 +24,25 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.ProgressBar;
 import android.widget.RemoteViews;
-import android.widget.ScrollView;
-import android.widget.TextView;
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.service.SpeakerService;
-import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.component.paragraph.Paragraph;
 import com.example.icecream.ui.component.paragraph.ParagraphAdapter;
+import com.example.icecream.utils.Para;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 
 public class ReadFragment extends Fragment {
@@ -61,10 +59,7 @@ public class ReadFragment extends Fragment {
 
   private ListView paragraphs;
 
-  private int numParagraph;
-
   private AVLoadingIndicatorView downloadIndicator;
-
 
   /** to control the progress update thread exit. */
   boolean needUpdate;
@@ -77,6 +72,12 @@ public class ReadFragment extends Fragment {
 
   /** the article we are reading now. */
   private Article article;
+
+  /** para num*/
+  private int paraNum;
+
+  /** all para information. */
+  private Para para;
 
   /** to update the ui progress thread. */
   Thread progressUpdateThread;
@@ -98,8 +99,6 @@ public class ReadFragment extends Fragment {
 
   /** record play music index right now. */
   private int playIndex = 0;
-
-//  private TextView volumeText;
 
   private ImageView iVBack;
 
@@ -123,10 +122,14 @@ public class ReadFragment extends Fragment {
   private static class MusicHandler extends Handler {
     private final WeakReference<ReadFragment> readFragmentWeakReference;
 
-    public MusicHandler(ReadFragment fragment) {
+    private MusicHandler(ReadFragment fragment) {
       readFragmentWeakReference = new WeakReference<>(fragment);
     }
 
+    /**
+     * update the seek bar and list view scroll
+     * @param msg
+     */
     @Override
     public void handleMessage(Message msg) {
       super.handleMessage(msg);
@@ -138,7 +141,14 @@ public class ReadFragment extends Fragment {
             int max = 100;
             int position = (int) (max * progress);
             readFragment.sbProgress.setProgress(position);
-            //readFragment.articleScrollView.smoothScrollTo(0, position);
+            double timeNow = progress * readFragment.speakerService.getDuration();
+//            int i = readFragment.paragraphs.getFirstVisiblePosition();
+            int i = 0;
+            for (; i < readFragment.paraNum; i++) {
+              if (readFragment.para.getParas()[i].getStartTime()
+                  > timeNow) break;
+            }
+            readFragment.paragraphs.smoothScrollToPositionFromTop(i, 0, 500);
             break;
           default:
             break;
@@ -147,12 +157,14 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  private void initParagraphs(){
+  private void initParagraphs() {
+    paraNum = 17;
+    para = new Para(17);
     paragraphList.add(new Paragraph(getResources().getString(R.string.title),0));
     paragraphList.add(new Paragraph(getResources().getString(R.string.time),2));
     // TODO: Initial the paragraphs
-    for (int i = 0; i < 10; i++) {
-      paragraphList.add(new Paragraph(getResources().getString(R.string.content),1));
+    for (int i = 0; i < paraNum; i++) {
+      paragraphList.add(new Paragraph(para.getParas()[i].getContent(),1));
     }
   }
 
@@ -168,15 +180,18 @@ public class ReadFragment extends Fragment {
     sbProgress = view.findViewById(R.id.read_pb_progress);
     btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> startNextArticle());
+
+
+    initParagraphs();
     sbProgress.getConfigBuilder()
         .max(100)
-        .sectionCount(10)
+        .sectionCount(paraNum)
         .build();
     // TODO: reuse the seekbar
 //        sbProgress.setProgress(new VolumeListener());
 //         bind speaker service
 
-    initParagraphs();
+
     ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
     paragraphs = (ListView) view.findViewById(R.id.lv_article_view);
     paragraphs.setAdapter(paragraphAdapter);
@@ -199,7 +214,28 @@ public class ReadFragment extends Fragment {
         scrollToParagraph(position);
     });
 
+    paragraphs.setOnScrollListener(new OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch (scrollState) {
+          // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;// 手指接触状态
+          case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+            isPlaying = false;
+            break;
+          // crollState =SCROLL_STATE_IDLE(0) ：表示屏幕已停止。屏幕停止滚动时为0。
+          case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+            // 暂停两秒时间
+            isPlaying = true;
+            break;
+        }
+      }
 
+      @Override
+      public void onScroll(AbsListView view, int firstVisibleItem, int visibleItemCount,
+          int totalItemCount) {
+
+      }
+    });
     Activity activity = getActivity();
     if (activity != null) {
       activity.bindService(
@@ -212,9 +248,7 @@ public class ReadFragment extends Fragment {
     needUpdate = true;
     progressUpdateThread.start(); // TODO: 之后不应该在这里开始start线程, 不然会造成资源浪费
     // use for test
-    waitingMusicList.add("music/I_am_happy.mp3");
-    waitingMusicList.add("music/love_song.mp3");
-    waitingMusicList.add("music/Reality.mp3");
+    waitingMusicList.add("music/result.mp3");
     downloadIndicator.show();
     return view;
   }
@@ -228,8 +262,9 @@ public class ReadFragment extends Fragment {
     }
   }
 
-  private void scrollToParagraph(int position){
+  private void scrollToParagraph(int position) {
     paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
+    speakerService.seeTo(para.getParas()[position-2].getStartTime());
   }
 
   /**
@@ -366,7 +401,7 @@ public class ReadFragment extends Fragment {
 
   /** start New Song. */
   private void startNewArticle() {
-    if (article == null) return;
+//    if (article == null) return;  TODO: 记得解开注释
     isPlaying = false; // stop update the progress
     speakerService.startNewSong(waitingMusicList.get(playIndex));
     playSongCount++;
@@ -474,6 +509,7 @@ public class ReadFragment extends Fragment {
             data.putDouble("progress", speakerService.getProgress());
             msg.setData(data);
             uiUpdateHandle.sendMessage(msg);
+            Thread.sleep(1000);
           }
         }
         Thread.sleep(1000);
