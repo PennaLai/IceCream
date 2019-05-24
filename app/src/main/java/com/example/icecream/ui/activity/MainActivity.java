@@ -176,10 +176,14 @@ public class MainActivity extends AppCompatActivity
       goToActivity(SubscribeActivity.class);
       adapter.setSelected(POS_DASHBOARD);
       slidingRootNav.closeMenu();
-    } else if (position == POS_STAR || position == POS_SETTING) {
+    } else if (position == POS_STAR) {
       String repairing = "抱歉，这个功能正在装修中";
       Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
       adapter.setSelected(POS_DASHBOARD);
+    } else if (position == POS_SETTING) {
+      goToActivity(SettingActivity.class);
+      adapter.setSelected(POS_DASHBOARD);
+      slidingRootNav.closeMenu();
     }
   }
 

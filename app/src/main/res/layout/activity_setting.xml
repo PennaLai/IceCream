@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:tools="http://schemas.android.com/tools">
+
+
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/appBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_marginTop="0dp"
+    android:background="@color/white"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteX="8dp">
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <TextView
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="sans-serif"
+        android:text="选择你的头像"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:typeface="normal"/>
+
+    </FrameLayout>
+  </android.support.design.widget.AppBarLayout>
+
+  <de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/setting_choose_profile"
+    android:src="@drawable/profile"
+    android:layout_width="100dp"
+    android:layout_height="100dp"
+    android:layout_marginTop="8dp"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.167"/>
+
+  <Button
+    android:id="@+id/setting_confirm"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="52dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:text="确认"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toBottomOf="@+id/setting_choose_profile"/>
+
+  <HorizontalScrollView
+    android:id="@+id/hori_scroll_view"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="false"
+    android:foregroundGravity="left"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.0"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.483"
+    >
+
+    <LinearLayout
+      android:id="@+id/selected_photos_container"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:animateLayoutChanges="true"
+      android:orientation="horizontal"
+      android:visibility="visible"
+      android:layout_gravity="left"
+      android:gravity="left"
+      />
+
+  </HorizontalScrollView>
+
+
+</android.support.constraint.ConstraintLayout>
