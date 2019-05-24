@@ -31,9 +31,6 @@ public class SubscribeActivity extends AppCompatActivity {
    */
   class SubscribeItem {
 
-    /** item name. */
-    String name;
-
     /** has subscribe or not. */
     boolean hasSubscribe;
 
@@ -49,7 +46,6 @@ public class SubscribeActivity extends AppCompatActivity {
     /** initial to not select state. */
     private SubscribeItem(String name, String subScribeUrl,
         FrameLayout chip, TextView textView) {
-      this.name = name;
       this.subScribeUrl = subScribeUrl;
       this.chip = chip;
       this.textView = textView;
@@ -134,7 +130,7 @@ public class SubscribeActivity extends AppCompatActivity {
                 chips[i].setSubscribe(false);
               }
               for (RssFeed rssFeed : allSubscribes) {
-                int id = new Long(rssFeed.getId()).intValue();
+                int id = rssFeed.getId().intValue();
                 if (id >= 0 && id < SUBSCRIBE_NUM) {
                   Log.i("sss", "onCreate: "+rssFeed.getChannelName()+"id"+rssFeed.getId());
                   chips[id].setSubscribe(true);

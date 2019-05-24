@@ -24,7 +24,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    */
   private final ListItemClickListener mOnClickListener;
 
-  private static int viewHolderCount;
+  private int viewHolderCount;
 
   /** the total number of items. */
   private int mNumberItems;

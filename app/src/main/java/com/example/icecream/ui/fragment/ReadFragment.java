@@ -217,7 +217,6 @@ public class ReadFragment extends Fragment {
     btNext.setOnClickListener(v -> startNextArticle());
 
 
-
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
     playPauseButton.setOnControlStatusChangeListener((view13, state) -> {
       playBackgroundMusic();
@@ -290,15 +289,15 @@ public class ReadFragment extends Fragment {
       @Override
       public void onScrollStateChanged(AbsListView view, int scrollState) {
         switch (scrollState) {
-          // OnScrollListener.SCROLL_STATE_TOUCH_SCROLL;
+          default:
+            break;
           case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
             isPlaying = false;
             break;
-          // crollState =SCROLL_STATE_IDLE(0)
           case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-            // TODO: stop for 2 seconds.
             isPlaying = true;
             break;
+
         }
       }
 
@@ -352,9 +351,6 @@ public class ReadFragment extends Fragment {
     ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.show();
-    while (!downloadSucceed) {
-      // do nothing.
-    }
     viewModel.getDownloadComplete().setValue(false);
     this.article = article;
     startNextArticle();
