@@ -33,6 +33,7 @@ import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 
@@ -56,12 +57,14 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
   private Context mainAppContext;
   private Toast mToast;
 
+
   private List<String> lastSearches = new ArrayList<>();
   private MaterialSearchBar mSearchBar;
 
   private static String placeHolder = "Articles";
 
   private UserSettingHandler userSettingHandler;
+
 
 
 
@@ -129,6 +132,8 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
       ((MainActivity) getActivity()).setUpToolbar(toolbar);
     }
 
+
+
     mSearchBar = (MaterialSearchBar) view.findViewById(R.id.search_searchBar);
     mSearchBar.setHint(getResources().getText(R.string.search_hint));
     mSearchBar.setSpeechMode(false);
@@ -150,9 +155,7 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
 
       @Override
       public void afterTextChanged(Editable editable) {
-
       }
-
     });
 
     /*
@@ -189,10 +192,7 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
     }else {
       Toast.makeText(getContext(), "你还没有订阅哦，先随便看看吧", Toast.LENGTH_LONG).show();
       viewModel.getCommonArticles().observe(this, articles -> mAdapter.setArticles(articles));
-
     }
-
-
 
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);
@@ -209,7 +209,6 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
     refreshLayout.setOnLoadMoreListener(refresh -> {
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
-
     return view;
   }
 
@@ -249,7 +248,6 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
 
   private void onBackPressed() {
     if (getActivity() != null) {
-
       getActivity().onBackPressed();
     }
   }

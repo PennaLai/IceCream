@@ -44,6 +44,8 @@ import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.Para;
 import com.example.icecream.utils.ResourceHandler;
+import com.sackcentury.shinebuttonlib.ShineButton;
+import com.sackcentury.shinebuttonlib.ShineButton.OnCheckedChangeListener;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
@@ -51,6 +53,8 @@ import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import jp.co.recruit_lifestyle.android.widget.PlayPauseButton;
+import jp.co.recruit_lifestyle.android.widget.PlayPauseButton.OnControlStatusChangeListener;
 
 public class ReadFragment extends Fragment {
 
@@ -80,6 +84,13 @@ public class ReadFragment extends Fragment {
   /** the check whether the download is succeed. */
   private boolean downloadSucceed;
 
+
+  private boolean favorite = true;
+
+  /** view model. */
+  private AppViewModel viewModel;
+
+
   /** the article we are reading now. */
   private Article article;
 
@@ -92,11 +103,16 @@ public class ReadFragment extends Fragment {
   /** to update the ui progress thread. */
   Thread progressUpdateThread;
 
+  /** The play and pause button */
+  private PlayPauseButton playPauseButton;
+
   private BubbleSeekBar sbProgress;
 
   private NotificationManager musicBarManage;
 
   private RemoteViews remoteViews;
+
+  private ShineButton shineButton;
 
   /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
@@ -111,6 +127,13 @@ public class ReadFragment extends Fragment {
 
   public static ReadFragment newInstance() {
     return new ReadFragment();
+  }
+
+  /**
+   * used for callback to update the UI.
+   */
+  public interface OnPlayerUiListener {
+    void updateNewSongUi();
   }
 
   /** use to update the ui while playing music. */
@@ -174,15 +197,30 @@ public class ReadFragment extends Fragment {
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
-//    iVBack = view.findViewById(R.id.read_iv_back);
-//    iVBack.setOnClickListener(v -> backToResource());
+
+    shineButton = view.findViewById(R.id.read_sb_favorite);
+    shineButton.init(getActivity());
+    // TODO: initial the shineButton to checked state if already favorited
+    shineButton.setChecked(favorite);
+    shineButton.setOnCheckStateChangeListener((view14, checked) -> {
+      favorite = checked;
+    });
+
     downloadIndicator = view.findViewById(R.id.ld_download);
-//    ImageView btPlay = view.findViewById(R.id.read_iv_play);
+
     ImageView btNext = view.findViewById(R.id.read_iv_next);
-    sbProgress = view.findViewById(R.id.read_pb_progress);
-//    btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> startNextArticle());
 
+    sbProgress = view.findViewById(R.id.read_pb_progress);
+
+    playPauseButton = view.findViewById(R.id.read_play_pause_button);
+    playPauseButton.setOnControlStatusChangeListener((view13, state) -> {
+      playBackgroundMusic();
+    });
+
+    viewModel =  ViewModelProviders.of(this).get(AppViewModel.class);
+    // observe the download state.
+    viewModel.getDownloadComplete().observe(this, isSucceed->downloadSucceed=isSucceed);
 
 //    initParagraphs();
     sbProgress.getConfigBuilder()
@@ -214,9 +252,6 @@ public class ReadFragment extends Fragment {
           public void getProgressOnFinally(
               BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
         });
-    // TODO: reuse the seekbar
-//        sbProgress.setProgress(new VolumeListener());
-//         bind speaker service
 
 
     ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
@@ -303,10 +338,14 @@ public class ReadFragment extends Fragment {
   public void setArticle(Article article) {
     // TODO: download.
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
-    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+
     ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.show();
+    while (!downloadSucceed) {
+      // do nothing.
+    }
+    viewModel.getDownloadComplete().setValue(false);
     this.article = article;
     startNextArticle();
   }
@@ -461,11 +500,6 @@ public class ReadFragment extends Fragment {
     playIndexDecrease();
   }
 
-  /** to update ui after click pre or next or play or pause. */
-  private void checkUiUpdate() {
-    // TODO finish it.
-  }
-
   /**
    * after the service prepare the song resource and start to play it should call back this method
    * to update the new song ui for example max progress, start to update progress thread.
@@ -488,27 +522,6 @@ public class ReadFragment extends Fragment {
     playIndex--;
     if (playIndex < 0) playIndex = waitingMusicList.size() - 1;
   }
-  //
-//    /**
-//     * listener for the progress bar.
-//     */
-//    private class VolumeListener implements BubbleSeekBar {
-//
-//      public void onProgressChanged(SeekBar seekBar, int progress,
-//          boolean fromUser) {
-//        // Log the progress
-//        //set textView's text
-//        volumeText.setText(String.valueOf(progress));
-//      }
-//
-//      public void onStartTrackingTouch(SeekBar seekBar) {}
-//
-//      public void onStopTrackingTouch(SeekBar seekBar) {
-//        int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
-//        speakerService.seeTo(progress);
-//      }
-//
-//    }
 
   /** Use to connected and disconnected the service. */
   private ServiceConnection speakConnection =
