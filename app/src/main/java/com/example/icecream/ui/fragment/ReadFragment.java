@@ -46,6 +46,7 @@ import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.Para;
 import com.example.icecream.utils.ResourceHandler;
+import com.freedom.lauzy.playpauseviewlib.PlayPauseView;
 import com.sackcentury.shinebuttonlib.ShineButton;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
@@ -156,7 +157,8 @@ public class ReadFragment extends Fragment {
   /**
    * play pause button.
    */
-  private PlayPauseButton playPauseButton;
+//  private PlayPauseButton playPauseButton;
+  private PlayPauseView playPauseButton;
 
   /**
    * Receive notification event.
@@ -269,8 +271,8 @@ public class ReadFragment extends Fragment {
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
 
-    playPauseButton = view.findViewById(R.id.read_play_pause_button);
-    playPauseButton.setOnControlStatusChangeListener((View v, boolean state) -> {
+    playPauseButton = view.findViewById(R.id.read_play_pause_view);
+    playPauseButton.setOnClickListener( v -> {
       playBackgroundMusic();
     });
 
@@ -414,7 +416,7 @@ public class ReadFragment extends Fragment {
       paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
     }
     startNextArticle();
-    playPauseButton.setPlayed(true);
+    playPauseButton.play();
   }
 
   /**
@@ -526,17 +528,18 @@ public class ReadFragment extends Fragment {
   private void playBackgroundMusic() {
     if (playSongCount == 0) {
       startNextArticle();
-      playPauseButton.setPlayed(true);
+//      playPauseButton.setPlayed(true);
+      playPauseButton.play();
       if (musicBarManage == null) {
         crateNotification();
       }
     } else {
       if (!speakerService.isPlaying()) {
         speakerService.startMusic();
-        playPauseButton.setPlayed(true);
+        playPauseButton.play();
       } else {
         speakerService.pauseMusic();
-        playPauseButton.setPlayed(false);
+        playPauseButton.pause();
       }
     }
   }

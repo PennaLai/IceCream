@@ -5,29 +5,21 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.util.TypedValue;
-import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.RequestManager;
-import com.bumptech.glide.request.RequestOptions;
 import com.example.icecream.R;
 import com.gun0912.tedpermission.PermissionListener;
 import com.gun0912.tedpermission.TedPermission;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.ArrayList;
-import java.util.List;
 
 import gun0912.tedbottompicker.TedBottomPicker;
-import gun0912.tedbottompicker.TedRxBottomPicker;
-import io.reactivex.disposables.Disposable;
 
 
 public class SettingActivity extends AppCompatActivity {
