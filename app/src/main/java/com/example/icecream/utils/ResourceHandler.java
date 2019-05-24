@@ -130,8 +130,14 @@ public class ResourceHandler {
    * @param phone   phone.
    * @param article article.
    */
-  public void star(String phone, Article article) {
+  private void star(String phone, Article article) {
     new StarAsyncTask(this).execute(new ParamPhoneArticle(
+        phone, article
+    ));
+  }
+
+  public void unstar(String phone, Article article) {
+    new UnStarAsyncTask(this).execute(new ParamPhoneArticle(
         phone, article
     ));
   }
@@ -379,6 +385,48 @@ public class ResourceHandler {
         case Valid:
           Log.i(TAG, "successfully star");
           viewModel.star(phone, article);
+          break;
+        case InvalidToken:
+          // TODO back to login
+          break;
+        case NoSuchUser:
+          // TODO back to login
+          break;
+        default:
+          break;
+      }
+    }
+  }
+
+  private static class UnStarAsyncTask
+      extends AsyncTask<ParamPhoneArticle, Void, HttpHandler.ResponseState> {
+    private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+    private String phone;
+    private Article article;
+
+    UnStarAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(ParamPhoneArticle... params) {
+      phone = params[0].phone;
+      article = params[1].article;
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        responseState = httpHandler.getStarResponseState(phone, article.getId());
+      }
+      return responseState;
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      switch (responseState) {
+        case Valid:
+          Log.i(TAG, "successfully un-star");
+          viewModel.unstar(phone, article);
           break;
         case InvalidToken:
           // TODO back to login

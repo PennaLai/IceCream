@@ -225,11 +225,11 @@ public class AppViewModel extends AndroidViewModel {
   /**
    * Unstar the article.
    *
-   * @param phone user phone.
-   * @param url   article url.
+   * @param phone   user phone.
+   * @param article article .
    */
-  public void unstar(String phone, String url) {
-
+  void unstar(String phone, Article article) {
+    repository.unstarArticleByPhone(phone, article);
   }
 
   /**
