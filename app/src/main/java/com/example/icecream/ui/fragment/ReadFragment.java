@@ -84,7 +84,12 @@ public class ReadFragment extends Fragment {
   /** the check whether the download is succeed. */
   private boolean downloadSucceed;
 
+
   private boolean favorite = true;
+
+  /** view model. */
+  private AppViewModel viewModel;
+
 
   /** the article we are reading now. */
   private Article article;
@@ -206,6 +211,10 @@ public class ReadFragment extends Fragment {
       playBackgroundMusic();
     });
 
+    viewModel =  ViewModelProviders.of(this).get(AppViewModel.class);
+    // observe the download state.
+    viewModel.getDownloadComplete().observe(this, isSucceed->downloadSucceed=isSucceed);
+
 //    initParagraphs();
     sbProgress.getConfigBuilder()
         .max(100)
@@ -236,9 +245,6 @@ public class ReadFragment extends Fragment {
           public void getProgressOnFinally(
               BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {}
         });
-    // TODO: reuse the seekbar
-//        sbProgress.setProgress(new VolumeListener());
-//         bind speaker service
 
 
     ParagraphAdapter paragraphAdapter = new ParagraphAdapter(getContext(), paragraphList);
@@ -325,10 +331,14 @@ public class ReadFragment extends Fragment {
   public void setArticle(Article article) {
     // TODO: download.
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
-    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+
     ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
     resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.show();
+    while (!downloadSucceed) {
+      // do nothing.
+    }
+    viewModel.getDownloadComplete().setValue(false);
     this.article = article;
     startNextArticle();
   }
@@ -483,11 +493,6 @@ public class ReadFragment extends Fragment {
     playIndexDecrease();
   }
 
-  /** to update ui after click pre or next or play or pause. */
-  private void checkUiUpdate() {
-    // TODO finish it.
-  }
-
   /**
    * after the service prepare the song resource and start to play it should call back this method
    * to update the new song ui for example max progress, start to update progress thread.
@@ -510,27 +515,6 @@ public class ReadFragment extends Fragment {
     playIndex--;
     if (playIndex < 0) playIndex = waitingMusicList.size() - 1;
   }
-  //
-//    /**
-//     * listener for the progress bar.
-//     */
-//    private class VolumeListener implements BubbleSeekBar {
-//
-//      public void onProgressChanged(SeekBar seekBar, int progress,
-//          boolean fromUser) {
-//        // Log the progress
-//        //set textView's text
-//        volumeText.setText(String.valueOf(progress));
-//      }
-//
-//      public void onStartTrackingTouch(SeekBar seekBar) {}
-//
-//      public void onStopTrackingTouch(SeekBar seekBar) {
-//        int progress = speakerService.getDuration() * seekBar.getProgress() / 100;
-//        speakerService.seeTo(progress);
-//      }
-//
-//    }
 
   /** Use to connected and disconnected the service. */
   private ServiceConnection speakConnection =
