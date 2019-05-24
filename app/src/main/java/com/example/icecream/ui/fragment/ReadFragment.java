@@ -178,10 +178,10 @@ public class ReadFragment extends Fragment {
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
     View view = inflater.inflate(R.layout.fragment_read, container, false);
     downloadIndicator = view.findViewById(R.id.ld_download);
-    ImageView btPlay = view.findViewById(R.id.read_iv_play);
+//    ImageView btPlay = view.findViewById(R.id.read_iv_play);
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     sbProgress = view.findViewById(R.id.read_pb_progress);
-    btPlay.setOnClickListener(v -> playBackgroundMusic());
+//    btPlay.setOnClickListener(v -> playBackgroundMusic());
     btNext.setOnClickListener(v -> startNextArticle());
     viewModel =  ViewModelProviders.of(this).get(AppViewModel.class);
     // observe the download state.
