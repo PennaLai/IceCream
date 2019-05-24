@@ -65,7 +65,7 @@ dependencies {
     annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
     androidTestImplementation "android.arch.persistence.room:testing:1.1.1"
 //    implementation "com.github.zhengken:LyricViewDemo:v1.2"
-
+//    implementation 'com.github.Cutta:GifView:1.4'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.1.0-alpha-26'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.1.0-alpha-26'
 

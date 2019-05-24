@@ -20,6 +20,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.View;
 
+import android.widget.Toast;
 import com.example.icecream.R;
 
 import com.example.icecream.database.entity.Article;
@@ -170,11 +171,15 @@ public class MainActivity extends AppCompatActivity
       }
       goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
+      slidingRootNav.closeMenu();
     } else if (position == POS_FEED) {
       goToActivity(SubscribeActivity.class);
       adapter.setSelected(POS_DASHBOARD);
+      slidingRootNav.closeMenu();
+    } else if (position == POS_STAR || position == POS_SETTING) {
+      String repairing = "抱歉，这个功能正在装修中";
+      Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
     }
-    slidingRootNav.closeMenu();
   }
 
   /**
