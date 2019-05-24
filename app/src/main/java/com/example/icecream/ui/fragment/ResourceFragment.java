@@ -3,6 +3,7 @@ package com.example.icecream.ui.fragment;
 import android.arch.lifecycle.ViewModelProviders;
 import android.content.Context;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
@@ -201,6 +202,8 @@ public class ResourceFragment extends Fragment
     if (phoneNumber != null) resourceHandler.updatePersonalResources(phoneNumber);
   }
 
+
+
   /**
    * This is where we receive our callback from {@link ArticlesAdapter.ListItemClickListener}
    *
@@ -210,4 +213,6 @@ public class ResourceFragment extends Fragment
   public void onListItemClick(Article article) {
     musicConnectorCallback.onArticleSelect(article);
   }
+
+
 }

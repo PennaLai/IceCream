@@ -35,7 +35,6 @@ public class IntroActivity extends AhoyOnboarderActivity {
     initIntroCards();
     setOnboardPages(pages);
     setColorBackground(R.color.light_blue);
-
     loadData();
   }
 
