@@ -49,6 +49,7 @@ import java.util.List;
 public class ReadFragment extends Fragment {
 
   private static final String TAG = PlayFragment.class.getName();
+  private static final String TAG = ReadFragment.class.getName();
 
   /** background player service. */
   private SpeakerService speakerService;
@@ -315,11 +316,6 @@ public class ReadFragment extends Fragment {
     PendingIntent intent_go =
         PendingIntent.getActivity(getActivity(), 5, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     remoteViews.setOnClickPendingIntent(R.id.notice, intent_go);
-
-    // 4个参数context, requestCode, intent, flags
-    PendingIntent intent_close =
-        PendingIntent.getActivity(getActivity(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-    remoteViews.setOnClickPendingIntent(R.id.widget_close, intent_close);
 
     // 设置上一曲
     Intent prv = new Intent();
