@@ -389,8 +389,6 @@ public class ReadFragment extends Fragment {
    * @param article te article that resource fragment send.
    */
   public void startDownloadArticle(Article article) {
-//    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-//    resourceHandler.downloadSpeech(article.getId());
     downloadIndicator.smoothToShow();
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask(this);
     asyncTask.execute(article.getId());
