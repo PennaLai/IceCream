@@ -30,11 +30,19 @@
         android:textColor="@color/black"
         android:textSize="18sp"
         android:typeface="normal"/>
-      <!--<ImageView-->
-        <!--android:id="@+id/read_iv_back"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:src="@drawable/ic_action_back"/>-->
+
+      <com.sackcentury.shinebuttonlib.ShineButton
+        android:id="@+id/read_sb_favorite"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="end|center_vertical"
+        android:src="@android:color/darker_gray"
+        app:btn_color="@android:color/darker_gray"
+        app:btn_fill_color="@color/light_red"
+        app:allow_random_color="false"
+        app:siShape="@raw/heart"/>
+
     </FrameLayout>
   </android.support.design.widget.AppBarLayout>
 
@@ -46,6 +54,7 @@
     android:layout_marginStart="8dp"
     android:layout_marginEnd="8dp"
     android:visibility="visible"
+    app:indicatorColor="@color/light_blue"
     app:indicatorName="BallPulseIndicator"
     app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
     app:layout_constraintEnd_toEndOf="parent"
@@ -91,22 +100,8 @@
       android:layout_width="match_parent"
       android:layout_height="match_parent">
 
-      <!--<ImageView-->
-        <!--android:id="@+id/read_iv_play"-->
-        <!--android:layout_width="26dp"-->
-        <!--android:layout_height="26dp"-->
-        <!--android:layout_marginTop="8dp"-->
-        <!--android:layout_marginBottom="16dp"-->
-        <!--android:layout_marginStart="8dp"-->
-        <!--android:layout_marginEnd="8dp"-->
-        <!--app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--app:layout_constraintEnd_toEndOf="parent"-->
-        <!--app:layout_constraintStart_toStartOf="parent"-->
-        <!--app:layout_constraintTop_toTopOf="parent"-->
-        <!--app:srcCompat="@drawable/ic_play"/>-->
-
       <jp.co.recruit_lifestyle.android.widget.PlayPauseButton
-        android:id="@+id/main_play_pause_button"
+        android:id="@+id/read_play_pause_button"
         android:layout_width="26dp"
         android:layout_height="26dp"
         android:layout_marginTop="8dp"
@@ -128,7 +123,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginEnd="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/main_play_pause_button"
+        app:layout_constraintEnd_toStartOf="@+id/read_play_pause_button"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_previous_article"/>
 
@@ -140,7 +135,7 @@
         android:layout_marginBottom="16dp"
         android:layout_marginStart="40dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/main_play_pause_button"
+        app:layout_constraintStart_toEndOf="@+id/read_play_pause_button"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/ic_next_article"/>
 

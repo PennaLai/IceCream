@@ -132,14 +132,14 @@ public class PlayFragment extends Fragment {
   @Override
   public View onCreateView(
       @NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-    View view = inflater.inflate(R.layout.fragment_play, container, false);
+    View view = inflater.inflate(R.layout.fragment_read, container, false);
 
-    volumeText = view.findViewById(R.id.music_title);
-    ImageView btPlay = view.findViewById(R.id.btn_play_pause);
-    ImageView btNext = view.findViewById(R.id.btn_next);
-    sbProgress = view.findViewById(R.id.music_seek_bar);
-    btPlay.setOnClickListener(v -> playBackgroundMusic());
-    btNext.setOnClickListener(v -> playNextMusic());
+//    volumeText = view.findViewById(R.id.music_title);
+//    ImageView btPlay = view.findViewById(R.id.btn_play_pause);
+//    ImageView btNext = view.findViewById(R.id.btn_next);
+//    sbProgress = view.findViewById(R.id.music_seek_bar);
+//    btPlay.setOnClickListener(v -> playBackgroundMusic());
+//    btNext.setOnClickListener(v -> playNextMusic());
     sbProgress.setOnSeekBarChangeListener(new VolumeListener());
 //     bind speaker service
     Activity activity = getActivity();

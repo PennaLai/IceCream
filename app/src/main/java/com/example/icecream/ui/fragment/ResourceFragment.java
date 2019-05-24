@@ -33,6 +33,7 @@ import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener;
+import com.sackcentury.shinebuttonlib.ShineButton;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
 
@@ -56,12 +57,14 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
   private Context mainAppContext;
   private Toast mToast;
 
+
   private List<String> lastSearches = new ArrayList<>();
   private MaterialSearchBar mSearchBar;
 
   private static String placeHolder = "Articles";
 
   private UserSettingHandler userSettingHandler;
+
 
 
 
@@ -128,6 +131,8 @@ public class ResourceFragment extends Fragment implements ListItemClickListener,
     if (getActivity() != null) {
       ((MainActivity) getActivity()).setUpToolbar(toolbar);
     }
+
+
 
     mSearchBar = (MaterialSearchBar) view.findViewById(R.id.search_searchBar);
     mSearchBar.setHint(getResources().getText(R.string.search_hint));
