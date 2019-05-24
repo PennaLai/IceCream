@@ -45,6 +45,8 @@ public class Repository {
   private LiveData<List<RssFeed>> allRssFeeds;
   private LiveData<List<Article>> allArticles;
 
+  private MutableLiveData<Boolean> downloadComplete = new MutableLiveData<>();
+
   private MutableLiveData<User> userSearchResult = new MutableLiveData<>();
   private MutableLiveData<List<RssFeed>> feedSearchResults = new MutableLiveData<>();
   private MutableLiveData<List<Article>> articleSearchResults = new MutableLiveData<>();
@@ -75,6 +77,10 @@ public class Repository {
 
   public void setStarArticles(List<Article> articles) {
     starArticles.setValue(articles);
+  }
+
+  public void setDownloadComplete(Boolean flag) {
+    downloadComplete.setValue(flag);
   }
 
   public void setCommonArticles(List<Article> articles) {
@@ -368,6 +374,15 @@ public class Repository {
   }
 
   /**
+   * Get the download status.
+   *
+   * @return status.
+   */
+  public MutableLiveData<Boolean> getDownloadComplete() {
+    return downloadComplete;
+  }
+
+  /**
    * Synchronously update user token.
    *
    * @param user  user.
@@ -415,7 +430,9 @@ public class Repository {
    * @param para paragraph.
    */
   public void updateArticleParagraph(Long id, String para) {
-    new UpdateSpeechAsyncTask(articleDao).execute(new ParamSpeech(id, para));
+    UpdateSpeechAsyncTask task = new UpdateSpeechAsyncTask(articleDao);
+    task.delegate = this;
+    task.execute(new ParamSpeech(id, para));
   }
 
 
@@ -837,6 +854,7 @@ public class Repository {
 
   private static class UpdateSpeechAsyncTask extends AsyncTask<ParamSpeech, Void, Void> {
     private ArticleDao articleDao;
+    private Repository delegate;
 
     UpdateSpeechAsyncTask(ArticleDao articleDao) {
       this.articleDao = articleDao;
@@ -850,7 +868,11 @@ public class Repository {
       return null;
     }
 
-  }
+    @Override
+    protected void onPostExecute(Void result) {
+      delegate.setDownloadComplete(true);
+    }
 
+  }
 
 }

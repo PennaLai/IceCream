@@ -29,6 +29,8 @@ public class AppViewModel extends AndroidViewModel {
 
   private MutableLiveData<User> userSearchResult;
 
+  private MutableLiveData<Article> articleSearchResult;
+
   private MutableLiveData<List<RssFeed>> personalRssFeeds;
 
   private MutableLiveData<List<Article>> personalArticles;
@@ -36,6 +38,8 @@ public class AppViewModel extends AndroidViewModel {
   private MutableLiveData<List<Article>> starArticles;
 
   private MutableLiveData<List<Article>> commonArticles;
+
+  private MutableLiveData<Boolean> downloadComplete;
 
   /**
    * View model constructor.
@@ -52,6 +56,7 @@ public class AppViewModel extends AndroidViewModel {
     personalArticles = repository.getPersonalArticles();
     starArticles = repository.getStarArticles();
     commonArticles = repository.getCommonArticles();
+    downloadComplete = repository.getDownloadComplete();
   }
 
   /**
@@ -109,6 +114,15 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
+   * Get the article search result.
+   *
+   * @return article.
+   */
+  public MutableLiveData<Article> getArticleSearchResult() {
+    return articleSearchResult;
+  }
+
+  /**
    * Getter for the personal RSS feeds.
    *
    * @return result RSS feeds.
@@ -142,6 +156,15 @@ public class AppViewModel extends AndroidViewModel {
    */
   public MutableLiveData<List<Article>> getCommonArticles() {
     return commonArticles;
+  }
+
+  /**
+   * Getter for download status.
+   *
+   * @return boolean.
+   */
+  public MutableLiveData<Boolean> getDownloadComplete() {
+    return downloadComplete;
   }
 
   /**
