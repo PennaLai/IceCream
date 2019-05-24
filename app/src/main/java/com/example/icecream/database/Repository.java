@@ -625,7 +625,7 @@ public class Repository {
         try {
           return sdf.parse(a2.getPublishTime()).compareTo(sdf.parse(a1.getPublishTime()));
         } catch (ParseException e) {
-          e.printStackTrace();
+          Log.i(TAG, e.getMessage());
         }
         return 0;
       });

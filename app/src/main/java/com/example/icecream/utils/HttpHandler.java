@@ -33,7 +33,7 @@ import org.json.JSONObject;
  * @author Hanmei
  * @version V1.0
  */
-public class HttpHandler {
+public final class HttpHandler {
 
   private static volatile HttpHandler instance;
   private static final String TAG = HttpHandler.class.getName();
@@ -243,7 +243,8 @@ public class HttpHandler {
     try {
       Response response = okHttpClient.newCall(request).execute();
       if (response.body() != null) {
-        File file = new File(application.getFilesDir() + fileName);
+        String filePath = application.getFilesDir() + "/speech/" + fileName;
+        File file = new File(filePath);
         if (!file.exists()) {
           if (file.mkdirs() && file.createNewFile()) {
             BufferedSink sink = Okio.buffer(Okio.sink(file));
@@ -255,6 +256,7 @@ public class HttpHandler {
           sink.writeAll(response.body().source());
           sink.close();
         }
+        Log.i(TAG, filePath);
       }
     } catch (IOException e) {
       Log.e(TAG, "download file IO exception");
@@ -778,7 +780,7 @@ public class HttpHandler {
   void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
     Log.i(TAG, url);
-    getHttpResponseFile(url, "speech/" + id + ".mp3");
+    getHttpResponseFile(url, id + ".mp3");
   }
 
   String getUpdateSpeechInfo(@NonNull final Long id) {
