@@ -30,6 +30,7 @@ import com.mancj.materialsearchbar.MaterialSearchBar;
 import com.mancj.materialsearchbar.MaterialSearchBar.OnSearchActionListener;
 import com.scwang.smartrefresh.layout.api.RefreshLayout;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -108,6 +109,8 @@ public class ResourceFragment extends Fragment
      * if the article is select, Resource fragment -> Main activity -> Player fragment.
      */
     void onArticleSelect(Article article);
+
+    void onProfileClicked();
   }
 
   @Override
@@ -123,6 +126,11 @@ public class ResourceFragment extends Fragment
     if (getActivity() != null) {
       ((MainActivity) getActivity()).setUpToolbar(toolbar);
     }
+
+    CircleImageView civProfile = view.findViewById(R.id.resource_profile);
+    civProfile.setOnClickListener(v -> {
+      musicConnectorCallback.onProfileClicked();
+    });
 
     ArticlesAdapter mAdapter;
     RecyclerView mArticleList;
