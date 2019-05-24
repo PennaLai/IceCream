@@ -261,7 +261,9 @@ public class MainActivity extends AppCompatActivity
     ReadFragment readFragment = ((ReadFragment) data.get(1));
     assert readFragment != null;
     readFragment.setArticle(article);
+
     toReadFragment();
+    readFragment.startDownloadArticle(article);
   }
 
   /**

@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
     // view model
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getApplication());
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
 
 //    if (UserSettingHandler.autoLoginFlag) {
 //      autoLogin();
