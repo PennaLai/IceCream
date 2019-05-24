@@ -63,6 +63,8 @@ public class HttpHandler {
   private static final String PERSONAL_ARTICLES_URL = MAIN_URL + "list/user/all/articles?token=";
   private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel?token=";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel?token=";
+  private static final String STAR_URL = MAIN_URL + "like/article/";
+  private static final String UNSTAR_URL = MAIN_URL + "unlike/article/";
 
   /**
    * Record urls.
@@ -252,6 +254,8 @@ public class HttpHandler {
             sink.writeAll(response.body().source());
             sink.close();
           }
+        } else {
+
         }
       }
     } catch (IOException e) {
@@ -684,7 +688,6 @@ public class HttpHandler {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
     String url = SUBSCRIBE_URL + token + "&url=" + rssFeedUrl;
-    Log.i(TAG, "Subscribe request: " + url);
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {
@@ -772,17 +775,72 @@ public class HttpHandler {
     return responseState;
   }
 
-
+  /**
+   * Update speech music.
+   *
+   * @param id article id.
+   */
   public void getUpdateSpeech(@NonNull final Long id) {
     String url = SPEECH_URL + id;
     Log.i(TAG, url);
     getHttpResponseFile(url, id + ".mp3");
   }
 
+  /**
+   * Update speech info.
+   *
+   * @param id id.
+   * @return string.
+   */
   public String getUpdateSpeechInfo(@NonNull final Long id) {
     String url = SPEECH_INFO_URL + id;
     Log.i(TAG, url);
     return getHttpResponseString(url);
+  }
+
+  /**
+   * Star.
+   *
+   * @param phoneNumber phone.
+   * @param id          article id.
+   * @return response state.
+   */
+  public ResponseState getStarResponseState(@NonNull String phoneNumber,
+                                            @NonNull Long id) {
+    User user = repository.getUserByPhoneSync(phoneNumber);
+    String token = user.getAuthToken();
+    String url = STAR_URL + id + "?token=" + token;
+    String responseString = getHttpResponseString(url);
+    ResponseState responseState = null;
+    if (responseString == null) {
+      responseState = ResponseState.ServerWrong;
+    } else {
+      Log.i(TAG, responseString);
+      JSONObject responseJsonObject;
+      try {
+        responseJsonObject = new JSONObject(responseString);
+        switch (responseJsonObject.getString(MESSAGE_CODE)) {
+          case "0":
+            // token is invalid. Needs to re-login.
+            responseState = ResponseState.InvalidToken;
+            break;
+          case "1":
+            // user account may have been deleted. Needs to re-login.
+            responseState = ResponseState.NoSuchUser;
+            break;
+          case "2":
+            // token is valid and refresh local database.
+            responseState = ResponseState.Valid;
+            Log.i(TAG, "Successfully star");
+            break;
+          default:
+            break;
+        }
+      } catch (Exception e) {
+        Log.e(TAG, e.getMessage());
+      }
+    }
+    return responseState;
   }
 
 }

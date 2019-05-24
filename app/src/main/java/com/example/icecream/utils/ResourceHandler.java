@@ -4,6 +4,7 @@ import android.app.Application;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 
 import java.util.List;
@@ -77,15 +78,6 @@ public class ResourceHandler {
   }
 
   /**
-   * Download speech for article id.
-   *
-   * @param id article id.
-   */
-  public void downloadSpeech(final Long id) {
-    new UpdateSpeechAsyncTask(this).execute(id);
-  }
-
-  /**
    * Update user subscribed RSS feeds and articles.
    *
    * @param phone user phone.
@@ -130,6 +122,18 @@ public class ResourceHandler {
    */
   public void loadArticles(String phone) {
     viewModel.loadArticlesByPhone(phone);
+  }
+
+  /**
+   * Star article
+   *
+   * @param phone   phone.
+   * @param article article.
+   */
+  public void star(String phone, Article article) {
+    new StarAsyncTask(this).execute(new ParamPhoneArticle(
+        phone, article
+    ));
   }
 
 
@@ -335,4 +339,55 @@ public class ResourceHandler {
     }
   }
 
+  private class ParamPhoneArticle {
+    private String phone;
+    private Article article;
+
+    ParamPhoneArticle(String phone, Article article) {
+      this.phone = phone;
+      this.article = article;
+    }
+  }
+
+  private static class StarAsyncTask
+      extends AsyncTask<ParamPhoneArticle, Void, HttpHandler.ResponseState> {
+    private AppViewModel viewModel;
+    private HttpHandler httpHandler;
+    private String phone;
+    private Article article;
+
+    StarAsyncTask(ResourceHandler resourceHandler) {
+      viewModel = resourceHandler.viewModel;
+      httpHandler = resourceHandler.httpHandler;
+    }
+
+    @Override
+    protected HttpHandler.ResponseState doInBackground(ParamPhoneArticle... params) {
+      phone = params[0].phone;
+      article = params[1].article;
+      HttpHandler.ResponseState responseState = httpHandler.getUpdateRssFeedsState(phone);
+      if (responseState == HttpHandler.ResponseState.Valid) {
+        responseState = httpHandler.getStarResponseState(phone, article.getId());
+      }
+      return responseState;
+    }
+
+    @Override
+    protected void onPostExecute(HttpHandler.ResponseState responseState) {
+      switch (responseState) {
+        case Valid:
+          Log.i(TAG, "successfully star");
+          viewModel.star(phone, article);
+          break;
+        case InvalidToken:
+          // TODO back to login
+          break;
+        case NoSuchUser:
+          // TODO back to login
+          break;
+        default:
+          break;
+      }
+    }
+  }
 }
