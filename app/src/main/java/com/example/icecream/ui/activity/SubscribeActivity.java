@@ -117,6 +117,7 @@ public class SubscribeActivity extends AppCompatActivity {
     chips[4] = new SubscribeItem("知乎",  "https://www.zhihu.com/rss",
         findViewById(R.id.zhihu_chip), findViewById(R.id.zhihu_tv));
 
+    // 订阅更新后更新ui
     viewModel
         .getPersonalRssFeeds()
         .observe(

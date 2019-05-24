@@ -170,7 +170,12 @@ public class LoginActivity extends AppCompatActivity {
    * Jump to the MainPage.
    */
   public void goToMainPage() {
-    resourceHandler.updateCommonArticles(); // 随便看看
+    resourceHandler.updateCommonArticles(); // 提前加载随便看看
+    String phone = userSettingHandler.getLoginPhone();
+    if (phone != null) {
+      resourceHandler.updateAllRssFeeds();
+      resourceHandler.updatePersonalResources(phone);
+    }
     Context context = LoginActivity.this;
     Class destinationActivity = MainActivity.class;
     // need to clear current activity stack.

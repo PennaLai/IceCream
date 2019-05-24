@@ -291,8 +291,10 @@ public class ReadFragment extends Fragment {
 
   private void scrollToParagraph(int position) {
     paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
-    if (speakerService.isPlaying())
-      speakerService.seeTo(para.getParas()[position-2].getStartTime());
+    if (speakerService != null) {
+      if (speakerService.isPlaying())
+        speakerService.seeTo(para.getParas()[position - 2].getStartTime());
+    }
   }
 
   /**

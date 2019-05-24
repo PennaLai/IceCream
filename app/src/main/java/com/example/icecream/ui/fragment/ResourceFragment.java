@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
+import com.example.icecream.ui.activity.LoginActivity;
 import com.example.icecream.ui.activity.MainActivity;
 import com.example.icecream.ui.activity.SearchActivity;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
@@ -117,11 +118,23 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
     // view model
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
-    // observe articles from subscribed feeds
-    viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
-
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel, getActivity().getApplication());
-    // load local feeds and articles
+    // 用户设置读取
+    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+
+    String phone = userSettingHandler.getLoginPhone();
+
+    // observe articles from subscribed feeds
+    if (phone != null) { // TODO: 加一个判断有没有订阅
+      viewModel.getPersonalArticles().observe(this, articles -> mAdapter.setArticles(articles));
+    }else {
+      Toast.makeText(getContext(), "你还没有订阅哦，先随便看看吧", Toast.LENGTH_LONG).show();
+      viewModel.getCommonArticles().observe(this, articles -> mAdapter.setArticles(articles));
+
+    }
+
+
+
 
 //    com.scwang.smartrefresh.header.BezierCircleHeader header = view.findViewById(R.id.refreshHeader);
 //    header.setAccentColor(getResources().getColor(R.color.light_pink)); // 强调颜色
@@ -138,8 +151,7 @@ public class ResourceFragment extends Fragment implements ArticlesAdapter.ListIt
       refresh.finishLoadMore(2000/*,false*/);//传入false表示加载失败
     });
 
-    // 用户设置读取
-    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+
 
     return view;
   }
