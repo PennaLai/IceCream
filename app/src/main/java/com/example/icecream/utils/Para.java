@@ -21,13 +21,12 @@ public class Para {
     paras = new EachPara[paraNum];
   }
 
-  public void insertEachPara(EachPara para, int index) {
+  public void insertEachPara(String content, int start, int index) {
     if (index < this.paraNums) {
-      this.paras[index] = para;
+      EachPara eachPara = new EachPara(content, start);
+      this.paras[index] = eachPara;
     }
   }
-
-
 
   public int getParaNums() {
     return paraNums;
@@ -76,15 +75,12 @@ public class Para {
         JSONObject eachPara = initObject.getJSONObject(String.valueOf(i));
         String content = eachPara.getString("content");
         int time = eachPara.getInt("time");
-        EachPara line = new EachPara(content, time);
-        para.insertEachPara(line, i);
+        para.insertEachPara(content, time, i);
         return para;
       }
     } catch (JSONException e) {
       e.printStackTrace();
     }
-
-
     return null;
   }
 
