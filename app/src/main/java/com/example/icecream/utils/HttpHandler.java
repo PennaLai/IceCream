@@ -246,15 +246,7 @@ public class HttpHandler {
         String parentDir = application.getFilesDir() + "/speech/";
         File dir = new File(parentDir);
         File file = new File(parentDir + fileName);
-        if (!dir.exists()) {
-          if (dir.mkdirs()) {
-            if (file.createNewFile()) {
-              BufferedSink sink = Okio.buffer(Okio.sink(file));
-              sink.writeAll(response.body().source());
-              sink.close();
-            }
-          }
-        } else {
+        if (dir.mkdirs()) {
           if (file.createNewFile()) {
             BufferedSink sink = Okio.buffer(Okio.sink(file));
             sink.writeAll(response.body().source());

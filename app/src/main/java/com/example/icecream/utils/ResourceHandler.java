@@ -59,7 +59,7 @@ public class ResourceHandler {
    * @return url.
    */
   public static String getSpeechFileUrl(final Long id, Application application) {
-    return application.getFilesDir() + "speech/" + id + ".mp3";
+    return application.getFilesDir() + "/speech/" + id + ".mp3";
   }
 
   /**
