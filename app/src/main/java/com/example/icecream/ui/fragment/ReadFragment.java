@@ -225,7 +225,7 @@ public class ReadFragment extends Fragment {
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     httpHandler = HttpHandler.getInstance(getActivity().getApplication());
 
-    initParagraphs();
+//    initParagraphs();
 
     sbProgress = view.findViewById(R.id.read_pb_progress);
     sbProgress.getConfigBuilder().max(100).sectionCount(paraNum).build();
