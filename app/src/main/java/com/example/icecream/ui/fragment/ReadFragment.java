@@ -49,6 +49,7 @@ import com.sackcentury.shinebuttonlib.ShineButton;
 import com.wang.avi.AVLoadingIndicatorView;
 import com.xw.repo.BubbleSeekBar;
 import com.xw.repo.BubbleSeekBar.OnProgressChangedListener;
+import java.io.File;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
@@ -111,11 +112,15 @@ public class ReadFragment extends Fragment {
   /** remote view for notification. */
   private RemoteViews remoteViews;
 
+  /** read for play article. */
+  private Article article;
+
   /** play pause button. */
   private PlayPauseButton playPauseButton;
 
   /** Receive notification event. */
   BroadcastReceiver broadcastReceiver;
+
 
   /** for action for the player button. */
   private static final String ACTION_PRE = "ACTION_PRE";
@@ -332,6 +337,7 @@ public class ReadFragment extends Fragment {
     downloadIndicator.smoothToShow();
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask();
     asyncTask.execute(article.getId());
+    this.article = article; // prepare to play, maybe not.
   }
 
 
@@ -340,6 +346,11 @@ public class ReadFragment extends Fragment {
    */
   public void setArticle() {
     downloadIndicator.smoothToHide();
+    String url = ResourceHandler.getSpeechFileUrl(704L , getActivity().getApplication());
+    Log.i("的", "setArticle: url !!" + url);
+    File file = new File(url);
+    Log.i("我", "setArticle: file is" + file.exists());
+    Log.i("我", "setArticle: article" + article.getParagraph());
     // TODO: load data.
     // update the article ui.
     paragraphList.add(new Paragraph(getResources().getString(R.string.title), 0));
@@ -474,7 +485,8 @@ public class ReadFragment extends Fragment {
       return false;
     }
     isPlaying = false; // stop update the progress
-    speakerService.startNewSong(waitingMusicList.get(playIndex));
+    String url = ResourceHandler.getSpeechFileUrl(704L, getActivity().getApplication());
+    speakerService.startNewSong(url);
     playSongCount++;
     return true;
   }
