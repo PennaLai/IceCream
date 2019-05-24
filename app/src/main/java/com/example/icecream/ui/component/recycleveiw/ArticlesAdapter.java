@@ -24,7 +24,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    */
   private final ListItemClickListener mOnClickListener;
 
-  private static int viewHolderCount;
+  private int viewHolderCount;
 
   /** the total number of items. */
   private int mNumberItems;
@@ -160,7 +160,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      * @param itemView The View that you inflated in {@link
      *     ArticlesAdapter#onCreateViewHolder(ViewGroup, int)}
      */
-    public ArticlesViewHolder(View itemView) {
+    ArticlesViewHolder(View itemView) {
       super(itemView);
 
       author = itemView.findViewById(R.id.tv_author);
@@ -175,7 +175,7 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
     /**
      * Bind content from repository to the view.
      *
-     * @param article
+     * @param article the article needed to display
      */
     void bindContent(Article article) {
       this.article = article;

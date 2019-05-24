@@ -1,6 +1,5 @@
 package com.example.icecream.ui.activity;
 
-import android.app.Fragment;
 import android.content.Context;
 
 import android.content.Intent;
@@ -18,10 +17,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 
+import android.widget.Toast;
 import com.example.icecream.R;
 
 import com.example.icecream.database.entity.Article;
@@ -54,23 +53,32 @@ public class MainActivity extends AppCompatActivity
     DrawerAdapter.OnItemSelectedListener,
     ResourceFragment.MusicConnector {
 
+  /** The positions for Drawer Item. */
   private static final int POS_DASHBOARD = 0;
   private static final int POS_FEED = 1;
   private static final int POS_STAR = 2;
   private static final int POS_SETTING = 3;
   private static final int POS_LOGOUT = 5;
-  private static final String TAG = "MainActivity";
 
+  /** The toolbar for the Activity */
   private Toolbar toolbar;
-  private int toolbarMargin;
 
+  /** The titles for the drawer items */
   private String[] screenTitles;
+
+  /** The icons for the drawer items */
   private Drawable[] screenIcons;
 
+  /** The function interface for the SlidingRootNavLayout we used */
   private SlidingRootNav slidingRootNav;
+
+  /** The Adapter for the Drawer */
   private DrawerAdapter adapter;
+
+  /** The ViewPager instance to hold sliding ResourceFragment and ReadFragment */
   private ViewPager viewPager;
 
+  /** The Map to hold the sliding Fragments */
   final Map<Integer, android.support.v4.app.Fragment> data = new TreeMap<>();
 
   @Override
@@ -82,7 +90,7 @@ public class MainActivity extends AppCompatActivity
     data.put(1, ReadFragment.newInstance());
 
     // 找到ViewPager
-    viewPager = (ViewPager) findViewById(R.id.view_pager);
+    viewPager = findViewById(R.id.view_pager);
 
     // 为ViewPager配置Adapter
     viewPager.setAdapter(
@@ -148,70 +156,42 @@ public class MainActivity extends AppCompatActivity
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
    *
-   * @param tb : The instance of SimpleToolbar
+   * @param tb : The instance of Toolbar.
    */
-
   public void setUpToolbar(Toolbar tb) {
-//    toolbar = tb;
-//    setSupportActionBar(toolbar);
-//
-//    toolbarMargin = getResources().getDimensionPixelSize(R.dimen.toolbarMargin);
-//    toolbar.setOnClickListener(v -> showKeyboard());
-//    super.setUpToolbar(toolbar);
     toolbar = tb;
-//    toolbar.setLogo(R.mipmap.logo);
-//    getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-////    getSupportActionBar().setTitle("");
   }
 
   @Override
   public void onItemSelected(int position) {
     if (position == POS_LOGOUT) {
-//      login();
-      // set current phone as null.
       UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
       if (userSettingHandler.getLoginPhone() != null) {
         userSettingHandler.setLoginPhone(null);
       }
       goToActivity(LoginActivity.class);
       adapter.setSelected(POS_DASHBOARD);
-//      finish();
+      slidingRootNav.closeMenu();
     } else if (position == POS_FEED) {
-//      feed();
       goToActivity(SubscribeActivity.class);
       adapter.setSelected(POS_DASHBOARD);
+      slidingRootNav.closeMenu();
+    } else if (position == POS_STAR || position == POS_SETTING) {
+      String repairing = "抱歉，这个功能正在装修中";
+      Toast.makeText(this, repairing, Toast.LENGTH_LONG).show();
+      adapter.setSelected(POS_DASHBOARD);
     }
-    slidingRootNav.closeMenu();
-
-    Log.i("Draw", "" + position);
   }
 
+  /**
+   * This method would change the current activity to a destinated activity.
+   *
+   * @param destActivity : the destinated activity.
+   */
   private void goToActivity(Class destActivity) {
     final Context context = this;
     final Intent registerIntent = new Intent(context, destActivity);
     startActivity(registerIntent);
-  }
-
-//  private void login() {
-//    final Context context = this;
-//    final Class destActivity = LoginActivity.class;
-//    final Intent registerIntent = new Intent(context, destActivity);
-//    startActivity(registerIntent);
-//  }
-//
-//  private void feed() {
-//    final Context context = this;
-//    final Class destActivity = SubscribeActivity.class;
-//    final Intent registerIntent = new Intent(context, destActivity);
-//    startActivity(registerIntent);  }
-
-  /**
-   * This method is to switch fragment according to the selected draw item.
-   *
-   * @param fragment : The destined fragment.
-   */
-  private void showFragment(Fragment fragment) {
-    getFragmentManager().beginTransaction().replace(R.id.container, fragment).commit();
   }
 
   /**
@@ -228,10 +208,20 @@ public class MainActivity extends AppCompatActivity
         .withSelectedTextTint(color(R.color.colorAccent));
   }
 
+  /**
+   * This method load titles of drawer items from xml file.
+   *
+   * @return java.lang.String[] the String array of titles
+   */
   private String[] loadScreenTitles() {
     return getResources().getStringArray(R.array.ld_activityScreenTitles);
   }
 
+  /**
+   * This method load icons of drawer items from xml file.
+   *
+   * @return android.graphics.drawable.Drawable[] the Drawable array of icons
+   */
   private Drawable[] loadScreenIcons() {
     TypedArray ta = getResources().obtainTypedArray(R.array.ld_activityScreenIcons);
     Drawable[] icons = new Drawable[ta.length()];
@@ -269,6 +259,9 @@ public class MainActivity extends AppCompatActivity
   @Override
   public void onArticleSelect(Article article) {
     ReadFragment readFragment = ((ReadFragment) data.get(1));
+    assert readFragment != null;
+    readFragment.setArticle(article);
+
     toReadFragment();
     readFragment.startDownloadArticle(article);
   }
@@ -291,6 +284,5 @@ public class MainActivity extends AppCompatActivity
   public void onBackPressed() {
     super.onBackPressed();
   }
-
 
 }

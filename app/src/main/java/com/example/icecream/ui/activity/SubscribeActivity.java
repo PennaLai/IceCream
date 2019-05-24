@@ -1,6 +1,5 @@
 package com.example.icecream.ui.activity;
 
-import android.arch.lifecycle.MutableLiveData;
 import android.arch.lifecycle.ViewModelProviders;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -19,15 +18,18 @@ import com.example.icecream.utils.UserSettingHandler;
 import com.robertlevonyan.views.chip.Chip;
 import java.util.List;
 
+/**
+ * The Subscribe Activity.
+ *
+ * @author aaron penna
+ * @version V1.0
+ */
 public class SubscribeActivity extends AppCompatActivity {
 
   /**
    * the select item to store the subscribe information.
    */
   class SubscribeItem {
-
-    /** item name. */
-    String name;
 
     /** has subscribe or not. */
     boolean hasSubscribe;
@@ -44,7 +46,6 @@ public class SubscribeActivity extends AppCompatActivity {
     /** initial to not select state. */
     private SubscribeItem(String name, String subScribeUrl,
         FrameLayout chip, TextView textView) {
-      this.name = name;
       this.subScribeUrl = subScribeUrl;
       this.chip = chip;
       this.textView = textView;
@@ -129,7 +130,7 @@ public class SubscribeActivity extends AppCompatActivity {
                 chips[i].setSubscribe(false);
               }
               for (RssFeed rssFeed : allSubscribes) {
-                int id = new Long(rssFeed.getId()).intValue();
+                int id = rssFeed.getId().intValue();
                 if (id >= 0 && id < SUBSCRIBE_NUM) {
                   Log.i("sss", "onCreate: "+rssFeed.getChannelName()+"id"+rssFeed.getId());
                   chips[id].setSubscribe(true);

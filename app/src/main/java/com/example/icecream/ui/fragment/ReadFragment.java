@@ -214,6 +214,7 @@ public class ReadFragment extends Fragment {
     downloadIndicator.hide();
     ImageView btNext = view.findViewById(R.id.read_iv_next);
     btNext.setOnClickListener(v -> startNextArticle());
+
     playPauseButton = view.findViewById(R.id.read_play_pause_button);
     playPauseButton.setOnControlStatusChangeListener((View v, boolean state) -> {
       playBackgroundMusic();
@@ -272,25 +273,24 @@ public class ReadFragment extends Fragment {
           return false;
         });
 
+    paragraphs.setOnScrollListener(new OnScrollListener() {
+      @Override
+      public void onScrollStateChanged(AbsListView view, int scrollState) {
+        switch (scrollState) {
+          default:
+            break;
+          case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
+            isPlaying = false;
+            break;
+          case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
+            isPlaying = true;
+            break;
+
+        }
+      }
+
     paragraphs.setOnItemClickListener(
         (parent, view1, position, id) -> scrollToParagraph(position));
-
-    paragraphs.setOnScrollListener(
-        new OnScrollListener() {
-          @Override
-          public void onScrollStateChanged(AbsListView view, int scrollState) {
-            switch (scrollState) {
-              case AbsListView.OnScrollListener.SCROLL_STATE_TOUCH_SCROLL:
-                isPlaying = false;
-                break;
-              case AbsListView.OnScrollListener.SCROLL_STATE_IDLE:
-                // TODO: stop for 2 seconds.
-                isPlaying = true;
-                break;
-              default:
-                break;
-            }
-          }
 
           @Override
           public void onScroll(
@@ -330,7 +330,6 @@ public class ReadFragment extends Fragment {
    * @param article te article that resource fragment send.
    */
   public void startDownloadArticle(Article article) {
-
 //    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
 //    resourceHandler.downloadSpeech(article.getId());
 //    downloadIndicator.smoothToShow();
@@ -354,7 +353,8 @@ public class ReadFragment extends Fragment {
     musicBarManage = (NotificationManager) getActivity().getSystemService(NOTIFICATION_SERVICE);
     remoteViews = new RemoteViews(getActivity().getPackageName(), R.layout.music_notify);
 
-    NotificationCompat.Builder builder = new Builder(getActivity());
+    NotificationCompat.Builder builder;
+    builder = new Builder(getActivity());
 
     Intent intent = new Intent(getActivity(), MainActivity.class);
 

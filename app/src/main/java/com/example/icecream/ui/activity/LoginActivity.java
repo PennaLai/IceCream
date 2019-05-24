@@ -32,10 +32,19 @@ import java.lang.ref.WeakReference;
  */
 public class LoginActivity extends AppCompatActivity {
 
+  /** A tool instance of HttpHandler to handle the http */
   private HttpHandler httpHandler;
+
+  /** A instance of ResourceHandler to handle the recourse change */
   ResourceHandler resourceHandler;
+
+  /** A instance of UserSettingHandler to handle the user settings */
   private UserSettingHandler userSettingHandler;
+
+  /** The input EditText view to enter phone number */
   private MaterialEditText phoneEdit;
+
+  /** The input EditText view to enter password */
   private MaterialEditText passwordEdit;
 
   @Override
@@ -271,12 +280,23 @@ public class LoginActivity extends AppCompatActivity {
     }
   }
 
+  /**
+   * A class to implement auto login from disk.
+   *
+   * @author kemo
+   */
   private static class AutoLoginAsyncTask extends AsyncTask<String, Void,
       HttpHandler.ResponseState> {
+
+    /** A weak reference of LoginActivity */
     private WeakReference<LoginActivity> activityReference;
+
+    /** The phone number of the user */
     private String phone;
 
-    // only retain a weak reference to the activity
+    /**
+     * Only retain a weak reference to the activity
+     */
     AutoLoginAsyncTask(LoginActivity context) {
       activityReference = new WeakReference<>(context);
     }

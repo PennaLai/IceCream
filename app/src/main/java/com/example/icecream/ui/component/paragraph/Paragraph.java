@@ -2,6 +2,8 @@ package com.example.icecream.ui.component.paragraph;
 
 /**
  * Paragraph for the read fragment.
+ *
+ * @author aaron penna.
  */
 public class Paragraph {
 
@@ -11,7 +13,7 @@ public class Paragraph {
   /** the paragraph type 0 for Title, 1 for paragraph, 2 for time. */
   private int type;
 
-  /***
+  /**
    * construct for paragraph.
    * @param content content.
    * @param type type.
@@ -21,11 +23,19 @@ public class Paragraph {
     this.type = type;
   }
 
+  /**
+   * Getter of attribute content.
+   * @return The content of the paragraph instance.
+   */
   public String getContent() {
     return content;
   }
 
-  public int getType() {
+  /**
+   * Getter of attribute type.
+   * @return The type of the paragraph.
+   */
+  int getType() {
     return type;
   }
 }
