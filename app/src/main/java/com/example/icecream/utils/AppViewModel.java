@@ -33,6 +33,10 @@ public class AppViewModel extends AndroidViewModel {
 
   private MutableLiveData<List<Article>> personalArticles;
 
+  private MutableLiveData<List<Article>> starArticles;
+
+  private MutableLiveData<List<Article>> commonArticles;
+
   /**
    * View model constructor.
    *
@@ -46,6 +50,8 @@ public class AppViewModel extends AndroidViewModel {
     userSearchResult = repository.getUserSearchResult();
     personalRssFeeds = repository.getPersonalRssFeeds();
     personalArticles = repository.getPersonalArticles();
+    starArticles = repository.getStarArticles();
+    commonArticles = repository.getCommonArticles();
   }
 
   /**
@@ -109,6 +115,24 @@ public class AppViewModel extends AndroidViewModel {
    */
   public MutableLiveData<List<Article>> getPersonalArticles() {
     return personalArticles;
+  }
+
+  /**
+   * Getter for star articles.
+   *
+   * @return list.
+   */
+  public MutableLiveData<List<Article>> getStarArticles() {
+    return starArticles;
+  }
+
+  /**
+   * Getter for common articles.
+   *
+   * @return list.
+   */
+  public MutableLiveData<List<Article>> getCommonArticles() {
+    return commonArticles;
   }
 
   /**

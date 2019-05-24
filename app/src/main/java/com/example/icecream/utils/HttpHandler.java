@@ -776,7 +776,7 @@ public class HttpHandler {
 
   public void getUpdateSpeechInfo(@NonNull final Long id) {
     String url = SPEECH_INFO_URL + id;
-    getHttpResponseFile(url, "speech/" + id + ".mp3");
+    getHttpResponseFile(url, "speech/" + id + ".json");
     Log.i(TAG, url);
   }
 

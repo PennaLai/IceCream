@@ -19,7 +19,7 @@ import android.support.annotation.NonNull;
     indices = {@Index("feedUrl"), @Index("title")})
 public class Article {
 
-  @PrimaryKey()
+  @PrimaryKey
   private Long id;
 
   @NonNull
@@ -33,6 +33,8 @@ public class Article {
   private String description;
 
   private String publishTime;
+
+  private String paragraph;
 
   /**
    * Constructor for article.
@@ -102,4 +104,11 @@ public class Article {
     this.publishTime = publishTime;
   }
 
+  public String getParagraph() {
+    return paragraph;
+  }
+
+  public void setParagraph(String paragraph) {
+    this.paragraph = paragraph;
+  }
 }

@@ -350,6 +350,24 @@ public class Repository {
   }
 
   /**
+   * Get the starred articles of user.
+   *
+   * @return article list.
+   */
+  public MutableLiveData<List<Article>> getStarArticles() {
+    return starArticles;
+  }
+
+  /**
+   * Get the common article.
+   *
+   * @return common article list.
+   */
+  public MutableLiveData<List<Article>> getCommonArticles() {
+    return commonArticles;
+  }
+
+  /**
    * Synchronously update user token.
    *
    * @param user  user.
