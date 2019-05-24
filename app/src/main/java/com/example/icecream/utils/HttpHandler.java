@@ -52,7 +52,7 @@ public class HttpHandler {
   private static final String REGISTER_URL = MAIN_URL + "signup";
   private static final String BEFORE_REGISTER = MAIN_URL + "before-register";
   private static final String CHECK_TOKEN_URL = MAIN_URL + "checkToken";
-  private static final String USER_INFO_URL = MAIN_URL + "userinfo";
+  private static final String USER_SETTING_URL = MAIN_URL + "userSetting";
 
   /**
    * User feeds and articles urls.
@@ -60,7 +60,7 @@ public class HttpHandler {
   private static final String ALL_RSS_FEEDS_URL = MAIN_URL + "list/all/feeds";
   private static final String ALL_ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
   private static final String PERSONAL_RSS_FEEDS_URL = MAIN_URL + "list/feeds";
-  private static final String ARTICLES_URL = MAIN_URL + "list/feed/all/articles";
+  private static final String PERSONAL_ARTICLES_URL = MAIN_URL + "list/user/all/articles";
   private static final String SUBSCRIBE_URL = MAIN_URL + "addChannel";
   private static final String UNSUBSCRIBE_URL = MAIN_URL + "deleteChannel";
 
@@ -154,8 +154,8 @@ public class HttpHandler {
     ServerWrong
   }
 
-  private String getUpdateUsername(@NonNull String phoneNumber) {
-    String url = USER_INFO_URL + "?phone=" + phoneNumber;
+  private String getUpdateSetting(@NonNull String token) {
+    String url = USER_SETTING_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     if (responseString != null) {
       Log.i(TAG, responseString);
@@ -163,17 +163,18 @@ public class HttpHandler {
       return null;
     }
     JSONObject responseJsonObject;
-    String response = "";
+    String username = null;
     try {
       responseJsonObject = new JSONObject(responseString);
       if (responseJsonObject.getString(MESSAGE_CODE).equals("2")) {
         // user found.
-        response = responseJsonObject.getString(MESSAGE);
+        JSONObject userSettingJson = new JSONObject(responseJsonObject.getString(MESSAGE));
+        username = userSettingJson.getString("username");
       }
     } catch (Exception e) {
-      Log.e(TAG, "getUpdateUsername: ", e);
+      Log.e(TAG, "getUpdateSetting: ", e);
     }
-    return response;
+    return username;
   }
 
 
@@ -298,7 +299,7 @@ public class HttpHandler {
             // check if it is in local database
             User user = repository.getUserByPhoneSync(phoneNumber);
             if (user == null) {
-              String username = getUpdateUsername(phoneNumber);
+              String username = getUpdateSetting(token);
               if (username == null) {
                 username = "";
               }
@@ -608,7 +609,7 @@ public class HttpHandler {
   public ResponseState getUpdateArticlesState(@NonNull final String phoneNumber) {
     User user = repository.getUserByPhoneSync(phoneNumber);
     String token = user.getAuthToken();
-    String url = ARTICLES_URL + "?token=" + token;
+    String url = PERSONAL_ARTICLES_URL + "?token=" + token;
     String responseString = getHttpResponseString(url);
     ResponseState responseState = null;
     if (responseString == null) {
