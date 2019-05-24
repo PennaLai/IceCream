@@ -1,5 +1,6 @@
 package com.example.icecream.utils;
 
+import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -107,7 +108,7 @@ public class Para {
   /***
    * load the json to para object.
    * @param json speaker json data.
-   * @return
+   * @return Para
    */
   public static Para loadToPara(String json) {
     try {
@@ -122,7 +123,7 @@ public class Para {
       }
       return para;
     } catch (JSONException e) {
-      e.printStackTrace();
+      Log.e("error", "null pointer");
     }
     return null;
   }

@@ -44,7 +44,7 @@ public class SubscribeActivity extends AppCompatActivity {
     TextView textView;
 
     /** initial to not select state. */
-    private SubscribeItem(String name, String subScribeUrl,
+    private SubscribeItem(String subScribeUrl,
         FrameLayout chip, TextView textView) {
       this.subScribeUrl = subScribeUrl;
       this.chip = chip;
@@ -107,15 +107,15 @@ public class SubscribeActivity extends AppCompatActivity {
     setContentView(R.layout.acitivity_subscribe);
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
 
-    chips[0] = new SubscribeItem("36氪", "https://36kr.com/feed",
+    chips[0] = new SubscribeItem("https://36kr.com/feed",
         findViewById(R.id.kr_chip), findViewById(R.id.kr_tv));
-    chips[1] = new SubscribeItem("爱范儿", "https://www.ifanr.com/feed",
+    chips[1] = new SubscribeItem("https://www.ifanr.com/feed",
         findViewById(R.id.ifanr_chip), findViewById(R.id.ifanr_tv));
-    chips[2] = new SubscribeItem("威锋网", "https://www.feng.com/rss.xml",
+    chips[2] = new SubscribeItem("https://www.feng.com/rss.xml",
         findViewById(R.id.feng_chip), findViewById(R.id.feng_tv));
-    chips[3] = new SubscribeItem("极客公园", "https://www.geekpark.net/rss",
+    chips[3] = new SubscribeItem("https://www.geekpark.net/rss",
         findViewById(R.id.geekpark_chip), findViewById(R.id.geekpark_tv));
-    chips[4] = new SubscribeItem("知乎",  "https://www.zhihu.com/rss",
+    chips[4] = new SubscribeItem("https://www.zhihu.com/rss",
         findViewById(R.id.zhihu_chip), findViewById(R.id.zhihu_tv));
 
     // 订阅更新后更新ui

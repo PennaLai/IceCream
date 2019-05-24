@@ -81,10 +81,6 @@ public class LoginActivity extends AppCompatActivity {
 //    }
   }
 
-  private void autoLogin() {
-    new AutoLoginAsyncTask(this).execute(userSettingHandler.getLoginPhone());
-  }
-
   /**
    * The <em>onClick</em> listener function for the login button.
    *

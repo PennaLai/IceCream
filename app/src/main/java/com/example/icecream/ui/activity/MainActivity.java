@@ -149,13 +149,6 @@ public class MainActivity extends AppCompatActivity
     adapter.setSelected(POS_DASHBOARD);
   }
 
-
-  @Override
-  protected void onDestroy() {
-    super.onDestroy();
-  }
-
-
   /**
    * This method is invoked from resource fragment to set up the customized Toolbar.
    *

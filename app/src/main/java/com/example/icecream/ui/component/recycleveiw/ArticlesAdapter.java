@@ -99,8 +99,12 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
    * @return articles count
    */
   public int getArticlesCount() {
-    if (mArticles == null) return 0;
-    else return mArticles.size();
+    if (mArticles == null) {
+      return 0;
+    }
+    else {
+      return mArticles.size();
+    }
   }
 
   /**
@@ -186,7 +190,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
 
     /** This used to update content depend on article. */
     private void updateContent() {
-      if (article == null) return;
+      if (article == null) {
+        return;
+      }
       this.title.setText(article.getTitle());
       Log.i("ashdjakshd", article.getFeedUrl());
       switch (article.getFeedUrl()) {
@@ -221,7 +227,9 @@ public class ArticlesAdapter extends RecyclerView.Adapter<ArticlesViewHolder> {
      */
     @Override
     public void onClick(View v) {
-      if (article != null) mOnClickListener.onListItemClick(this.article);
+      if (article != null) {
+        mOnClickListener.onListItemClick(this.article);
+      }
     }
   }
 }

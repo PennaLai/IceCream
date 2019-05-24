@@ -158,7 +158,6 @@ public class SpeakerService extends Service implements OnPreparedListener, OnCom
     if (isPlaying()) {
       speakerPlayer.stop();
     }
-    AssetFileDescriptor fd;
     try {
       Log.i(TAG, "startNewSong: " + url);
       speakerPlayer.reset();

@@ -153,9 +153,6 @@ public class ReadFragment extends Fragment {
 
   private ShineButton shineButton;
 
-  /** to get the uer setting information. */
-  private UserSettingHandler userSettingHandler;
-
   /** to handler the resource update. */
   private ResourceHandler resourceHandler;
 
@@ -244,7 +241,9 @@ public class ReadFragment extends Fragment {
     HttpHandler httpHandler = HttpHandler.getInstance(getActivity().getApplication());
     resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     // 用户设置读取
-    userSettingHandler = UserSettingHandler.getInstance(getActivity().getApplication());
+    /** to get the uer setting information. */
+    UserSettingHandler userSettingHandler = UserSettingHandler
+        .getInstance(getActivity().getApplication());
 
     phone = userSettingHandler.getLoginPhone();
 
@@ -276,9 +275,6 @@ public class ReadFragment extends Fragment {
           Log.i("Article", "Not null");
           if (checked) {
             resourceHandler.star(phone, waitingMusicList.get(playIndex));
-          } else {
-            // No unstar
-            // resourceHandler.unstar(phone, waitingMusicList.get(playIndex));
           }
         } else {
           Log.i("Article", "NULL");
@@ -403,12 +399,8 @@ public class ReadFragment extends Fragment {
    */
   private void scrollToParagraph(int position) {
     paragraphs.smoothScrollToPositionFromTop(position, 0, 500);
-    if (speakerService != null) {
-      if (speakerService.isPlaying()) {
-        if (position >= 2) {
-          speakerService.seeTo(para.getParas()[position - 2].getStartTime());
-        }
-      }
+    if (speakerService != null && (speakerService.isPlaying() && position >= 2)) {
+      speakerService.seeTo(para.getParas()[position - 2].getStartTime());
     }
   }
 

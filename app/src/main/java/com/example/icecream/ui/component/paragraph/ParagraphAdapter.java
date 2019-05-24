@@ -79,19 +79,26 @@ public class ParagraphAdapter extends BaseAdapter {
       }
     }else{
       view = convertView;
-      if (Type == 0)
+      if (Type == 0) {
         titleViewHolder = (TitleViewHolder) convertView.getTag();
-      else if (Type == 1)
+      }
+      else if (Type == 1) {
         contentViewHolder = (ContentViewHolder) convertView.getTag();
-      else timeViewHolder = (TimeViewHolder) convertView.getTag();
+      }
+      else {
+        timeViewHolder = (TimeViewHolder) convertView.getTag();
+      }
     }
 
-    if (Type == 0)
+    if (Type == 0) {
       titleViewHolder.paragraphTitle.setText(paragraph.getContent());
-    else if (Type == 1)
+    }
+    else if (Type == 1) {
       contentViewHolder.paragraphContent.setText(paragraph.getContent());
-    else
+    }
+    else {
       timeViewHolder.paragraphTime.setText(paragraph.getContent());
+    }
 
     return view;
   }

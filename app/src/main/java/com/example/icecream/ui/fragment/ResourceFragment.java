@@ -135,7 +135,6 @@ public class ResourceFragment extends Fragment
     ArticlesAdapter mAdapter;
     RecyclerView mArticleList;
     Context mainAppContext;
-    Toast mToast;
     String placeHolder = "Articles";
     mSearchBar = view.findViewById(R.id.search_searchBar);
     mSearchBar.setHint(getResources().getText(R.string.search_hint));
@@ -172,7 +171,7 @@ public class ResourceFragment extends Fragment
       LinearLayoutManager layoutManager = new LinearLayoutManager(mainAppContext);
       mArticleList.setLayoutManager(layoutManager);
     } catch (java.lang.NullPointerException npe) {
-      npe.printStackTrace();
+      Log.e("error", "null pointer");
     }
 
     // TODO: get the articles size and set it into NUM_LIST_ITEMS

@@ -40,7 +40,6 @@ public class Repository {
   private UserRssFeedJoinDao userRssFeedJoinDao;
   private UserArticleJoinDao userArticleJoinDao;
   private LiveData<List<User>> allUsers;
-  private LiveData<List<RssFeed>> allRssFeeds;
 
   private MutableLiveData<Boolean> downloadComplete = new MutableLiveData<>();
 
@@ -83,7 +82,6 @@ public class Repository {
     userRssFeedJoinDao = db.userRssFeedJoinDao();
     userArticleJoinDao = db.userArticleJoinDao();
     allUsers = userDao.getAllUsers();
-    allRssFeeds = rssFeedDao.getAllFeeds();
   }
 
   /**

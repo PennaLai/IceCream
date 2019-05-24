@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.example.icecream.R;
@@ -23,16 +24,8 @@ import java.util.Objects;
 
 public class StarActivity extends AppCompatActivity implements ListItemClickListener {
 
-  private ArticlesAdapter mAdapter;
-  private RecyclerView mArticleList;
-  private Context mainAppContext;
-
-  private TextView header;
-
   private String phone;
 
-  private HttpHandler httpHandler;
-  private ResourceHandler resourceHandler;
   private AppViewModel viewModel;
 
 //  private MusicConnector musicConnectorCallback;
@@ -42,9 +35,7 @@ public class StarActivity extends AppCompatActivity implements ListItemClickList
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_star);
 
-    header = findViewById(R.id.star_header);
-
-//    musicConnectorCallback = (MainActivity) MainActivity.getContext();
+    //    musicConnectorCallback = (MainActivity) MainActivity.getContext();
 
     loadUserInfo();
     loadArticles();
@@ -53,24 +44,22 @@ public class StarActivity extends AppCompatActivity implements ListItemClickList
 
   private void loadUserInfo(){
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    httpHandler = HttpHandler.getInstance(this.getApplication());
-    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
     UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(this.getApplication());
     phone = userSettingHandler.getLoginPhone();
   }
 
   private void loadArticles(){
-    mArticleList = findViewById(R.id.rv_source);
+    RecyclerView mArticleList = findViewById(R.id.rv_source);
 
     try {
-      mainAppContext = StarActivity.this;
+      Context mainAppContext = StarActivity.this;
       LinearLayoutManager layoutManager = new LinearLayoutManager(mainAppContext);
       mArticleList.setLayoutManager(layoutManager);
     } catch (java.lang.NullPointerException npe) {
-      npe.printStackTrace();
+      Log.e("error", "null pointer");
     }
 
-    mAdapter = new ArticlesAdapter(0, this);
+    ArticlesAdapter mAdapter = new ArticlesAdapter(0, this);
     mArticleList.setAdapter(mAdapter);
 
     if (phone!=null) {
