@@ -7,6 +7,7 @@ import android.util.Log;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.database.entity.RssFeed;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -179,10 +180,11 @@ public final class ResourceHandler {
     protected void onPostExecute(HttpHandler.ResponseState responseState) {
       if (responseState == HttpHandler.ResponseState.Valid) {
         // get those feeds successfully
-        Log.i(TAG, "inserting all rss feeds");
         List<RssFeed> list = httpHandler.getAllRssFeeds();
         RssFeed[] arr = list.toArray(new RssFeed[0]);
         viewModel.insertAllRssFeeds(arr);
+        Log.i(TAG, "insert rss feeds: " +
+            Arrays.toString(viewModel.getPersonalRssFeeds().getValue().toArray()));
       }
     }
   }

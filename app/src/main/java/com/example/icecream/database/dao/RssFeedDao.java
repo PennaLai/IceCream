@@ -25,7 +25,7 @@ public interface RssFeedDao {
   void update(RssFeed... rssFeed);
 
   @Query("SELECT * FROM RssFeed ORDER BY category")
-  LiveData<List<RssFeed>> getAllFeeds();
+  List<RssFeed> getAllFeeds();
 
   @Query("SELECT * FROM RssFeed WHERE channelName =:name")
   List<RssFeed> getRssFeedByName(String name);

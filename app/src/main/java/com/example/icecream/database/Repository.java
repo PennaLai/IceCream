@@ -20,6 +20,7 @@ import com.example.icecream.database.entity.UserRssFeedJoin;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -610,9 +611,14 @@ public class Repository {
     @Override
     protected List<RssFeed> doInBackground(final String... params) {
       Long userId = userDao.getUserByPhone(params[0]).getId();
-      userRssFeedJoinDao.insert(new UserRssFeedJoin(
-          userId,
-          rssFeedDao.getRssFeedByUrl(params[1]).getId()));
+      Log.i(TAG, "all:" + Arrays.toString(rssFeedDao.getAllFeeds().toArray()));
+      Log.i(TAG, "subscribe url: " + params[1]);
+      RssFeed rssFeed = rssFeedDao.getRssFeedByUrl(params[1]);
+      if (rssFeed != null) {
+        userRssFeedJoinDao.insert(new UserRssFeedJoin(
+            userId,
+            rssFeed.getId()));
+      }
       return userRssFeedJoinDao.getRssFeedsByUserId(userId);
     }
 
@@ -636,9 +642,14 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final String... params) {
-      userRssFeedJoinDao.deleteByIds(
-          userDao.getUserByPhone(params[0]).getId(),
-          rssFeedDao.getRssFeedByUrl(params[1]).getId());
+      Log.i(TAG, "all:" + Arrays.toString(rssFeedDao.getAllFeeds().toArray()));
+      Log.i(TAG, "unsubscribe url: " + params[1]);
+      RssFeed rssFeed = rssFeedDao.getRssFeedByUrl(params[1]);
+      if (rssFeed != null) {
+        userRssFeedJoinDao.deleteByIds(
+            userDao.getUserByPhone(params[0]).getId(),
+            rssFeed.getId());
+      }
       return null;
     }
   }

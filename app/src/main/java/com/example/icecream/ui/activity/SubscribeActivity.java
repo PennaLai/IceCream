@@ -152,6 +152,7 @@ public class SubscribeActivity extends AppCompatActivity {
         findViewById(R.id.zhihu_chip), findViewById(R.id.zhihu_tv));
 
     // 订阅更新后更新ui
+    resourceHandler.updateAllRssFeeds();
     resourceHandler.loadRssFeeds(phoneNumber);
     for (int i = 0; i < SUBSCRIBE_NUM; i++) {
       chips[i].setSubscribe(false);
