@@ -636,9 +636,9 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final String... params) {
-      userRssFeedJoinDao.delete(new UserRssFeedJoin(
+      userRssFeedJoinDao.deleteByIds(
           userDao.getUserByPhone(params[0]).getId(),
-          rssFeedDao.getRssFeedByUrl(params[1]).getId()));
+          rssFeedDao.getRssFeedByUrl(params[1]).getId());
       return null;
     }
   }

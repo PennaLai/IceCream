@@ -9,6 +9,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.icecream.R;
 import com.example.icecream.database.entity.RssFeed;
 import com.example.icecream.utils.AppViewModel;
@@ -16,6 +17,7 @@ import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
 import com.robertlevonyan.views.chip.Chip;
+
 import java.util.List;
 
 /**
@@ -31,21 +33,31 @@ public class SubscribeActivity extends AppCompatActivity {
    */
   class SubscribeItem {
 
-    /** has subscribe or not. */
+    /**
+     * has subscribe or not.
+     */
     boolean hasSubscribe;
 
-    /** subscribe url. */
+    /**
+     * subscribe url.
+     */
     String subScribeUrl;
 
-    /** the ui chip. */
+    /**
+     * the ui chip.
+     */
     FrameLayout chip;
 
-    /** I do not know. */
+    /**
+     * I do not know.
+     */
     TextView textView;
 
-    /** initial to not select state. */
+    /**
+     * initial to not select state.
+     */
     private SubscribeItem(String subScribeUrl,
-        FrameLayout chip, TextView textView) {
+                          FrameLayout chip, TextView textView) {
       this.subScribeUrl = subScribeUrl;
       this.chip = chip;
       this.textView = textView;
@@ -53,19 +65,25 @@ public class SubscribeActivity extends AppCompatActivity {
       this.setSubscribe(false);
     }
 
-    /** when click the item, it should change the state and update ui. */
+    /**
+     * when click the item, it should change the state and update ui.
+     */
     private void clickSubScribe() {
       this.hasSubscribe = !this.hasSubscribe;
       updateUi();
     }
 
-    /** direct set the state and update ui. */
+    /**
+     * direct set the state and update ui.
+     */
     private void setSubscribe(boolean dest) {
       this.hasSubscribe = dest;
       updateUi();
     }
 
-    /** update ui depend the state.*/
+    /**
+     * update ui depend the state.
+     */
     private void updateUi() {
       if (this.hasSubscribe) {
         this.chip.setBackgroundDrawable(getResources().getDrawable(R.drawable.chip_selected));
@@ -76,36 +94,51 @@ public class SubscribeActivity extends AppCompatActivity {
       }
     }
 
-    /** return state. */
+    /**
+     * return state.
+     */
     private boolean isHasSubscribe() {
       return hasSubscribe;
     }
 
-    /** return the url. */
+    /**
+     * return the url.
+     */
     private String getSubScribeUrl() {
       return subScribeUrl;
     }
 
   }
 
-  /** the subscribe number. */
+  /**
+   * the subscribe number.
+   */
   static final int SUBSCRIBE_NUM = 5;
 
-  /** all the subscribe element. */
+  /**
+   * all the subscribe element.
+   */
   private SubscribeItem[] chips = new SubscribeItem[SUBSCRIBE_NUM];
 
-  /** select all chip. */
+  /**
+   * select all chip.
+   */
   private Chip all;
 
-  /** store the all subscribe list. */
-  private List<RssFeed> allSubscribes;
+  private ResourceHandler resourceHandler;
 
+  private String phoneNumber;
 
   @Override
   protected void onCreate(final Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.acitivity_subscribe);
+
+    HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
     AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
+    resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
+    UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
+    phoneNumber = userSettingHandler.getLoginPhone();
 
     chips[0] = new SubscribeItem("https://36kr.com/feed",
         findViewById(R.id.kr_chip), findViewById(R.id.kr_tv));
@@ -119,25 +152,20 @@ public class SubscribeActivity extends AppCompatActivity {
         findViewById(R.id.zhihu_chip), findViewById(R.id.zhihu_tv));
 
     // 订阅更新后更新ui
-    viewModel
-        .getPersonalRssFeeds()
-        .observe(
-            this,
-            rssFeeds -> {
-              allSubscribes = rssFeeds;
-              // unsubscribe first.
-              for (int i = 0; i < SUBSCRIBE_NUM; i++) {
-                chips[i].setSubscribe(false);
-              }
-              for (RssFeed rssFeed : allSubscribes) {
-                int id = rssFeed.getId().intValue();
-                if (id >= 0 && id < SUBSCRIBE_NUM) {
-                  Log.i("sss", "onCreate: "+rssFeed.getChannelName()+"id"+rssFeed.getId());
-                  chips[id].setSubscribe(true);
-                }
-              }
-
-            });
+    resourceHandler.loadRssFeeds(phoneNumber);
+    for (int i = 0; i < SUBSCRIBE_NUM; i++) {
+      chips[i].setSubscribe(false);
+    }
+    List<RssFeed> allSubscribes = viewModel.getPersonalRssFeeds().getValue();
+    if (allSubscribes != null) {
+      for (RssFeed rssFeed : allSubscribes) {
+        Log.i("sss", "onCreate: " + rssFeed.getChannelName() + "id" + rssFeed.getId());
+        int id = rssFeed.getId().intValue();
+        if (id >= 0 && id < SUBSCRIBE_NUM) {
+          chips[id].setSubscribe(true);
+        }
+      }
+    }
 
     all = findViewById(R.id.all_chip);
     ImageView back = findViewById(R.id.sub_iv_back);
@@ -169,12 +197,6 @@ public class SubscribeActivity extends AppCompatActivity {
    * send the request to the server to subscribe the selected item.
    */
   private void confirmSubscribe() {
-    HttpHandler httpHandler = HttpHandler.getInstance(getApplication());
-    AppViewModel viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
-    ResourceHandler resourceHandler = ResourceHandler.getInstance(httpHandler, viewModel);
-    UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(getApplication());
-    String phoneNumber;
-    phoneNumber = userSettingHandler.getLoginPhone();
     if (phoneNumber == null) {
       Toast.makeText(SubscribeActivity.this, "你还没有登录哦", Toast.LENGTH_LONG).show();
       return;
@@ -184,11 +206,11 @@ public class SubscribeActivity extends AppCompatActivity {
       if (element.isHasSubscribe()) {
         resourceHandler.subscribe(phoneNumber,
             element.getSubScribeUrl());
-        Log.i("SUB", "confirmSubscribe: subscribe"+element.getSubScribeUrl());
+        Log.i("SUB", "confirmSubscribe: subscribe" + element.getSubScribeUrl());
       } else {
         resourceHandler.unsubscribe(phoneNumber,
             element.getSubScribeUrl());
-        Log.i("UNSUB", "confirmSubscribe: subscribe"+element.getSubScribeUrl());
+        Log.i("UNSUB", "confirmSubscribe: subscribe" + element.getSubScribeUrl());
 
       }
     }

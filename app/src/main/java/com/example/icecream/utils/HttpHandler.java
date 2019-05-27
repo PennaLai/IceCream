@@ -694,9 +694,6 @@ public final class HttpHandler {
             responseState = ResponseState.NoSuchUser;
             break;
           case "2":
-            // cannot subscribe
-            responseState = ResponseState.SubscribeFail;
-            break;
           case "3":
             // token is valid and refresh local database.
             responseState = ResponseState.Valid;
@@ -742,9 +739,6 @@ public final class HttpHandler {
             responseState = ResponseState.NoSuchUser;
             break;
           case "2":
-            // cannot unsubscribe
-            responseState = ResponseState.UnsubscribeFail;
-            break;
           case "3":
             // token is valid and refresh local database.
             responseState = ResponseState.Valid;

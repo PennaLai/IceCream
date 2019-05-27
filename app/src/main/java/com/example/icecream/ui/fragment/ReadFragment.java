@@ -415,9 +415,9 @@ public class ReadFragment extends Fragment {
     if (downloadIndicator != null) {
       downloadIndicator.smoothToShow();
     }
+    this.article = article; // prepare to play, maybe not.
     UpdateSpeechAsyncTask asyncTask = new UpdateSpeechAsyncTask(this);
     asyncTask.execute(article.getId());
-    this.article = article; // prepare to play, maybe not.
   }
 
 
@@ -428,8 +428,6 @@ public class ReadFragment extends Fragment {
     downloadIndicator.smoothToHide();
     String url = ResourceHandler.getSpeechFileUrl(article.getId(), getActivity().getApplication());
     File file = new File(url);
-    Log.i("Test", "file length: " + file.length());
-    Log.i("Test", "paragraph: " + article.getParagraph());
     if (article.getParagraph() == null || !file.exists()) {
       Toast.makeText(this.getContext(), "加载资源失败，等会再来吧", Toast.LENGTH_LONG).show();
       return;
@@ -455,11 +453,10 @@ public class ReadFragment extends Fragment {
       paragraphList.clear();
       paragraphList.add(new Paragraph(article.getTitle(), 0));
       paragraphList.add(new Paragraph(article.getPublishTime(), 2));
-      Log.i("test", "article: " + article.getTitle());
-      Log.i("test", "para1: " + para.getParas()[0].getContent());
       for (int i = 0; i < para.getParaNums(); i++) {
         paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
       }
+      scrollToParagraph(para.getParaNums()+2);
       for (Article a : favoriteArticles) {
         if (a.getId().equals(article.getId())) {
           favorite = true;

@@ -29,5 +29,6 @@ public interface UserRssFeedJoinDao {
       + "UserRssFeedJoin.userId = :userId")
   List<RssFeed> getRssFeedsByUserId(final Long userId);
 
-
+  @Query("DELETE FROM UserRssFeedJoin WHERE userId = :userId AND rssFeedId = :feedId")
+  void deleteByIds(final Long userId, final Long feedId);
 }
