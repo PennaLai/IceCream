@@ -183,8 +183,6 @@ public final class ResourceHandler {
         List<RssFeed> list = httpHandler.getAllRssFeeds();
         RssFeed[] arr = list.toArray(new RssFeed[0]);
         viewModel.insertAllRssFeeds(arr);
-        Log.i(TAG, "insert rss feeds: " +
-            Arrays.toString(viewModel.getPersonalRssFeeds().getValue().toArray()));
       }
     }
   }
