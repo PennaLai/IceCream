@@ -160,7 +160,6 @@ public class SubscribeActivity extends AppCompatActivity {
     List<RssFeed> allSubscribes = viewModel.getPersonalRssFeeds().getValue();
     if (allSubscribes != null) {
       for (RssFeed rssFeed : allSubscribes) {
-        Log.i("sss", "onCreate: " + rssFeed.getChannelName() + "id" + rssFeed.getId());
         int id = rssFeed.getId().intValue();
         if (id >= 0 && id < SUBSCRIBE_NUM) {
           chips[id].setSubscribe(true);

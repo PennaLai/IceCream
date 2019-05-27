@@ -466,7 +466,7 @@ public class ReadFragment extends Fragment {
       sbProgress.getConfigBuilder().max(100).sectionCount(para.getParaNums()).build();
 
     } catch (Exception e) {
-      Toast.makeText(this.getContext(), "出了点小差错，等会再来吧", Toast.LENGTH_LONG).show();
+//      Toast.makeText(this.getContext(), "出了点小差错，等会再来吧", Toast.LENGTH_LONG).show();
     }
   }
 
