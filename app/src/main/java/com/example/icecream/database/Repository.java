@@ -611,7 +611,6 @@ public class Repository {
     @Override
     protected List<RssFeed> doInBackground(final String... params) {
       Long userId = userDao.getUserByPhone(params[0]).getId();
-      Log.i(TAG, "all:" + Arrays.toString(rssFeedDao.getAllFeeds().toArray()));
       Log.i(TAG, "subscribe url: " + params[1]);
       RssFeed rssFeed = rssFeedDao.getRssFeedByUrl(params[1]);
       if (rssFeed != null) {
@@ -642,7 +641,6 @@ public class Repository {
 
     @Override
     protected Void doInBackground(final String... params) {
-      Log.i(TAG, "all:" + Arrays.toString(rssFeedDao.getAllFeeds().toArray()));
       Log.i(TAG, "unsubscribe url: " + params[1]);
       RssFeed rssFeed = rssFeedDao.getRssFeedByUrl(params[1]);
       if (rssFeed != null) {
