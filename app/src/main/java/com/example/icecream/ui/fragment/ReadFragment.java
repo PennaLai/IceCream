@@ -153,7 +153,9 @@ public class ReadFragment extends Fragment {
 
   private ShineButton shineButton;
 
-  /** to handler the resource update. */
+  /**
+   * to handler the resource update.
+   */
   private ResourceHandler resourceHandler;
 
   private String phone;
@@ -269,19 +271,19 @@ public class ReadFragment extends Fragment {
     // TODO: initial the shineButton to checked state if already favorited
     shineButton.setChecked(favorite);
     shineButton.setOnCheckStateChangeListener(
-      (view14, checked) -> {
-        favorite = checked;
-        if (phone != null && playIndex != -1) {
-          Log.i("Article", "Not null");
-          if (checked) {
-            resourceHandler.star(phone, waitingMusicList.get(playIndex));
+        (view14, checked) -> {
+          favorite = checked;
+          if (phone != null && playIndex != -1) {
+            Log.i("Article", "Not null");
+            if (checked) {
+              resourceHandler.star(phone, waitingMusicList.get(playIndex));
+            }
+          } else {
+            Log.i("Article", "NULL");
+            shineButton.setChecked(!checked);
+            Toast.makeText(getContext(), "收藏失败，未登录或者当前没有正在播放的文章哦", Toast.LENGTH_LONG).show();
           }
-        } else {
-          Log.i("Article", "NULL");
-          shineButton.setChecked(!checked);
-          Toast.makeText(getContext(), "收藏失败，未登录或者当前没有正在播放的文章哦", Toast.LENGTH_LONG).show();
-        }
-      });
+        });
 
     downloadIndicator = view.findViewById(R.id.ld_download);
     downloadIndicator.hide();
@@ -305,7 +307,7 @@ public class ReadFragment extends Fragment {
         new OnProgressChangedListener() {
           @Override
           public void onProgressChanged(
-            BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
+              BubbleSeekBar bubbleSeekBar, int progress, float progressFloat, boolean fromUser) {
             if (fromUser) {
               if (playSongCount <= 0) {
                 Toast.makeText(getContext(), "好像没有东西在播放欸", Toast.LENGTH_LONG).show();
@@ -426,8 +428,8 @@ public class ReadFragment extends Fragment {
     downloadIndicator.smoothToHide();
     String url = ResourceHandler.getSpeechFileUrl(article.getId(), getActivity().getApplication());
     File file = new File(url);
-    Log.i("Test", "文件"+file.exists());
-    Log.i("Test", "url"+article.getParagraph());
+    Log.i("Test", "file length: " + file.length());
+    Log.i("Test", "paragraph: " + article.getParagraph());
     if (article.getParagraph() == null || !file.exists()) {
       Toast.makeText(this.getContext(), "加载资源失败，等会再来吧", Toast.LENGTH_LONG).show();
       return;
@@ -442,7 +444,7 @@ public class ReadFragment extends Fragment {
     try {
       favorite = false;
       shineButton.setChecked(false);
-      for (Article a:favoriteArticles) {
+      for (Article a : favoriteArticles) {
         if (a.getId().equals(article.getId())) {
           favorite = true;
           shineButton.setChecked(true);
@@ -453,10 +455,12 @@ public class ReadFragment extends Fragment {
       paragraphList.clear();
       paragraphList.add(new Paragraph(article.getTitle(), 0));
       paragraphList.add(new Paragraph(article.getPublishTime(), 2));
+      Log.i("test", "article: " + article.getTitle());
+      Log.i("test", "para1: " + para.getParas()[0].getContent());
       for (int i = 0; i < para.getParaNums(); i++) {
         paragraphList.add(new Paragraph(para.getParas()[i].getContent(), 1));
       }
-      for (Article a:favoriteArticles) {
+      for (Article a : favoriteArticles) {
         if (a.getId().equals(article.getId())) {
           favorite = true;
           shineButton.setChecked(true);
@@ -727,9 +731,11 @@ public class ReadFragment extends Fragment {
     @Override
     protected Void doInBackground(Long... params) {
       id = params[0];
-      readFragment.httpHandler.getUpdateSpeech(id);
-      String paragraph = readFragment.httpHandler.getUpdateSpeechInfo(id);
+      HttpHandler httpHandler = HttpHandler.getInstance(readFragment.getActivity().getApplication());
+      httpHandler.getUpdateSpeech(id);
+      String paragraph = httpHandler.getUpdateSpeechInfo(id);
       readFragment.viewModel.updateArticleParagraph(id, paragraph);
+      readFragment.article = readFragment.viewModel.getArticleByIdSync(id);
       return null;
     }
 

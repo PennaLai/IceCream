@@ -287,10 +287,8 @@ public final class HttpHandler {
       Log.e(TAG, "postLoginState: ", e);
     }
     String responseString = postHttpResponseString(LOGIN_URL, jsonObject.toString());
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -349,10 +347,8 @@ public final class HttpHandler {
       Log.e(TAG, "postRegisterState: ", e);
     }
     String responseString = postHttpResponseString(REGISTER_URL, jsonObject.toString());
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -387,10 +383,8 @@ public final class HttpHandler {
       Log.e(TAG, "postPhoneState: ", e);
     }
     String responseString = postHttpResponseString(BEFORE_REGISTER, requestJsonObject.toString());
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       try {
         JSONObject responseJsonObject = new JSONObject(responseString);
@@ -424,10 +418,8 @@ public final class HttpHandler {
     }
     String token = user.getAuthToken();
     String responseString = getHttpResponseString(CHECK_TOKEN_URL + token);
-    ResponseState responseState;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       responseState = null;
       try {
@@ -461,10 +453,8 @@ public final class HttpHandler {
    */
   ResponseState getUpdateAllFeedsState() {
     String responseString = getHttpResponseString(ALL_RSS_FEEDS_URL);
-    ResponseState responseState;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       responseState = ResponseState.Valid;
       Log.i(TAG, responseString);
       try {
@@ -502,10 +492,8 @@ public final class HttpHandler {
    */
   ResponseState getUpdateCommonArticlesState() {
     String responseString = getHttpResponseString(ALL_ARTICLES_URL);
-    ResponseState responseState;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       responseState = ResponseState.Valid;
       Log.i(TAG, responseString);
       try {
@@ -556,10 +544,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = PERSONAL_RSS_FEEDS_URL + token;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -623,10 +609,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = PERSONAL_ARTICLES_URL + token;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -694,10 +678,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = SUBSCRIBE_URL + token + "&url=" + rssFeedUrl;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -744,10 +726,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = UNSUBSCRIBE_URL + token + "&url=" + rssFeedUrl;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -816,10 +796,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = STAR_URL + id + "?token=" + token;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -854,10 +832,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = UNSTAR_URL + id + "?token=" + token;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -898,10 +874,8 @@ public final class HttpHandler {
     String token = user.getAuthToken();
     String url = PERSONAL_STAR_URL + token;
     String responseString = getHttpResponseString(url);
-    ResponseState responseState = null;
-    if (responseString == null) {
-      responseState = ResponseState.ServerWrong;
-    } else {
+    ResponseState responseState = ResponseState.ServerWrong;
+    if (responseString != null) {
       Log.i(TAG, responseString);
       JSONObject responseJsonObject;
       try {
@@ -953,7 +927,7 @@ public final class HttpHandler {
    *
    * @return list articles.
    */
-  public List<Article> getStarArticles() {
+  List<Article> getStarArticles() {
     return starArticles;
   }
 }

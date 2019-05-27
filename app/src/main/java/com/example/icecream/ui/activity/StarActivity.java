@@ -11,6 +11,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.widget.TextView;
 import android.widget.Toast;
+
 import com.example.icecream.R;
 import com.example.icecream.database.entity.Article;
 import com.example.icecream.ui.component.recycleveiw.ArticlesAdapter;
@@ -20,6 +21,7 @@ import com.example.icecream.utils.AppViewModel;
 import com.example.icecream.utils.HttpHandler;
 import com.example.icecream.utils.ResourceHandler;
 import com.example.icecream.utils.UserSettingHandler;
+
 import java.util.Objects;
 
 public class StarActivity extends AppCompatActivity implements ListItemClickListener {
@@ -39,16 +41,15 @@ public class StarActivity extends AppCompatActivity implements ListItemClickList
 
     loadUserInfo();
     loadArticles();
-
   }
 
-  private void loadUserInfo(){
+  private void loadUserInfo() {
     viewModel = ViewModelProviders.of(this).get(AppViewModel.class);
     UserSettingHandler userSettingHandler = UserSettingHandler.getInstance(this.getApplication());
     phone = userSettingHandler.getLoginPhone();
   }
 
-  private void loadArticles(){
+  private void loadArticles() {
     RecyclerView mArticleList = findViewById(R.id.rv_source);
 
     try {
@@ -62,9 +63,9 @@ public class StarActivity extends AppCompatActivity implements ListItemClickList
     ArticlesAdapter mAdapter = new ArticlesAdapter(0, this);
     mArticleList.setAdapter(mAdapter);
 
-    if (phone!=null) {
+    if (phone != null) {
       viewModel.getStarArticles().observe(this, mAdapter::setArticles);
-//      viewModel.getPersonalArticles().observe(this, mAdapter::setArticles);
+      viewModel.loadStarArticlesByPhone(phone);
     } else {
       Toast.makeText(getContext(), "你还没有登录哦，先随便看看吧", Toast.LENGTH_LONG).show();
       viewModel.getCommonArticles().observe(this, mAdapter::setArticles);

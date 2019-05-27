@@ -58,30 +58,13 @@ public class AppViewModel extends AndroidViewModel {
   }
 
   /**
-   * Get all the users in local database.
+   * Get article by id.
    *
-   * @return local users.
+   * @param id article id.
+   * @return article.
    */
-  public LiveData<List<User>> getAllUsers() {
-    return allUsers;
-  }
-
-  /**
-   * Execute insertion for user(s) to database.
-   *
-   * @param user input user(s).
-   */
-  public void insertUser(User user) {
-    repository.insertUser(user);
-  }
-
-  /**
-   * Update the user(s).
-   *
-   * @param user input user(s).
-   */
-  public void updateUser(User... user) {
-    repository.updateUser(user);
+  public Article getArticleByIdSync(Long id) {
+    return repository.getArticleByIdSync(id);
   }
 
   /**

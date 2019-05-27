@@ -136,6 +136,7 @@ public class SubscribeActivity extends AppCompatActivity {
                   chips[id].setSubscribe(true);
                 }
               }
+
             });
 
     all = findViewById(R.id.all_chip);

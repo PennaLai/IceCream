@@ -337,6 +337,16 @@ public class Repository {
   }
 
   /**
+   * Synchronously get article by id.
+   *
+   * @param id id.
+   * @return article.
+   */
+  public Article getArticleByIdSync(Long id) {
+    return articleDao.getArticleById(id);
+  }
+
+  /**
    * Update paragraph.
    *
    * @param id   article id.
