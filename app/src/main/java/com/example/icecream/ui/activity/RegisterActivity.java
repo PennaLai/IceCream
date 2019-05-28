@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -205,6 +206,11 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
     final Character[] chars = pinCode.getCode();
     final StringBuilder stringBuilder = new StringBuilder();
     for (final Character c : chars) {
+      if (c == null) {
+        Toast.makeText(this,
+            "请输入完整的验证码", Toast.LENGTH_LONG).show();
+        return;
+      }
       stringBuilder.append(c.toString());
     }
     final String authCode = stringBuilder.toString();
