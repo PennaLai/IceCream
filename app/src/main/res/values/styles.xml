@@ -12,4 +12,45 @@
     <item name="android:windowNoTitle">true</item>
     </style>
 
+    <style name="Toolbar.TitleText"
+        parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">#a0000000</item>
+    </style>
+
+
+    <!--&lt;!&ndash;Toolbar&ndash;&gt;-->
+    <!--<style name="Theme.ToolBar.Menu" parent="ThemeOverlay.AppCompat.Dark.ActionBar">-->
+        <!--&lt;!&ndash; 设置-弹窗的背景-颜色&ndash;&gt;-->
+        <!--<item name="android:colorBackground">@color/nb.theme.background</item>-->
+        <!--&lt;!&ndash; 字体的颜色&ndash;&gt;-->
+        <!--<item name="android:textColor">@color/nb.text.default</item>-->
+        <!--&lt;!&ndash; 字体大小&ndash;&gt;-->
+        <!--<item name="android:textSize">16sp</item>-->
+        <!--<item name="android:gravity">center_vertical</item>-->
+        <!--&lt;!&ndash; 用于替换菜单的三个小白点，换成自已的图片&ndash;&gt;-->
+        <!--<item name="actionOverflowButtonStyle">@style/ActionButton.Overflow.Menu</item>-->
+        <!--&lt;!&ndash;用于控制menu弹出的位置，位于toolbar的下面，而不是上面&ndash;&gt;-->
+        <!--<item name="actionOverflowMenuStyle">@style/OverflowMenuStyle</item>-->
+        <!--&lt;!&ndash; 用于修改item默认的分割线&ndash;&gt;-->
+        <!--<item name="android:dropDownListViewStyle">@style/dropDownStyle</item>-->
+        <!--<item name="dropDownListViewStyle">@style/dropDownStyle</item>-->
+    <!--</style>-->
+
+
+    <style name="ActionButton.Overflow.Menu" parent="android:style/Widget.Holo.Light.ActionButton.Overflow">
+        <item name="android:src">@drawable/ic_menu_overflow</item>
+    </style>
+
+    <style name="OverflowMenuStyle" parent="Widget.AppCompat.Light.PopupMenu.Overflow">
+        <item name="overlapAnchor">false</item>
+    </style>
+
+    <!--用于修改popmenu的分割线-->
+    <style name="dropDownStyle" parent="android:style/Widget.Holo.ListView.DropDown">
+        <item name="android:listSelector">@drawable/selector_common_bg</item>
+        <item name="android:divider">@color/nb.divider.common</item>
+        <item name="android:dividerHeight">@dimen/nb.divider.line</item>
+    </style>
+
 </resources>

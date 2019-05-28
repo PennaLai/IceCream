@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+  <!--https://github.com/scwang90/SmartRefreshLayout   刷新来源-->
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  android:background="@color/backgroundColor"
+  android:orientation="vertical"
+  tools:context=".ui.activity.MainActivity">
+
+    <android.support.design.widget.AppBarLayout
+      android:id="@+id/appBarLayout"
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      app:layout_constraintTop_toTopOf="parent">
+
+        <android.support.v7.widget.Toolbar
+          android:id="@+id/toolbar"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:background="@color/white">
+            <FrameLayout
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              >
+                <!--<TextView-->
+                <!--android:textStyle="bold"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Articles"-->
+                <!--android:textColor="@color/black"-->
+                <!--android:textSize="30sp"/>-->
+                <com.mancj.materialsearchbar.MaterialSearchBar
+                  android:id="@+id/search_searchBar"
+                  style="@style/MaterialSearchBarLight"
+                  android:layout_width="match_parent"
+                  android:layout_height="wrap_content"
+                  android:layout_marginRight="45dp"
+                  android:layout_gravity="start"
+                  android:background="@color/backgroundColor"
+                  app:mt_hint="Custom hint"
+                  app:mt_maxSuggestionsCount="10"
+                  app:mt_speechMode="true"/>
+                <de.hdodenhof.circleimageview.CircleImageView
+                  android:id="@+id/resource_profile"
+                  android:layout_width="25dp"
+                  android:layout_height="25dp"
+                  android:layout_marginRight="10dp"
+                  android:layout_gravity="end|center_vertical"
+                  android:src="@drawable/cat"
+                  app:civ_border_width="0dp"
+                  />
+                <!--<TextView-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_marginEnd="35dp"-->
+                <!--android:layout_gravity="end|center_vertical"-->
+                <!--android:text="一口闰心"-->
+                <!--android:textColor="@color/black"/>-->
+            </FrameLayout>
+
+        </android.support.v7.widget.Toolbar>
+        <!--<include layout="@layout/toolbar"/>-->
+
+    </android.support.design.widget.AppBarLayout>
+    <Space
+      android:id="@+id/toolbar_space"
+      android:layout_width="match_parent"
+      android:layout_height="56dp"
+      app:layout_constraintTop_toTopOf="parent"
+      tools:layout_editor_absoluteX="0dp"/>
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:id="@+id/refreshLayout"
+      android:layout_width="match_parent"
+      android:layout_height="match_parent"
+      android:layout_marginTop="56dp"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintTop_toBottomOf="@+id/toolbar_space"
+      tools:layout_editor_absoluteX="31dp">
+        <com.scwang.smartrefresh.header.BezierCircleHeader
+          android:id="@+id/refreshHeader"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+        <android.support.v7.widget.RecyclerView
+          android:id="@+id/rv_source"
+          android:layout_width="match_parent"
+          android:layout_height="match_parent"
+          android:layout_marginTop="0dp"
+          app:layout_constraintTop_toTopOf="parent"/>
+        <com.scwang.smartrefresh.layout.footer.BallPulseFooter
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"/>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+</android.support.constraint.ConstraintLayout>

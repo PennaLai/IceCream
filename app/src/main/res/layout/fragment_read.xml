@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+  xmlns:android="http://schemas.android.com/apk/res/android"
+  android:layout_width="match_parent"
+  android:layout_height="match_parent"
+  xmlns:app="http://schemas.android.com/apk/res-auto"
+  xmlns:tools="http://schemas.android.com/tools"
+  android:background="@color/backgroundColor"
+  android:orientation="vertical">
+
+  <android.support.design.widget.AppBarLayout
+    android:id="@+id/appBarLayout"
+    android:layout_width="match_parent"
+    android:layout_height="56dp"
+    android:layout_marginTop="0dp"
+    android:background="@color/white"
+    app:layout_constraintTop_toTopOf="parent"
+    tools:layout_editor_absoluteX="8dp">
+    <FrameLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+      <TextView
+        android:textStyle="bold"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="35dp"
+        android:layout_gravity="center_vertical"
+        android:fontFamily="sans-serif"
+        android:text="Reading"
+        android:textColor="@color/black"
+        android:textSize="18sp"
+        android:typeface="normal"/>
+
+      <com.sackcentury.shinebuttonlib.ShineButton
+        android:id="@+id/read_sb_favorite"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginRight="15dp"
+        android:layout_gravity="end|center_vertical"
+        android:src="@android:color/darker_gray"
+        app:btn_color="@android:color/darker_gray"
+        app:btn_fill_color="@color/light_red"
+        app:allow_random_color="false"
+        app:siShape="@raw/heart"/>
+
+    </FrameLayout>
+  </android.support.design.widget.AppBarLayout>
+
+  <com.wang.avi.AVLoadingIndicatorView
+    android:id="@+id/ld_download"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    android:layout_marginStart="8dp"
+    android:layout_marginEnd="8dp"
+    android:visibility="visible"
+    app:indicatorColor="@color/light_blue"
+    app:indicatorName="BallPulseIndicator"
+    app:layout_constraintBottom_toBottomOf="@+id/linearLayout"
+    app:layout_constraintEnd_toEndOf="parent"
+    app:layout_constraintHorizontal_bias="0.498"
+    app:layout_constraintStart_toStartOf="parent"
+    app:layout_constraintTop_toTopOf="parent"
+    app:layout_constraintVertical_bias="0.528"/>
+
+  <ListView
+    android:id="@+id/lv_article_view"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_marginTop="56dp"
+    android:layout_marginBottom="55dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintTop_toTopOf="parent">
+  </ListView>
+
+
+  <LinearLayout
+    android:id="@+id/linearLayout"
+    android:layout_width="match_parent"
+    android:layout_height="55dp"
+    android:orientation="vertical"
+    app:layout_constraintBottom_toBottomOf="parent">
+
+    <com.xw.repo.BubbleSeekBar
+      android:id="@+id/read_pb_progress"
+      android:layout_width="match_parent"
+      android:layout_height="1dp"
+      app:bsb_hide_bubble="true"
+      app:bsb_auto_adjust_section_mark="true"
+      app:bsb_second_track_color="@color/light_blue"
+      app:bsb_section_count="10"
+      app:bsb_bubble_color="@color/light_blue"
+      app:bsb_track_color="@color/common_gray"
+      app:bsb_show_section_mark="true"
+      app:bsb_show_section_text="false"
+      app:bsb_show_thumb_text="false"
+      app:bsb_touch_to_seek="true"/>
+
+    <android.support.constraint.ConstraintLayout
+      android:layout_width="match_parent"
+      android:layout_height="match_parent">
+
+      <!--<jp.co.recruit_lifestyle.android.widget.PlayPauseButton-->
+        <!--android:id="@+id/read_play_pause_button"-->
+        <!--android:layout_width="26dp"-->
+        <!--android:layout_height="26dp"-->
+        <!--android:layout_marginTop="8dp"-->
+        <!--android:layout_marginBottom="16dp"-->
+        <!--android:layout_marginStart="8dp"-->
+        <!--android:layout_marginEnd="8dp"-->
+        <!--app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--app:layout_constraintEnd_toEndOf="parent"-->
+        <!--app:layout_constraintStart_toStartOf="parent"-->
+        <!--app:layout_constraintTop_toTopOf="parent"-->
+        <!--/>-->
+
+      <com.freedom.lauzy.playpauseviewlib.PlayPauseView
+        android:id="@+id/read_play_pause_view"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:anim_direction="positive"
+        app:anim_duration="300"
+        app:bg_color="@color/backgroundColor"
+        app:btn_color="#000000"
+        app:gap_width="3dp"/>
+
+      <ImageView
+        android:id="@+id/read_iv_previous"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/read_play_pause_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_previous_article"/>
+
+      <ImageView
+        android:id="@+id/read_iv_next"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginStart="40dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/read_play_pause_view"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_next_article"/>
+
+      <ImageView
+        android:id="@+id/read_iv_more"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="16dp"
+        android:layout_marginEnd="15dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/ic_more"/>
+
+
+    </android.support.constraint.ConstraintLayout>
+  </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

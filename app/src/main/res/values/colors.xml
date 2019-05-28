@@ -6,4 +6,46 @@
 
     <color name="textColorPrimary">#212121</color>
     <color name="textColorSecondary">#757575</color>
+
+    <color name="backgroundColor">#FAFAFA</color>
+
+
+
+    <color name="artist">#8D8D8D</color>
+    <color name="mask_image_view">#44555555</color>
+    <color name="lrc_view_text">#8D8D8D</color>
+
+    <!--from book reader-->
+
+
+    <!--common-->
+    <color name="transparent">#00000000</color>
+    <color name="translucent">#99343434</color>
+    <color name="white">#ffffff</color>
+    <color name="red">#FF0000</color>
+    <color name="orange">#DE6014</color>
+    <color name="gray">#b8b8b8</color>
+    <color name="green">#5FB236</color>
+    <color name="black">#000000</color>
+    <color name="light_pink">#fb9090</color>
+    <color name="light_white">#EEEEEE</color>
+    <color name="light_coffee">#A58D5E</color>
+    <color name="light_red">#EC4A48</color>
+    <color name="light_blue">#039BE5</color>
+    <color name="light_translucent">#23000000</color>
+    <color name="common_gray">#EEEEEE</color>
+
+    <color name="nb.theme.background">@color/white</color>
+    <color name="nb.text.default">@color/black</color>
+
+    <color name="nb.divider.common">#727272</color>
+
+
+    <!--button-->
+    <color name="nb.widget.button.normal">@color/white</color>
+    <color name="nb.widget.button.selected">#E3E3E3</color>
+
+    <!--For subscribe-->
+    <color name="selected">#424242</color>
+    <color name="unselected">#e0e0e0</color>
 </resources>

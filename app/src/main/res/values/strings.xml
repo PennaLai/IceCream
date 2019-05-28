@@ -1,6 +1,43 @@
 <resources>
-    <string name="app_name">IceCream</string>
-    <string name="account_balance">Account Balance</string>
-    <string name="balance_currency">$</string>
-    <string name="balance_amount">524.99</string>
+  <string name="app_name">IceCream</string>
+
+  <string name="subscribe">订阅</string>
+
+  <string name="login">登录</string>
+  <string name="logout">注销</string>
+
+  <string name="kr">36氪</string>
+  <string name="zhihu">知乎</string>
+  <string name="geekpark">极客公园</string>
+  <string name="ifanr">爱范儿</string>
+  <string name="feng">威锋</string>
+
+  <string name="title">What To Do: Divorced Parent Enrolling A Child At School</string>
+
+  <string name="time">Steven Welch · 21 June, 2018</string>
+
+  <string name="content">Unless required by applicable law or agreed to in writing, software
+
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+
+      Unless required by applicable law or agreed to in writing, software
+     distributed under the License is distributed on an "AS IS" BASIS,
+     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+     See the License for the specific language governing permissions and
+     limitations under the License.
+    </string>
+
+  <string name="settings">Settings</string>
+  <string name="search_hint">搜索你想要的资讯</string>
+
+  <string name="hello_blank_fragment">Hello blank fragment</string>
+
+  <string name="default_title">UnKnown</string>
+  <string name="default_artist">UnKnown</string>
+  <string name="default_time">00:00</string>
+
+  <string name="message_music_is_null">please open a local file</string>
 </resources>
