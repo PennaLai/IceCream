@@ -20,13 +20,14 @@
 ### 样例
 
 <center class="half">
-    <img src="D:\Github\Penna\IceCream\resource\intro.gif" width="300" style="margin-right: 100px"/>
-    <img src="D:\Github\Penna\IceCream\resource\login.gif" width="300"/>
+    <img src="resource\intro.gif" width="300" style="margin-right: 100px"/>
+    <img src="resource\login.gif" width="300"/>
 </center>
 
+
 <center class="half">
-    <img src="D:\Github\Penna\IceCream\resource\main.gif" width="300" style="margin-right: 100px"/>
-    <img src="D:\Github\Penna\IceCream\resource\player.gif" width="300"/>
+    <img src="resource\main.gif" width="300" style="margin-right: 100px"/>
+    <img src="resource\player.gif" width="300"/>
 </center>
 
 
