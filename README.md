@@ -1,21 +1,12 @@
 # IScream
 [![All Contributors](https://img.shields.io/badge/all_contributors-5-orange.svg?style=flat-square)](#contributors)
 
-*这是一个文本生成语音安卓软件，基础调用了讯飞的中文语音接口，经过语速语义分析，自动生成对应语音*
+*Iscream是一个有声读物软件，基础调用了讯飞的中文语音接口，经过Tensorflow分析段落语速语义，生成接近人声情感语音*
 
-### 功能
+### 即将上线
 
-##### 现有功能
-
-- 订阅文章
-- 收藏文章
-- 滚动播放
-- 自动推荐
-
-##### 即将到来
-
-- 搜索
-- 本地上传
+- 关键词搜索
+- 自定义上传文本
 
 ### 样例
 
